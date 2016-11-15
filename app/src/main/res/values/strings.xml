@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">My Symphony</string>
+    <string name="action_settings">Settings</string>
+    <string name="section_format">none</string>
+
+        <string name="one">ONE</string>
+        <string name="two">TWO</string>
+        <string name="three">THREE</string>
+        <string name="four">FOUR</string>
+</resources>
