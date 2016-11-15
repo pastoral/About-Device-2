@@ -1,0 +1,18 @@
+{
+  "Helio S25" :{
+    "display" : "5.5 inch full HD",
+    "camera" : "21MP"
+  },
+
+  "Z8" :{
+    "processor" : "Qualcom Snapdragon\n Matha nosto... man!!!",
+    "camera" : "8MP",
+    "display" : "5 inch",
+    "os" : "Android Nougat 7.0",
+    "data_connection" : "4G LTE ",
+    "connectivity" : "WiFi MIMO",
+    "battery" : "10000mAh",
+    "sim" : "dual"
+
+  }
+}
