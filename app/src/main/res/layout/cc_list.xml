@@ -7,6 +7,7 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="Name"
+        android:textColor="#0d0d0d"
         android:id="@+id/txtCCName" />
 
 
@@ -15,6 +16,7 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="Address"
+        android:textColor="#0d0d0d"
         android:id="@+id/txtCCAddress" />
 
 </LinearLayout>

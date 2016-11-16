@@ -12,8 +12,8 @@ import aboutdevice.com.munir.symphony.mysymphony.R;
  */
 
 public class CCAddressViewHolder extends RecyclerView.ViewHolder implements View.OnCreateContextMenuListener {
-    private TextView txtCCName;
-    private TextView txtCCAddress;
+    public TextView txtCCName;
+    public TextView txtCCAddress;
     View mView;
     public CCAddressViewHolder(View mView){
         super(mView);

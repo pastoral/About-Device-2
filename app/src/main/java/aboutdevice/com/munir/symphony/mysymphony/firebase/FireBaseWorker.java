@@ -22,25 +22,14 @@ public class FireBaseWorker {
     private ProgressBar progressBar;
     SearchView searchView;
     private List<CCAddress> list ;
-   boolean calledAlready = false;
+
 
     public DatabaseReference intDatabase(String path){
         mDatabaseReference = FirebaseDatabase.getInstance().getReference(ADRESS);
-        mDatabaseReference.keepSynced(true);
+
         return mDatabaseReference;
     }
 
-    public boolean isOfflineDBSupport(){
-        if (!calledAlready)
-        {
-            FirebaseDatabase.getInstance().setPersistenceEnabled(true);
-            calledAlready = true;
-        }
-        else{
-            calledAlready = false;
-        }
 
-        return calledAlready;
-    }
 
 }

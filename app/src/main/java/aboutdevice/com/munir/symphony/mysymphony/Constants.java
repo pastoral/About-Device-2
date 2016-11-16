@@ -5,6 +5,6 @@ package aboutdevice.com.munir.symphony.mysymphony;
  */
 
 public class Constants {
-    public static final String ADRESS = "addresses";
+    public static final String ADRESS = "ccAddresses";
     static final int REQ = 1;
 }

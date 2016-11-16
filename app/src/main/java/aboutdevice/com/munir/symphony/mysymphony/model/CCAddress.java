@@ -17,6 +17,9 @@ public class CCAddress {
     private Date created;
     private Date last_modified;
 
+
+    public CCAddress(){}
+
     public CCAddress(String name, String created_by, Date last_modified, String country, Date created, float lan, float lat, boolean cc, String address, String district) {
         this.name = name;
         this.created_by = created_by;
