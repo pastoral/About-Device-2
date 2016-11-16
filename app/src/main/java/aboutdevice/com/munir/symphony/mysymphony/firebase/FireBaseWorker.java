@@ -10,16 +10,37 @@ import java.util.List;
 
 import aboutdevice.com.munir.symphony.mysymphony.model.CCAddress;
 
+import static aboutdevice.com.munir.symphony.mysymphony.Constants.ADRESS;
+
 /**
  * Created by munirul.hoque on 11/16/2016.
  */
 
 public class FireBaseWorker {
-    public static FirebaseDatabase mDatabase;
-    public static DatabaseReference mDatabaseReference;
+    //public static FirebaseDatabase mDatabase;
+    public  DatabaseReference mDatabaseReference;
     private ProgressBar progressBar;
     SearchView searchView;
     private List<CCAddress> list ;
+   boolean calledAlready = false;
 
+    public DatabaseReference intDatabase(String path){
+        mDatabaseReference = FirebaseDatabase.getInstance().getReference(ADRESS);
+        mDatabaseReference.keepSynced(true);
+        return mDatabaseReference;
+    }
+
+    public boolean isOfflineDBSupport(){
+        if (!calledAlready)
+        {
+            FirebaseDatabase.getInstance().setPersistenceEnabled(true);
+            calledAlready = true;
+        }
+        else{
+            calledAlready = false;
+        }
+
+        return calledAlready;
+    }
 
 }

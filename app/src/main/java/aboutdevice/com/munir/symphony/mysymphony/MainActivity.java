@@ -46,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
      */
     private ViewPager mViewPager;
     private  AppBarLayout appBarLayout;
-    public static boolean calledAlready = false;
+
 
 
     @Override
