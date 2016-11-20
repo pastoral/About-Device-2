@@ -1,11 +1,13 @@
 package aboutdevice.com.munir.symphony.mysymphony.ui;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +15,8 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -36,7 +40,7 @@ import static android.view.View.GONE;
 /**
  * Created by munirul.hoque on 5/16/2016.
  */
-public class ThreeFragment extends Fragment {
+public class ThreeFragment extends Fragment implements GoogleApiClient.OnConnectionFailedListener {
     public String name;
     public View view;
     public int pos;
@@ -48,6 +52,8 @@ public class ThreeFragment extends Fragment {
     private CCAddressViewHolder ccAddressViewHolder;
     private DatabaseReference mDatabaseReference;
     private FirebaseRecyclerAdapter<CCAddress,CCAddressViewHolder> firebaseRecyclerAdapter;
+    public boolean mRequestingLocationUpdates;
+    protected String mLastUpdateTime;
     static boolean calledAlready = false;
     public ThreeFragment (){
         ccAddressList = new ArrayList<CCAddress>();
@@ -71,6 +77,14 @@ public class ThreeFragment extends Fragment {
         //recyclerView.setLayoutManager(mLinearLayoutManager);
         recyclerView.setHasFixedSize(true);
 
+
+
+
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
         if (!calledAlready)
         {
             FirebaseDatabase.getInstance().setPersistenceEnabled(true);
@@ -80,6 +94,11 @@ public class ThreeFragment extends Fragment {
         mDatabaseReference = fireBaseWorker.intDatabase(Constants.ADRESS);
 
         mDatabaseReference.keepSynced(true);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
         //ccAddressList.clear();
         firebaseRecyclerAdapter = new FirebaseRecyclerAdapter<CCAddress, CCAddressViewHolder>(
                 CCAddress.class,
@@ -127,26 +146,17 @@ public class ThreeFragment extends Fragment {
             recyclerView.setAdapter(firebaseRecyclerAdapter);
         }
 
-
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-
-
-
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
         firebaseRecyclerAdapter.cleanup();
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+        Log.d("ThirdFragment", "onConnectionFailed:" + connectionResult);
+        Toast.makeText(getActivity(), "Google Play Services error.", Toast.LENGTH_SHORT).show();
     }
 }
