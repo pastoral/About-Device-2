@@ -25,7 +25,7 @@ import aboutdevice.com.munir.symphony.mysymphony.utils.FetchJson;
  * Created by munirul.hoque on 5/16/2016.
  */
 public class TwoFragment extends Fragment {
-    private String modelName;
+    public String modelName;
     TextView txtModelName ;
     RecyclerView recyclerView;
     private View view;

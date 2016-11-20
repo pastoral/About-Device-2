@@ -7,16 +7,18 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="Name"
-        android:textColor="#0d0d0d"
+        android:textColor="#262626"
+        android:layout_marginStart="8dp"
         android:id="@+id/txtCCName" />
 
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textAppearance="?android:attr/textAppearanceSmall"
         android:text="Address"
-        android:textColor="#0d0d0d"
+        android:textColor="#4d4d4d"
+        android:layout_marginStart="8dp"
         android:id="@+id/txtCCAddress" />
 
 </LinearLayout>

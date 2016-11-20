@@ -11,26 +11,27 @@ public class CCAddress {
     private String district;
     private String address;
     private boolean cc ;
-    private float lat;
-    private float lan;
+    private double lat;
+    private double lan;
     private String country;
-    private Date created;
-    private Date last_modified;
+    private String created;
+    private String last_modified;
+    private String created_by;
 
 
     public CCAddress(){}
 
-    public CCAddress(String name, String created_by, Date last_modified, String country, Date created, float lan, float lat, boolean cc, String address, String district) {
+    public CCAddress(String name, String district, String address, boolean cc, double lat, double lan, String country, String created, String last_modified, String created_by) {
         this.name = name;
-        this.created_by = created_by;
-        this.last_modified = last_modified;
+        this.district = district;
+        this.address = address;
+        this.cc = cc;
+        this.lat = lat;
+        this.lan = lan;
         this.country = country;
         this.created = created;
-        this.lan = lan;
-        this.lat = lat;
-        this.cc = cc;
-        this.address = address;
-        this.district = district;
+        this.last_modified = last_modified;
+        this.created_by = created_by;
     }
 
     public String getName() {
@@ -49,19 +50,19 @@ public class CCAddress {
         this.created_by = created_by;
     }
 
-    public Date getLast_modified() {
+    public String getLast_modified() {
         return last_modified;
     }
 
-    public void setLast_modified(Date last_modified) {
+    public void setLast_modified(String last_modified) {
         this.last_modified = last_modified;
     }
 
-    public Date getCreated() {
+    public String getCreated() {
         return created;
     }
 
-    public void setCreated(Date created) {
+    public void setCreated(String created) {
         this.created = created;
     }
 
@@ -73,7 +74,7 @@ public class CCAddress {
         this.country = country;
     }
 
-    public float getLan() {
+    public double getLan() {
         return lan;
     }
 
@@ -81,7 +82,7 @@ public class CCAddress {
         this.lan = lan;
     }
 
-    public float getLat() {
+    public double getLat() {
         return lat;
     }
 
@@ -113,6 +114,5 @@ public class CCAddress {
         this.district = district;
     }
 
-    private String created_by;
 
 }

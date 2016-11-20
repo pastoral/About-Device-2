@@ -10,9 +10,11 @@ import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import aboutdevice.com.munir.symphony.mysymphony.R;
 import aboutdevice.com.munir.symphony.mysymphony.adapter.TileAdapter;
+import aboutdevice.com.munir.symphony.mysymphony.model.CCAddress;
 import aboutdevice.com.munir.symphony.mysymphony.utils.TileSpacesItemDecoration;
 
 
@@ -47,6 +49,10 @@ public class OneFragment extends Fragment {
        /* mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.addItemDecoration(tileSpacesItemDecoration);
         mRecyclerView.setAdapter(mTileAdapter);*/
+        CCAddress ccAddress = new CCAddress("Dhaka (Mirpur11)", "Dhaka","Plot-22 (2nd Floor), Block-D, Road-3, Section-11, Mirpur, Dhaka",
+                true, 23.817577,90.401567,"ban", "2012-04-23T18:25:43.511Z","2012-04-23T18:25:43.511Z", "munirul.hoque@edison-bd.com" );
+
+       Toast.makeText(getActivity(),String.valueOf(ccAddress.isCc()), Toast.LENGTH_SHORT).show();
 
     }
 }

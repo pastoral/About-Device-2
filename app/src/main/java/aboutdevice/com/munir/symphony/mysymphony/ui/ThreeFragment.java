@@ -10,13 +10,18 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import aboutdevice.com.munir.symphony.mysymphony.Constants;
 import aboutdevice.com.munir.symphony.mysymphony.R;
@@ -32,6 +37,7 @@ import static android.view.View.GONE;
  * Created by munirul.hoque on 5/16/2016.
  */
 public class ThreeFragment extends Fragment {
+    public String name;
     public View view;
     public int pos;
     public ProgressBar progressBar;
@@ -62,13 +68,9 @@ public class ThreeFragment extends Fragment {
         recyclerView = (RecyclerView)view.findViewById(R.id.cc_recycler);
 
         mLinearLayoutManager = new LinearLayoutManager(getActivity());
-        recyclerView.setLayoutManager(mLinearLayoutManager);
+        //recyclerView.setLayoutManager(mLinearLayoutManager);
         recyclerView.setHasFixedSize(true);
-    }
 
-    @Override
-    public void onStart() {
-        super.onStart();
         if (!calledAlready)
         {
             FirebaseDatabase.getInstance().setPersistenceEnabled(true);
@@ -79,15 +81,11 @@ public class ThreeFragment extends Fragment {
 
         mDatabaseReference.keepSynced(true);
         //ccAddressList.clear();
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
         firebaseRecyclerAdapter = new FirebaseRecyclerAdapter<CCAddress, CCAddressViewHolder>(
                 CCAddress.class,
                 R.layout.cc_list,
                 CCAddressViewHolder.class,
+                // mDatabaseReference.orderByChild("name")
                 mDatabaseReference.orderByChild("name")
         ) {
             @Override
@@ -111,9 +109,39 @@ public class ThreeFragment extends Fragment {
             }
         });
 
-        recyclerView.setItemAnimator(new DefaultItemAnimator());
-        recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), LinearLayoutManager.VERTICAL));
-        recyclerView.setAdapter(firebaseRecyclerAdapter);
+
+        // recyclerView.setLayoutManager(mLinearLayoutManager);
+
+        //recyclerView.setAdapter(firebaseRecyclerAdapter);
+        if(firebaseRecyclerAdapter == null){
+            Toast.makeText(getActivity(), "No adapter attached; skipping layout",Toast.LENGTH_SHORT).show();
+        }
+        else if (mLinearLayoutManager == null){
+            Toast.makeText(getActivity(), "No layout manager attached; skipping layout",Toast.LENGTH_SHORT).show();
+        }
+        else{
+            Toast.makeText(getActivity(), "Got it",Toast.LENGTH_SHORT).show();
+            recyclerView.setLayoutManager(mLinearLayoutManager);
+            recyclerView.setItemAnimator(new DefaultItemAnimator());
+            recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), LinearLayoutManager.VERTICAL));
+            recyclerView.setAdapter(firebaseRecyclerAdapter);
+        }
+
+
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+
+
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
     }
 
     @Override

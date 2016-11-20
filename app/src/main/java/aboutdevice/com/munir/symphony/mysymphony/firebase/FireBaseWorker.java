@@ -19,9 +19,7 @@ import static aboutdevice.com.munir.symphony.mysymphony.Constants.ADRESS;
 public class FireBaseWorker {
     //public static FirebaseDatabase mDatabase;
     public  DatabaseReference mDatabaseReference;
-    private ProgressBar progressBar;
-    SearchView searchView;
-    private List<CCAddress> list ;
+
 
 
     public DatabaseReference intDatabase(String path){

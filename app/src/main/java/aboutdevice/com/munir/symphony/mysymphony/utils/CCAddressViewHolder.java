@@ -11,7 +11,7 @@ import aboutdevice.com.munir.symphony.mysymphony.R;
  * Created by munirul.hoque on 11/16/2016.
  */
 
-public class CCAddressViewHolder extends RecyclerView.ViewHolder implements View.OnCreateContextMenuListener {
+public class CCAddressViewHolder extends RecyclerView.ViewHolder {
     public TextView txtCCName;
     public TextView txtCCAddress;
     View mView;
@@ -20,11 +20,6 @@ public class CCAddressViewHolder extends RecyclerView.ViewHolder implements View
         this.mView = mView;
         txtCCName = (TextView)mView.findViewById(R.id.txtCCName);
         txtCCAddress = (TextView)mView.findViewById(R.id.txtCCAddress);
-        mView.setOnCreateContextMenuListener(this);
     }
 
-    @Override
-    public void onCreateContextMenu(ContextMenu contextMenu, View view, ContextMenu.ContextMenuInfo contextMenuInfo) {
-        contextMenu.add(0,view.getId(),0,"Delete");
-    }
 }

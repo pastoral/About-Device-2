@@ -3,34 +3,26 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_alignParentTop="true"
-        android:layout_marginBottom="9dp"
-        android:id="@+id/layout_nearest_cc"
-        android:layout_marginTop="3dp">
-
-        <TextView
-            android:text="TextView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="5dp"
-            android:layout_marginEnd="5dp"
-            android:id="@+id/textNearestCC"
-            android:textSize="18sp"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentStart="true" />
-    </RelativeLayout>
-    <FrameLayout
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="aboutdevice.com.munir.symphony.mysymphony.ui.ThreeFragment">
+    <TextView
+        android:text="TextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/layout_nearest_cc"
+        android:layout_marginStart="5dp"
+        android:layout_marginEnd="5dp"
+        android:id="@+id/textNearestCC"
+        android:textSize="18sp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true" />
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/textNearestCC"
         android:orientation="vertical"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         >
+
         <ProgressBar
             style="?android:attr/progressBarStyle"
             android:layout_width="wrap_content"
@@ -40,10 +32,8 @@
         <android.support.v7.widget.RecyclerView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_alignParentEnd="true"
             android:id="@+id/cc_recycler"
-            >
-        </android.support.v7.widget.RecyclerView>
-    </FrameLayout>
+            android:scrollbars="vertical" />
 
+    </FrameLayout>
 </RelativeLayout>
