@@ -32,7 +32,7 @@ import aboutdevice.com.munir.symphony.mysymphony.utils.FetchJson;
  */
 public class TwoFragment extends Fragment  {
     public String modelName;
-    TextView txtModelName ;
+    TextView txtLat, txtLan, txtModelName ;
     RecyclerView recyclerView;
     private View view;
     private RecyclerView.Adapter mAdapter;
