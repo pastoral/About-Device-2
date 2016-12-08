@@ -38,6 +38,7 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResult;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -46,10 +47,15 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
+import aboutdevice.com.munir.symphony.mysymphony.BaseActivity;
 import aboutdevice.com.munir.symphony.mysymphony.Constants;
 import aboutdevice.com.munir.symphony.mysymphony.R;
 import aboutdevice.com.munir.symphony.mysymphony.firebase.FireBaseWorker;
@@ -85,12 +91,17 @@ public class ThreeFragment extends Fragment implements GoogleApiClient.Connectio
     protected LocationSettingsRequest mLocationSettingsRequest;
     public boolean mRequestingLocationUpdates;
     protected String mLastUpdateTime;
-    public Location mCurrentlocation;
+    public Location mCurrentlocation,ccLocation;
     private View view;
     private GoogleApiClient googleApiClient;
     private Context context;
+    private int permissionCheck;
     private Bundle bundle;
-    String permisionList[] = {"android.Manifest.permission.ACCESS_COARSE_LOCATION", "android.permission.ACCESS_FINE_LOCATION"};
+    private BaseActivity baseActivity;
+    public Map<String, Location> ccLocationMap;
+    public Map<String,Float> distanceMap, sortedDistanceMap;
+
+    private boolean mapReady;
     public ThreeFragment (){
         ccAddressList = new ArrayList<CCAddress>();
         this.pos = 0;
@@ -100,7 +111,9 @@ public class ThreeFragment extends Fragment implements GoogleApiClient.Connectio
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_three,container,false);
-
+        buildGoogleApiClient();
+        createLocationRequest();
+        buildLocationSettingRequest();
         return view;
     }
 
@@ -124,9 +137,13 @@ public class ThreeFragment extends Fragment implements GoogleApiClient.Connectio
 
         mRequestingLocationUpdates = false;
         mLastUpdateTime = "";
-        buildGoogleApiClient();
-        createLocationRequest();
-        buildLocationSettingRequest();
+
+        ccLocation = new Location("Location of CC");
+        ccLocationMap = new HashMap<>();
+        distanceMap = new LinkedHashMap<>();
+        sortedDistanceMap = new LinkedHashMap<>();
+
+
 
     }
 
@@ -151,7 +168,7 @@ public class ThreeFragment extends Fragment implements GoogleApiClient.Connectio
     @Override
     public void onResume() {
         super.onResume();
-      //  askForPermission(permisionList[1],REQUEST_CHECK_SETTINGS);
+        //  askForPermission(permisionList[1],REQUEST_CHECK_SETTINGS);
         //ccAddressList.clear();
         firebaseRecyclerAdapter = new FirebaseRecyclerAdapter<CCAddress, CCAddressViewHolder>(
                 CCAddress.class,
@@ -232,6 +249,11 @@ public class ThreeFragment extends Fragment implements GoogleApiClient.Connectio
         if(mCurrentlocation != null){
             txtLat.setText("Latitude: " + mCurrentlocation.getLatitude());
             txtLan.setText("Longitude: " + mCurrentlocation.getLongitude());
+            //  Toast.makeText(getActivity(),String.valueOf(distanceMap.size()),Toast.LENGTH_SHORT).show();
+            sortedDistanceMap = sortByValue(distanceMap);
+            Map.Entry<String,Float> entry = sortedDistanceMap.entrySet().iterator().next();
+           // Toast.makeText(getActivity(),String.valueOf(sortedDistanceMap.size()),Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(),entry.getKey(),Toast.LENGTH_SHORT).show();
         }
         else {
             Toast.makeText(getActivity(), "Mara Kha ", Toast.LENGTH_SHORT).show();
@@ -359,7 +381,9 @@ public class ThreeFragment extends Fragment implements GoogleApiClient.Connectio
         mCurrentlocation = location;
         mLastUpdateTime = java.text.DateFormat.getDateTimeInstance().format(new Date());
         ///////////////////////////////////////////Update your UI now ////////////////////////////////
+        setDistanceMap(ccLocationMap);
         updateUI();
+
         Log.v(TAG,"Last updated on " + mLastUpdateTime);
     }
 
@@ -410,6 +434,64 @@ public class ThreeFragment extends Fragment implements GoogleApiClient.Connectio
 
 
 
+
+
+    public void fillDistanceMap(){
+        mDatabaseReference.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                Map<String, Object> map = (Map<String, Object>)dataSnapshot.getValue();
+                double lat = Double.parseDouble(map.get("lat").toString()) ;
+                ccLocation.setLatitude(Double.parseDouble(map.get("lat").toString()));
+                ccLocation.setLongitude(Double.parseDouble(map.get("lan").toString()));
+                //Toast.makeText(getActivity(),String.valueOf(mCurrentlocation),Toast.LENGTH_SHORT).show();
+                ccLocationMap.put(map.get("name").toString(),ccLocation);
+                ccLocation = new Location("CC Location");
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+    }
+
+    public void setDistanceMap(Map<String,Location> map){
+        if(mCurrentlocation != null) {
+            for (Map.Entry<String, Location> entry : map.entrySet()) {
+                String key = entry.getKey();
+                Location value = entry.getValue();
+                distanceMap.put(key, mCurrentlocation.distanceTo(value));
+            }
+        }
+        return;
+    }
+
+    public Map sortByValue(Map unSortedMap){
+        Map sortedMap = new TreeMap(new ValueComparator(unSortedMap));
+        sortedMap.putAll(unSortedMap);
+        return sortedMap;
+    }
+
+
+
+
     public class LocationAsyncRunner extends AsyncTask<Void,Void,Void>{
         ProgressDialog progressDialog;
         @Override
@@ -419,8 +501,15 @@ public class ThreeFragment extends Fragment implements GoogleApiClient.Connectio
         }
 
         @Override
+        protected void onProgressUpdate(Void... values) {
+            super.onProgressUpdate(values);
+            progressBar.isIndeterminate();
+        }
+
+        @Override
         protected Void doInBackground(Void... voids) {
-           checkLocationSettings();
+            checkLocationSettings();
+            fillDistanceMap();
             return null;
         }
 
@@ -432,6 +521,18 @@ public class ThreeFragment extends Fragment implements GoogleApiClient.Connectio
         }
     }
 
+    class ValueComparator implements Comparator {
+        Map map;
 
+        public ValueComparator(Map map) {
+            this.map = map;
+        }
+
+        public int compare(Object keyA, Object keyB) {
+            Comparable valueA = (Comparable) map.get(keyA);
+            Comparable valueB = (Comparable) map.get(keyB);
+            return valueA.compareTo(valueB);
+        }
+    }
 
 }

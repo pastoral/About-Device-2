@@ -32,7 +32,10 @@ import aboutdevice.com.munir.symphony.mysymphony.ui.OneFragment;
 import aboutdevice.com.munir.symphony.mysymphony.ui.ThreeFragment;
 import aboutdevice.com.munir.symphony.mysymphony.ui.TwoFragment;
 
-public class MainActivity extends AppCompatActivity {
+import static aboutdevice.com.munir.symphony.mysymphony.Constants.permisionList;
+import static aboutdevice.com.munir.symphony.mysymphony.Constants.permsRequestCode;
+
+public class MainActivity extends BaseActivity {
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
      * fragments for each of the sections. We use a
@@ -101,6 +104,13 @@ public class MainActivity extends AppCompatActivity {
                         .setAction("Action", null).show();
             }
         });*/
+        MainActivity.super.requestAppPermissions(permisionList, R.string.runtime_permissions_txt, permsRequestCode);
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
 
     }
 
@@ -118,4 +128,9 @@ public class MainActivity extends AppCompatActivity {
         sectionAdapter.addFrag(new FourFrgment(), "Contuct us");
         viewPager.setAdapter(sectionAdapter);
     }
+
+  /*  @Override
+    public void onPermissionsGranted(int requestCode) {
+        Toast.makeText(this, "Permissions Received.", Toast.LENGTH_LONG).show();
+    }*/
 }

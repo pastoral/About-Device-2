@@ -11,5 +11,6 @@ public class Constants {
     public final static String KEY_REQUESTING_LOCATION_UPDATES = "requesting-location-updates";
     public final static String KEY_LOCATION = "location";
     public final static String KEY_LAST_UPDATED_TIME_STRING = "last-updated-time-string";
-    public static final int permsRequestCode = 200;
+    public static final int permsRequestCode = 20;
+    public static String[] permisionList = { "android.permission.ACCESS_FINE_LOCATION" , "android.permission.ACCESS_COARSE_LOCATION"};
 }
