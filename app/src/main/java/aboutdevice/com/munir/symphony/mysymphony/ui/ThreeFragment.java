@@ -112,8 +112,7 @@ public class ThreeFragment extends Fragment implements GoogleApiClient.Connectio
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_three,container,false);
         buildGoogleApiClient();
-        createLocationRequest();
-        buildLocationSettingRequest();
+
         return view;
     }
 
@@ -150,6 +149,7 @@ public class ThreeFragment extends Fragment implements GoogleApiClient.Connectio
     @Override
     public void onStart() {
         super.onStart();
+        ccLocation = new Location("CC Location");
         if(googleApiClient != null){
             googleApiClient.connect();
         }
@@ -163,6 +163,8 @@ public class ThreeFragment extends Fragment implements GoogleApiClient.Connectio
         mDatabaseReference = fireBaseWorker.intDatabase(Constants.ADRESS);
 
         mDatabaseReference.keepSynced(true);
+
+
     }
 
     @Override
@@ -180,6 +182,11 @@ public class ThreeFragment extends Fragment implements GoogleApiClient.Connectio
             @Override
             protected void populateViewHolder(CCAddressViewHolder viewHolder, CCAddress model, int position) {
                 progressBar.setVisibility(GONE);
+                ccLocation.setLatitude(firebaseRecyclerAdapter.getItem(position).getLat());
+                ccLocation.setLongitude(firebaseRecyclerAdapter.getItem(position).getLan());
+                //Toast.makeText(getActivity(),String.valueOf(mCurrentlocation),Toast.LENGTH_SHORT).show();
+                ccLocationMap.put(firebaseRecyclerAdapter.getItem(position).getName().toString(),ccLocation);
+                ccLocation = new Location("CC Location");
                 viewHolder.txtCCName.setText(model.getName());
                 viewHolder.txtCCAddress.setText(model.getAddress());
                 pos = position;
@@ -215,6 +222,7 @@ public class ThreeFragment extends Fragment implements GoogleApiClient.Connectio
             recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), LinearLayoutManager.VERTICAL));
             recyclerView.setAdapter(firebaseRecyclerAdapter);
         }
+
         LocationAsyncRunner runner = new LocationAsyncRunner();
         runner.execute();
 
@@ -250,10 +258,16 @@ public class ThreeFragment extends Fragment implements GoogleApiClient.Connectio
             txtLat.setText("Latitude: " + mCurrentlocation.getLatitude());
             txtLan.setText("Longitude: " + mCurrentlocation.getLongitude());
             //  Toast.makeText(getActivity(),String.valueOf(distanceMap.size()),Toast.LENGTH_SHORT).show();
-            sortedDistanceMap = sortByValue(distanceMap);
-            Map.Entry<String,Float> entry = sortedDistanceMap.entrySet().iterator().next();
-           // Toast.makeText(getActivity(),String.valueOf(sortedDistanceMap.size()),Toast.LENGTH_SHORT).show();
-            Toast.makeText(getActivity(),entry.getKey(),Toast.LENGTH_SHORT).show();
+            if(distanceMap.size() > 0) {
+                sortedDistanceMap = sortByValue(distanceMap);
+                Map.Entry<String, Float> entry = sortedDistanceMap.entrySet().iterator().next();
+                Toast.makeText(getActivity(),entry.getKey(),Toast.LENGTH_SHORT).show();
+            }
+            else{
+                return;
+            }
+            // Toast.makeText(getActivity(),String.valueOf(sortedDistanceMap.size()),Toast.LENGTH_SHORT).show();
+
         }
         else {
             Toast.makeText(getActivity(), "Mara Kha ", Toast.LENGTH_SHORT).show();
@@ -381,6 +395,7 @@ public class ThreeFragment extends Fragment implements GoogleApiClient.Connectio
         mCurrentlocation = location;
         mLastUpdateTime = java.text.DateFormat.getDateTimeInstance().format(new Date());
         ///////////////////////////////////////////Update your UI now ////////////////////////////////
+       // checkLocationSettings();
         setDistanceMap(ccLocationMap);
         updateUI();
 
@@ -508,8 +523,10 @@ public class ThreeFragment extends Fragment implements GoogleApiClient.Connectio
 
         @Override
         protected Void doInBackground(Void... voids) {
+            createLocationRequest();
+            buildLocationSettingRequest();
             checkLocationSettings();
-            fillDistanceMap();
+           // fillDistanceMap();
             return null;
         }
 
@@ -534,5 +551,8 @@ public class ThreeFragment extends Fragment implements GoogleApiClient.Connectio
             return valueA.compareTo(valueB);
         }
     }
+
+
+
 
 }

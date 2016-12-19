@@ -51,6 +51,7 @@ public class MainActivity extends BaseActivity {
      */
     private ViewPager mViewPager;
     private  AppBarLayout appBarLayout;
+    private ThreeFragment threeFragment;
 
 
 
@@ -62,6 +63,8 @@ public class MainActivity extends BaseActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.main_toolbar);
         setSupportActionBar(toolbar);
         invalidateOptionsMenu();
+
+        threeFragment = new ThreeFragment();
         // getSupportActionBar().setTitle("Parallax Tabs");
         // getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
@@ -133,4 +136,9 @@ public class MainActivity extends BaseActivity {
     public void onPermissionsGranted(int requestCode) {
         Toast.makeText(this, "Permissions Received.", Toast.LENGTH_LONG).show();
     }*/
+
+    public void updateLoc(View view){
+        Toast.makeText(this, "Clicked", Toast.LENGTH_SHORT).show();
+    }
+
 }

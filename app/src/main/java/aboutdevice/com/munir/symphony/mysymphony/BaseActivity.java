@@ -21,6 +21,7 @@ import android.view.View;
 public  class BaseActivity extends AppCompatActivity {
     private SparseIntArray mErrorString;
     private int permissionCheck;
+    public boolean permissionGranted;
 
     public BaseActivity(){
         mErrorString = new SparseIntArray();
@@ -88,7 +89,7 @@ public  class BaseActivity extends AppCompatActivity {
         }
     }
 
-    /*public boolean onPermissionsGranted(int requestCode){
+    public boolean onPermissionsGranted(int requestCode){
         boolean stat;
         if(permissionCheck >0){
             stat = true;
@@ -98,8 +99,8 @@ public  class BaseActivity extends AppCompatActivity {
         }
         return stat;
 
-    }*/
+    }
 
-    public  void onPermissionsGranted(int requestCode){};
+   // public  void onPermissionsGranted(int requestCode){};
 
 }
