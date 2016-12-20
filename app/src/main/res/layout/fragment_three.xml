@@ -5,42 +5,67 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="aboutdevice.com.munir.symphony.mysymphony.ui.ThreeFragment">
-    <RelativeLayout
+
+    <android.support.v7.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:minHeight="100dp"
         android:id="@+id/nearest_cc_header"
+        android:visibility="gone"
         >
-        <TextView
-            android:text="TextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="5dp"
-            android:layout_marginEnd="5dp"
-            android:id="@+id/txtlat"
-            android:textSize="15sp"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentStart="true" />
-        <TextView
-            android:text="TextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="5dp"
-            android:layout_marginEnd="5dp"
-            android:id="@+id/txtlan"
-            android:textSize="15sp"
-            android:layout_alignParentTop="true"
-            android:layout_toEndOf="@+id/txtlat" />
 
-        <Button
-            android:text="Refresh"
-            android:layout_width="wrap_content"
+        <RelativeLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/button2"
-            android:layout_below="@+id/txtlat"
-            android:layout_alignStart="@+id/txtlat"
-            android:onClick="updateLoc"
-            />
-    </RelativeLayout>
+
+            >
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="19sp"
+                android:text="Nearest Customer Care"
+                android:textStyle="bold"
+                android:id="@+id/txtNearestCC"
+                android:layout_marginLeft="7dp"
+                android:textColor="#000003"
+
+                />
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:background="@color/colorViewLine"
+                android:layout_margin="1dp"
+                android:layout_below="@+id/txtNearestCC"
+                />
+            <TextView
+                android:text="See all the features"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="34dp"
+                android:id="@+id/txtNearestCCName" />
+            <TextView
+                android:text="See all the features"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="34dp"
+                android:layout_below="@+id/txtNearestCCName"
+                android:layout_alignStart="@+id/txtNearestCCName"
+                android:id="@+id/txtNearestCCAddress" />
+
+            <Button
+                android:text="Refresh"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/buttonRefresh"
+                android:layout_below="@+id/txtNearestCCAddress"
+                android:layout_alignStart="@+id/txtNearestCCAddress"
+                />
+        </RelativeLayout>
+    </android.support.v7.widget.CardView>
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -56,11 +81,12 @@
             android:layout_height="wrap_content"
             android:id="@+id/progressBar"
             android:layout_gravity="center"/>
-        <android.support.v7.widget.RecyclerView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:id="@+id/cc_recycler"
-            android:scrollbars="vertical" />
+
+            <android.support.v7.widget.RecyclerView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/cc_recycler"
+                android:scrollbars="vertical" />
 
     </FrameLayout>
 </RelativeLayout>

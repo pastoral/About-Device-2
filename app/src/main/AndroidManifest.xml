@@ -3,6 +3,7 @@
     package="aboutdevice.com.munir.symphony.mysymphony">
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <action android:name="android.location.PROVIDERS_CHANGED" />
 
     <application
         android:allowBackup="true"
@@ -20,6 +21,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
     </application>
 
 </manifest>

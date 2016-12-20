@@ -3,11 +3,14 @@ package aboutdevice.com.munir.symphony.mysymphony.ui;
 import android.Manifest;
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -15,6 +18,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -22,6 +26,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -85,10 +90,10 @@ public class ThreeFragment extends Fragment implements GoogleApiClient.Connectio
     private DatabaseReference mDatabaseReference;
     private FirebaseRecyclerAdapter<CCAddress,CCAddressViewHolder> firebaseRecyclerAdapter;
     static boolean calledAlready = false;
-    private TextView txtLat, txtLan;
+    private TextView txtNearestCCAddress,txtNearestCCName;
     private static final String TAG = "FusedLocationFinder";
     public LocationRequest mLocationRequest;
-    protected LocationSettingsRequest mLocationSettingsRequest;
+    public LocationSettingsRequest mLocationSettingsRequest;
     public boolean mRequestingLocationUpdates;
     protected String mLastUpdateTime;
     public Location mCurrentlocation,ccLocation;
@@ -100,6 +105,9 @@ public class ThreeFragment extends Fragment implements GoogleApiClient.Connectio
     private BaseActivity baseActivity;
     public Map<String, Location> ccLocationMap;
     public Map<String,Float> distanceMap, sortedDistanceMap;
+    public Button btnRefresh;
+    public CardView nearest_cc_card;
+   // public GpsLocationReceiver gpsLocationReceiver;
 
     private boolean mapReady;
     public ThreeFragment (){
@@ -112,7 +120,7 @@ public class ThreeFragment extends Fragment implements GoogleApiClient.Connectio
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_three,container,false);
         buildGoogleApiClient();
-
+        //getContext().registerReceiver(gpsLocationReceiver, new IntentFilter("android.location.PROVIDERS_CHANGED"));
         return view;
     }
 
@@ -122,11 +130,14 @@ public class ThreeFragment extends Fragment implements GoogleApiClient.Connectio
         bundle = savedInstanceState;
         progressBar = (ProgressBar)view.findViewById(R.id.progressBar);
         recyclerView = (RecyclerView)view.findViewById(R.id.cc_recycler);
-        txtLat = (TextView)view.findViewById(R.id.txtlat);
-        txtLan = (TextView)view.findViewById(R.id.txtlan);
+        txtNearestCCAddress = (TextView)view.findViewById(R.id.txtNearestCCAddress);
+        nearest_cc_card = (CardView)view.findViewById(R.id.nearest_cc_header);
+
+        btnRefresh = (Button)view.findViewById(R.id.buttonRefresh);
 
         mLinearLayoutManager = new LinearLayoutManager(getActivity());
         //recyclerView.setLayoutManager(mLinearLayoutManager);
+
         recyclerView.setHasFixedSize(true);
     }
 
@@ -136,7 +147,7 @@ public class ThreeFragment extends Fragment implements GoogleApiClient.Connectio
 
         mRequestingLocationUpdates = false;
         mLastUpdateTime = "";
-
+       // gpsLocationReceiver = new GpsLocationReceiver();
         ccLocation = new Location("Location of CC");
         ccLocationMap = new HashMap<>();
         distanceMap = new LinkedHashMap<>();
@@ -152,12 +163,35 @@ public class ThreeFragment extends Fragment implements GoogleApiClient.Connectio
         ccLocation = new Location("CC Location");
         if(googleApiClient != null){
             googleApiClient.connect();
+           // getContext().registerReceiver(gpsLocationReceiver, new IntentFilter("android.location.PROVIDERS_CHANGED"));
         }
         if (!calledAlready)
         {
             FirebaseDatabase.getInstance().setPersistenceEnabled(true);
             calledAlready = true;
         }
+
+        //getContext().registerReceiver(gpsLocationReceiver, new IntentFilter("android.location.PROVIDERS_CHANGED"));
+         BroadcastReceiver gpsLocationReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                //here you can parse intent and get sms fields.
+                boolean anyLocationProv = false;
+                LocationManager locationManager = (LocationManager)context.getSystemService(Context.LOCATION_SERVICE);
+
+                anyLocationProv = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+               // anyLocationProv |=  locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+
+                // Log.i("", "Location service status" + anyLocationProv);
+                //Toast.makeText(context, "Location service status : " + anyLocationProv, Toast.LENGTH_SHORT).show();
+                if(anyLocationProv == false){
+                   // Toast.makeText(context, "No Location Service " , Toast.LENGTH_SHORT).show();
+                    checkLocationSettings();
+                }
+            }
+        };
+        IntentFilter filter = new IntentFilter("android.location.PROVIDERS_CHANGED");
+        this.getContext().registerReceiver(gpsLocationReceiver, filter);
 
         fireBaseWorker = new FireBaseWorker();
         mDatabaseReference = fireBaseWorker.intDatabase(Constants.ADRESS);
@@ -172,6 +206,7 @@ public class ThreeFragment extends Fragment implements GoogleApiClient.Connectio
         super.onResume();
         //  askForPermission(permisionList[1],REQUEST_CHECK_SETTINGS);
         //ccAddressList.clear();
+
         firebaseRecyclerAdapter = new FirebaseRecyclerAdapter<CCAddress, CCAddressViewHolder>(
                 CCAddress.class,
                 R.layout.cc_list,
@@ -225,7 +260,12 @@ public class ThreeFragment extends Fragment implements GoogleApiClient.Connectio
 
         LocationAsyncRunner runner = new LocationAsyncRunner();
         runner.execute();
-
+        btnRefresh.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(getActivity(), "Refresh me", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     @Override
@@ -255,13 +295,18 @@ public class ThreeFragment extends Fragment implements GoogleApiClient.Connectio
 
     public void updateUI(){
         if(mCurrentlocation != null){
-            txtLat.setText("Latitude: " + mCurrentlocation.getLatitude());
-            txtLan.setText("Longitude: " + mCurrentlocation.getLongitude());
+            //txtLat.setText("Latitude: " + mCurrentlocation.getLatitude());
+            //txtLan.setText("Longitude: " + mCurrentlocation.getLongitude());
+
             //  Toast.makeText(getActivity(),String.valueOf(distanceMap.size()),Toast.LENGTH_SHORT).show();
             if(distanceMap.size() > 0) {
                 sortedDistanceMap = sortByValue(distanceMap);
-                Map.Entry<String, Float> entry = sortedDistanceMap.entrySet().iterator().next();
-                Toast.makeText(getActivity(),entry.getKey(),Toast.LENGTH_SHORT).show();
+                if(sortedDistanceMap.size()>0) {
+                    Map.Entry<String, Float> entry = sortedDistanceMap.entrySet().iterator().next();
+                    // Toast.makeText(getActivity(),entry.getKey(),Toast.LENGTH_SHORT).show();
+                    nearest_cc_card.setVisibility(View.VISIBLE);
+                    txtNearestCCAddress.setText(entry.getKey());
+                }
             }
             else{
                 return;
@@ -302,6 +347,7 @@ public class ThreeFragment extends Fragment implements GoogleApiClient.Connectio
                     .addApi(LocationServices.API)
                     .build();
         }
+
 
     }
 
@@ -551,6 +597,8 @@ public class ThreeFragment extends Fragment implements GoogleApiClient.Connectio
             return valueA.compareTo(valueB);
         }
     }
+
+
 
 
 
