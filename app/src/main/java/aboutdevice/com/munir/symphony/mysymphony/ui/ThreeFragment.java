@@ -37,6 +37,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
+import com.google.android.gms.common.server.converter.StringToIntConverter;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
@@ -48,6 +49,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.text.DateFormat;
@@ -72,6 +74,7 @@ import aboutdevice.com.munir.symphony.mysymphony.utils.FusedLocationFinder;
 import static aboutdevice.com.munir.symphony.mysymphony.Constants.REQUEST_CHECK_SETTINGS;
 import static aboutdevice.com.munir.symphony.mysymphony.Constants.permsRequestCode;
 import static android.view.View.GONE;
+import static android.view.View.VISIBLE;
 
 
 /**
@@ -81,7 +84,7 @@ public class ThreeFragment extends Fragment implements GoogleApiClient.Connectio
         LocationListener, ResultCallback<LocationSettingsResult> {
     public String name;
     public int pos;
-    public ProgressBar progressBar;
+    public ProgressBar progressBar, progressBarCC;
     public RecyclerView recyclerView;
     private List<CCAddress> ccAddressList;
     private LinearLayoutManager mLinearLayoutManager;
@@ -108,6 +111,7 @@ public class ThreeFragment extends Fragment implements GoogleApiClient.Connectio
     public Button btnRefresh;
     public CardView nearest_cc_card;
    // public GpsLocationReceiver gpsLocationReceiver;
+    public String strNearestCCName, strNearestCCAddress;
 
     private boolean mapReady;
     public ThreeFragment (){
@@ -129,7 +133,9 @@ public class ThreeFragment extends Fragment implements GoogleApiClient.Connectio
         super.onActivityCreated(savedInstanceState);
         bundle = savedInstanceState;
         progressBar = (ProgressBar)view.findViewById(R.id.progressBar);
+        progressBarCC = (ProgressBar)view.findViewById(R.id.progressBarCC);
         recyclerView = (RecyclerView)view.findViewById(R.id.cc_recycler);
+        txtNearestCCName = (TextView)view.findViewById(R.id.txtNearestCCName);
         txtNearestCCAddress = (TextView)view.findViewById(R.id.txtNearestCCAddress);
         nearest_cc_card = (CardView)view.findViewById(R.id.nearest_cc_header);
 
@@ -172,26 +178,6 @@ public class ThreeFragment extends Fragment implements GoogleApiClient.Connectio
         }
 
         //getContext().registerReceiver(gpsLocationReceiver, new IntentFilter("android.location.PROVIDERS_CHANGED"));
-         BroadcastReceiver gpsLocationReceiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                //here you can parse intent and get sms fields.
-                boolean anyLocationProv = false;
-                LocationManager locationManager = (LocationManager)context.getSystemService(Context.LOCATION_SERVICE);
-
-                anyLocationProv = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
-               // anyLocationProv |=  locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
-
-                // Log.i("", "Location service status" + anyLocationProv);
-                //Toast.makeText(context, "Location service status : " + anyLocationProv, Toast.LENGTH_SHORT).show();
-                if(anyLocationProv == false){
-                   // Toast.makeText(context, "No Location Service " , Toast.LENGTH_SHORT).show();
-                    checkLocationSettings();
-                }
-            }
-        };
-        IntentFilter filter = new IntentFilter("android.location.PROVIDERS_CHANGED");
-        this.getContext().registerReceiver(gpsLocationReceiver, filter);
 
         fireBaseWorker = new FireBaseWorker();
         mDatabaseReference = fireBaseWorker.intDatabase(Constants.ADRESS);
@@ -266,6 +252,31 @@ public class ThreeFragment extends Fragment implements GoogleApiClient.Connectio
                 Toast.makeText(getActivity(), "Refresh me", Toast.LENGTH_SHORT).show();
             }
         });
+        BroadcastReceiver gpsLocationReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                //here you can parse intent and get sms fields.
+                boolean anyLocationProv = false;
+                LocationManager locationManager = (LocationManager)context.getSystemService(Context.LOCATION_SERVICE);
+
+                anyLocationProv = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+                // anyLocationProv |=  locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+
+                // Log.i("", "Location service status" + anyLocationProv);
+                //Toast.makeText(context, "Location service status : " + anyLocationProv, Toast.LENGTH_SHORT).show();
+                if(anyLocationProv == false){
+                    Toast.makeText(context, "No Location Service " , Toast.LENGTH_SHORT).show();
+                    nearest_cc_card.setVisibility(GONE);
+                    checkLocationSettings();
+                }
+                else{
+                    LocationAsyncRunner runner = new LocationAsyncRunner();
+                    runner.execute();
+                }
+            }
+        };
+        IntentFilter filter = new IntentFilter("android.location.PROVIDERS_CHANGED");
+        this.getContext().registerReceiver(gpsLocationReceiver, filter);
     }
 
     @Override
@@ -293,30 +304,22 @@ public class ThreeFragment extends Fragment implements GoogleApiClient.Connectio
         Toast.makeText(getActivity(), "Google Play Services error.", Toast.LENGTH_SHORT).show();
     }
 
-    public void updateUI(){
-        if(mCurrentlocation != null){
+    public void updateUI() {
+        if (mCurrentlocation != null) {
             //txtLat.setText("Latitude: " + mCurrentlocation.getLatitude());
             //txtLan.setText("Longitude: " + mCurrentlocation.getLongitude());
 
             //  Toast.makeText(getActivity(),String.valueOf(distanceMap.size()),Toast.LENGTH_SHORT).show();
-            if(distanceMap.size() > 0) {
-                sortedDistanceMap = sortByValue(distanceMap);
-                if(sortedDistanceMap.size()>0) {
-                    Map.Entry<String, Float> entry = sortedDistanceMap.entrySet().iterator().next();
-                    // Toast.makeText(getActivity(),entry.getKey(),Toast.LENGTH_SHORT).show();
-                    nearest_cc_card.setVisibility(View.VISIBLE);
-                    txtNearestCCAddress.setText(entry.getKey());
-                }
-            }
-            else{
-                return;
-            }
-            // Toast.makeText(getActivity(),String.valueOf(sortedDistanceMap.size()),Toast.LENGTH_SHORT).show();
+            if (distanceMap.size() > 0) {
 
-        }
-        else {
-            Toast.makeText(getActivity(), "Mara Kha ", Toast.LENGTH_SHORT).show();
-            //LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient,);
+                // Toast.makeText(getActivity(),String.valueOf(sortedDistanceMap.size()),Toast.LENGTH_SHORT).show();
+                NearestCCFinder runner = new NearestCCFinder();
+                runner.execute();
+
+            } else {
+                Toast.makeText(getActivity(), "Mara Kha ", Toast.LENGTH_SHORT).show();
+                //LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient,);
+            }
         }
     }
 
@@ -598,6 +601,67 @@ public class ThreeFragment extends Fragment implements GoogleApiClient.Connectio
         }
     }
 
+
+    public class NearestCCFinder extends AsyncTask<Void,Void,Void>{
+
+        @Override
+        protected void onProgressUpdate(Void... values) {
+            super.onProgressUpdate(values);
+            progressBarCC.isIndeterminate();
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            sortedDistanceMap = sortByValue(distanceMap);
+            if (sortedDistanceMap.size() > 0) {
+                Map.Entry<String, Float> entry = sortedDistanceMap.entrySet().iterator().next();
+                // Toast.makeText(getActivity(),entry.getKey(),Toast.LENGTH_SHORT).show();
+               // nearest_cc_card.setVisibility(VISIBLE);
+              //  txtNearestCCName.setText(entry.getKey());
+                strNearestCCName = entry.getKey();
+                Query query = mDatabaseReference.orderByChild("name").equalTo(entry.getKey());
+
+                ChildEventListener listner = new ChildEventListener() {
+                    @Override
+                    public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                        Map<String, Object> map = (Map<String,Object>)dataSnapshot.getValue();
+                        //txtNearestCCAddress.setText(map.get("address").toString());
+                        strNearestCCAddress = map.get("address").toString();
+                    }
+
+                    @Override
+                    public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+                    }
+
+                    @Override
+                    public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+                    }
+
+                    @Override
+                    public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                };
+                query.addChildEventListener(listner);
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            nearest_cc_card.setVisibility(VISIBLE);
+            txtNearestCCName.setText(strNearestCCName);
+            txtNearestCCAddress.setText(strNearestCCAddress);
+        }
+    }
 
 
 

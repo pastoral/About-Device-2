@@ -137,8 +137,6 @@ public class MainActivity extends BaseActivity {
         Toast.makeText(this, "Permissions Received.", Toast.LENGTH_LONG).show();
     }*/
 
-    public void updateLoc(View view){
-        Toast.makeText(this, "Clicked", Toast.LENGTH_SHORT).show();
-    }
+
 
 }
