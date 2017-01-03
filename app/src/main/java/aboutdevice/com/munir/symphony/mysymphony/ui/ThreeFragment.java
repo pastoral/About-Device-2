@@ -8,13 +8,18 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.IntentSender;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
@@ -64,14 +69,17 @@ import java.util.TreeMap;
 
 import aboutdevice.com.munir.symphony.mysymphony.BaseActivity;
 import aboutdevice.com.munir.symphony.mysymphony.Constants;
+import aboutdevice.com.munir.symphony.mysymphony.MySymphonyApp;
 import aboutdevice.com.munir.symphony.mysymphony.R;
 import aboutdevice.com.munir.symphony.mysymphony.firebase.FireBaseWorker;
 import aboutdevice.com.munir.symphony.mysymphony.model.CCAddress;
+import aboutdevice.com.munir.symphony.mysymphony.receiver.ConnectivityReceiver;
 import aboutdevice.com.munir.symphony.mysymphony.utils.CCAddressViewHolder;
 import aboutdevice.com.munir.symphony.mysymphony.utils.DividerItemDecoration;
 import aboutdevice.com.munir.symphony.mysymphony.utils.FusedLocationFinder;
 
 import static aboutdevice.com.munir.symphony.mysymphony.Constants.REQUEST_CHECK_SETTINGS;
+import static aboutdevice.com.munir.symphony.mysymphony.Constants.isFirebaseReady;
 import static aboutdevice.com.munir.symphony.mysymphony.Constants.permsRequestCode;
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
@@ -110,8 +118,11 @@ public class ThreeFragment extends Fragment implements GoogleApiClient.Connectio
     public Map<String,Float> distanceMap, sortedDistanceMap;
     public Button btnRefresh;
     public CardView nearest_cc_card;
-   // public GpsLocationReceiver gpsLocationReceiver;
+    public Query query;
+    // public GpsLocationReceiver gpsLocationReceiver;
     public String strNearestCCName, strNearestCCAddress;
+    public SharedPreferences sharedpreferences;
+    public  SharedPreferences.Editor editor;
 
     private boolean mapReady;
     public ThreeFragment (){
@@ -158,7 +169,7 @@ public class ThreeFragment extends Fragment implements GoogleApiClient.Connectio
         ccLocationMap = new HashMap<>();
         distanceMap = new LinkedHashMap<>();
         sortedDistanceMap = new LinkedHashMap<>();
-
+        sharedpreferences = getContext().getSharedPreferences("mysymphonyapp_data", Context.MODE_PRIVATE);
 
 
     }
@@ -192,6 +203,7 @@ public class ThreeFragment extends Fragment implements GoogleApiClient.Connectio
         super.onResume();
         //  askForPermission(permisionList[1],REQUEST_CHECK_SETTINGS);
         //ccAddressList.clear();
+
 
         firebaseRecyclerAdapter = new FirebaseRecyclerAdapter<CCAddress, CCAddressViewHolder>(
                 CCAddress.class,
@@ -237,12 +249,20 @@ public class ThreeFragment extends Fragment implements GoogleApiClient.Connectio
             Toast.makeText(getActivity(), "No layout manager attached; skipping layout",Toast.LENGTH_SHORT).show();
         }
         else{
-            Toast.makeText(getActivity(), "Got it",Toast.LENGTH_SHORT).show();
+           // Toast.makeText(getActivity(), "Got it",Toast.LENGTH_SHORT).show();
+            isFirebaseReady = true;
             recyclerView.setLayoutManager(mLinearLayoutManager);
             recyclerView.setItemAnimator(new DefaultItemAnimator());
             recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), LinearLayoutManager.VERTICAL));
             recyclerView.setAdapter(firebaseRecyclerAdapter);
+            if(sharedpreferences.getString("NEARESTCC_ADDRESS", null) != null  && sharedpreferences.getString("NEARESTCC_NAME", null) != null){
+
+                nearest_cc_card.setVisibility(VISIBLE);
+                txtNearestCCAddress.setText(sharedpreferences.getString("NEARESTCC_ADDRESS", null));
+                txtNearestCCName.setText(sharedpreferences.getString("NEARESTCC_NAME", null));
+            }
         }
+
 
         LocationAsyncRunner runner = new LocationAsyncRunner();
         runner.execute();
@@ -277,7 +297,11 @@ public class ThreeFragment extends Fragment implements GoogleApiClient.Connectio
         };
         IntentFilter filter = new IntentFilter("android.location.PROVIDERS_CHANGED");
         this.getContext().registerReceiver(gpsLocationReceiver, filter);
+
+
     }
+
+
 
     @Override
     public void onPause() {
@@ -313,8 +337,17 @@ public class ThreeFragment extends Fragment implements GoogleApiClient.Connectio
             if (distanceMap.size() > 0) {
 
                 // Toast.makeText(getActivity(),String.valueOf(sortedDistanceMap.size()),Toast.LENGTH_SHORT).show();
-                NearestCCFinder runner = new NearestCCFinder();
-                runner.execute();
+                sortedDistanceMap = sortByValue(distanceMap);
+                if (sortedDistanceMap.size() > 0) {
+                   // Map.Entry<String, Float> entry = sortedDistanceMap.entrySet().iterator().next();
+                    Map.Entry<String, Float> entry = sortedDistanceMap.entrySet().iterator().next();
+
+                    strNearestCCName = entry.getKey();
+                    query = mDatabaseReference.orderByChild("name").equalTo(entry.getKey());
+
+                    NearestCCFinder runner = new NearestCCFinder();
+                    runner.execute();
+                }
 
             } else {
                 Toast.makeText(getActivity(), "Mara Kha ", Toast.LENGTH_SHORT).show();
@@ -612,14 +645,9 @@ public class ThreeFragment extends Fragment implements GoogleApiClient.Connectio
 
         @Override
         protected Void doInBackground(Void... voids) {
-            sortedDistanceMap = sortByValue(distanceMap);
-            if (sortedDistanceMap.size() > 0) {
-                Map.Entry<String, Float> entry = sortedDistanceMap.entrySet().iterator().next();
-                // Toast.makeText(getActivity(),entry.getKey(),Toast.LENGTH_SHORT).show();
-               // nearest_cc_card.setVisibility(VISIBLE);
-              //  txtNearestCCName.setText(entry.getKey());
-                strNearestCCName = entry.getKey();
-                Query query = mDatabaseReference.orderByChild("name").equalTo(entry.getKey());
+           // sortedDistanceMap = sortByValue(distanceMap);
+          //  if (sortedDistanceMap.size() > 0) {
+
 
                 ChildEventListener listner = new ChildEventListener() {
                     @Override
@@ -650,7 +678,7 @@ public class ThreeFragment extends Fragment implements GoogleApiClient.Connectio
                     }
                 };
                 query.addChildEventListener(listner);
-            }
+           // }
             return null;
         }
 
@@ -658,13 +686,50 @@ public class ThreeFragment extends Fragment implements GoogleApiClient.Connectio
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
             nearest_cc_card.setVisibility(VISIBLE);
+            editor = sharedpreferences.edit();
+            editor.putString("NEARESTCC_ADDRESS", strNearestCCAddress);
+            editor.putString( "NEARESTCC_NAME", strNearestCCName);
+            editor.commit();
             txtNearestCCName.setText(strNearestCCName);
             txtNearestCCAddress.setText(strNearestCCAddress);
         }
     }
 
 
+   private void showSnack(boolean isConnected){
+       String message;
+       int color;
+       if(!isConnected){
+           message = "Sorry! Not connected to internet";
+           color = Color.RED;
+       }
+       else{
+           message = "Good! Connected to Internet";
+           color = Color.WHITE;
+       }
+       Snackbar snackbar = Snackbar.make(view.findViewById(android.R.id.content), message, Snackbar.LENGTH_LONG);
+       View sbView = snackbar.getView();
+       TextView textView = (TextView)sbView.findViewById(android.support.design.R.id.snackbar_text);
+       textView.setTextColor(color);
+       snackbar.show();
+   }
 
+    private boolean haveNetworkConnection() {
+        boolean haveConnectedWifi = false;
+        boolean haveConnectedMobile = false;
+
+        ConnectivityManager cm = (ConnectivityManager)getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo[] netInfo = cm.getAllNetworkInfo();
+        for (NetworkInfo ni : netInfo) {
+            if (ni.getTypeName().equalsIgnoreCase("WIFI"))
+                if (ni.isConnected())
+                    haveConnectedWifi = true;
+            if (ni.getTypeName().equalsIgnoreCase("MOBILE"))
+                if (ni.isConnected())
+                    haveConnectedMobile = true;
+        }
+        return haveConnectedWifi || haveConnectedMobile;
+    }
 
 
 }
