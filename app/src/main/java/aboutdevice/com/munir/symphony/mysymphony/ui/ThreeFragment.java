@@ -69,6 +69,7 @@ import java.util.TreeMap;
 
 import aboutdevice.com.munir.symphony.mysymphony.BaseActivity;
 import aboutdevice.com.munir.symphony.mysymphony.Constants;
+import aboutdevice.com.munir.symphony.mysymphony.MainActivity;
 import aboutdevice.com.munir.symphony.mysymphony.MySymphonyApp;
 import aboutdevice.com.munir.symphony.mysymphony.R;
 import aboutdevice.com.munir.symphony.mysymphony.firebase.FireBaseWorker;
@@ -77,6 +78,7 @@ import aboutdevice.com.munir.symphony.mysymphony.receiver.ConnectivityReceiver;
 import aboutdevice.com.munir.symphony.mysymphony.utils.CCAddressViewHolder;
 import aboutdevice.com.munir.symphony.mysymphony.utils.DividerItemDecoration;
 import aboutdevice.com.munir.symphony.mysymphony.utils.FusedLocationFinder;
+import aboutdevice.com.munir.symphony.mysymphony.utils.RecyclerTouchListener;
 
 import static aboutdevice.com.munir.symphony.mysymphony.Constants.REQUEST_CHECK_SETTINGS;
 import static aboutdevice.com.munir.symphony.mysymphony.Constants.isFirebaseReady;
@@ -204,7 +206,7 @@ public class ThreeFragment extends Fragment implements GoogleApiClient.Connectio
         //  askForPermission(permisionList[1],REQUEST_CHECK_SETTINGS);
         //ccAddressList.clear();
 
-
+         final Intent intent = new Intent(getActivity(),MapsActivity.class);
         firebaseRecyclerAdapter = new FirebaseRecyclerAdapter<CCAddress, CCAddressViewHolder>(
                 CCAddress.class,
                 R.layout.cc_list,
@@ -223,6 +225,19 @@ public class ThreeFragment extends Fragment implements GoogleApiClient.Connectio
                 viewHolder.txtCCName.setText(model.getName());
                 viewHolder.txtCCAddress.setText(model.getAddress());
                 pos = position;
+
+                recyclerView.addOnItemTouchListener(new RecyclerTouchListener(getActivity(), new RecyclerTouchListener.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(View view, int position) {
+                        String Key = getRef(position).getKey();
+                        intent.putExtra("CCName", firebaseRecyclerAdapter.getItem(position).getName());
+                        intent.putExtra("CCAddress", firebaseRecyclerAdapter.getItem(position).getAddress());
+                        intent.putExtra("Latitude",String.valueOf(firebaseRecyclerAdapter.getItem(position).getLat()) );
+                        intent.putExtra("Longitude" , String.valueOf(firebaseRecyclerAdapter.getItem(position).getLan()));
+                        startActivity(intent);
+                    }
+                }));
+
             }
         };
         firebaseRecyclerAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver(){
@@ -237,6 +252,8 @@ public class ThreeFragment extends Fragment implements GoogleApiClient.Connectio
                 }
             }
         });
+
+
 
 
         // recyclerView.setLayoutManager(mLinearLayoutManager);
@@ -255,12 +272,15 @@ public class ThreeFragment extends Fragment implements GoogleApiClient.Connectio
             recyclerView.setItemAnimator(new DefaultItemAnimator());
             recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), LinearLayoutManager.VERTICAL));
             recyclerView.setAdapter(firebaseRecyclerAdapter);
+
             if(sharedpreferences.getString("NEARESTCC_ADDRESS", null) != null  && sharedpreferences.getString("NEARESTCC_NAME", null) != null){
 
                 nearest_cc_card.setVisibility(VISIBLE);
                 txtNearestCCAddress.setText(sharedpreferences.getString("NEARESTCC_ADDRESS", null));
                 txtNearestCCName.setText(sharedpreferences.getString("NEARESTCC_NAME", null));
             }
+
+
         }
 
 
@@ -344,7 +364,7 @@ public class ThreeFragment extends Fragment implements GoogleApiClient.Connectio
 
                     strNearestCCName = entry.getKey();
                     query = mDatabaseReference.orderByChild("name").equalTo(entry.getKey());
-
+                    Location lc = mCurrentlocation;
                     NearestCCFinder runner = new NearestCCFinder();
                     runner.execute();
                 }

@@ -15,11 +15,17 @@ public class CCAddressViewHolder extends RecyclerView.ViewHolder {
     public TextView txtCCName;
     public TextView txtCCAddress;
     View mView;
+
+
+
+
     public CCAddressViewHolder(View mView){
         super(mView);
         this.mView = mView;
         txtCCName = (TextView)mView.findViewById(R.id.txtCCName);
         txtCCAddress = (TextView)mView.findViewById(R.id.txtCCAddress);
+
+
     }
 
 }
