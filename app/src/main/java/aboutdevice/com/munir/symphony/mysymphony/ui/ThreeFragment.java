@@ -38,6 +38,7 @@ import android.widget.Toast;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.common.api.ResultCallback;
@@ -124,6 +125,7 @@ public class ThreeFragment extends Fragment implements GoogleApiClient.Connectio
     public String strNearestCCName, strNearestCCAddress;
     public SharedPreferences sharedpreferences;
     public  SharedPreferences.Editor editor;
+    BroadcastReceiver gpsLocationReceiver;
 
     private boolean mapReady;
     public ThreeFragment (){
@@ -134,9 +136,13 @@ public class ThreeFragment extends Fragment implements GoogleApiClient.Connectio
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+
         view = inflater.inflate(R.layout.fragment_three,container,false);
-        buildGoogleApiClient();
+
         //getContext().registerReceiver(gpsLocationReceiver, new IntentFilter("android.location.PROVIDERS_CHANGED"));
+
+            buildGoogleApiClient();
+
         return view;
     }
 
@@ -162,7 +168,6 @@ public class ThreeFragment extends Fragment implements GoogleApiClient.Connectio
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         mRequestingLocationUpdates = false;
         mLastUpdateTime = "";
        // gpsLocationReceiver = new GpsLocationReceiver();
@@ -291,7 +296,7 @@ public class ThreeFragment extends Fragment implements GoogleApiClient.Connectio
                 Toast.makeText(getActivity(), "Refresh me", Toast.LENGTH_SHORT).show();
             }
         });
-        BroadcastReceiver gpsLocationReceiver = new BroadcastReceiver() {
+         gpsLocationReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
                 //here you can parse intent and get sms fields.
@@ -325,14 +330,19 @@ public class ThreeFragment extends Fragment implements GoogleApiClient.Connectio
     @Override
     public void onPause() {
         super.onPause();
-        stopLocationUpdates();
+        this.getContext().unregisterReceiver(gpsLocationReceiver);
+
+            stopLocationUpdates();
+
 
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        googleApiClient.disconnect();
+
+            googleApiClient.disconnect();
+
     }
 
     @Override
@@ -749,6 +759,8 @@ public class ThreeFragment extends Fragment implements GoogleApiClient.Connectio
         }
         return haveConnectedWifi || haveConnectedMobile;
     }
+
+
 
 
 }

@@ -10,6 +10,8 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        manifestPlaceholders = [onesignal_app_id: "ca87c9a3-54e4-47b2-9c04-ffd835d47e17",
+                                onesignal_google_project_number: "303838651450"]
     }
     buildTypes {
         release {
@@ -48,7 +50,10 @@ dependencies {
     compile 'com.google.android.gms:play-services:10.0.1'
     compile 'com.google.android.gms:play-services-auth:10.0.1'
     compile 'com.google.android.gms:play-services-gcm:10.0.1'
-    compile 'com.google.firebase:firebase-messaging:10.0.1'
+
+    // Required for OneSignal
+    compile 'com.onesignal:OneSignal:3.4.2'
+
     testCompile 'junit:junit:4.12'
 }
 apply plugin: 'com.google.gms.google-services'

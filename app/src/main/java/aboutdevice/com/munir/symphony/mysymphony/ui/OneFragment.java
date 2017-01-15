@@ -1,7 +1,10 @@
 package aboutdevice.com.munir.symphony.mysymphony.ui;
 
+import android.app.Activity;
+import android.app.Dialog;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -11,6 +14,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
+
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
 
 import aboutdevice.com.munir.symphony.mysymphony.R;
 import aboutdevice.com.munir.symphony.mysymphony.adapter.TileAdapter;
@@ -41,18 +47,33 @@ public class OneFragment extends Fragment {
         return view;
     }
 
-
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        isGooglePlayServicesAvailable(getActivity());
+    }
 
     @Override
     public void onResume() {
         super.onResume();
-       /* mRecyclerView.setLayoutManager(mLayoutManager);
-        mRecyclerView.addItemDecoration(tileSpacesItemDecoration);
-        mRecyclerView.setAdapter(mTileAdapter);*/
-        CCAddress ccAddress = new CCAddress("Dhaka (Mirpur11)", "Dhaka","Plot-22 (2nd Floor), Block-D, Road-3, Section-11, Mirpur, Dhaka",
-                true, 23.817577,90.401567,"ban", "2012-04-23T18:25:43.511Z","2012-04-23T18:25:43.511Z", "munirul.hoque@edison-bd.com" );
 
-       Toast.makeText(getActivity(),String.valueOf(ccAddress.isCc()), Toast.LENGTH_SHORT).show();
+        isGooglePlayServicesAvailable(getActivity());
 
+
+    }
+
+    public boolean isGooglePlayServicesAvailable(Activity activity) {
+        GoogleApiAvailability googleApiAvailability = GoogleApiAvailability.getInstance();
+        int status = googleApiAvailability.isGooglePlayServicesAvailable(activity);
+        if (status != ConnectionResult.SUCCESS) {
+            if (googleApiAvailability.isUserResolvableError(status)) {
+                Dialog df = googleApiAvailability.getErrorDialog(activity, status, 2404);
+                df.setCancelable(false);
+                df.show();
+                //googleApiAvailability.getErrorDialog(activity, status, 2404).show();
+            }
+            return false;
+        }
+        return true;
     }
 }
