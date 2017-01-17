@@ -1,6 +1,8 @@
 package aboutdevice.com.munir.symphony.mysymphony.onesignal;
 
+import android.content.ComponentName;
 import android.content.Intent;
+import android.net.Uri;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -47,7 +49,22 @@ public class MyNotificationOpenedHandler implements OneSignal.NotificationOpened
                 Log.i("OneSignalExample", "customkey set with value: " + activityToBeOpened);
                 Intent intent = new Intent(MySymphonyApp.getContext(), MainActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT | Intent.FLAG_ACTIVITY_NEW_TASK);
-                MySymphonyApp.getContext().startActivity(intent);            }
+                MySymphonyApp.getContext().startActivity(intent);
+            }
+
+            else if(activityToBeOpened != null && activityToBeOpened.equals("MediaTekFOTA")){
+                Log.i("OneSignalExample", "customkey set with value: " + activityToBeOpened);
+                Intent LaunchIntent = MySymphonyApp.getContext().getPackageManager().getLaunchIntentForPackage("com.mediatek.systemupdate");
+                MySymphonyApp.getContext().startActivity(LaunchIntent);
+
+                //Intent intent1 = new Intent(Intent.)
+                //Uri fotaActivity = Uri.parse("com.mediatek.systemupdate.OtaPkgManagerActivity");
+               //// Intent intent1 = new Intent(Intent.ACTION_VIEW, fotaActivity);
+                ////Intent intent = new Intent();
+               // intent.setComponent(new ComponentName("com.mediatek.systemupdate","com.mediatek.systemupdate.OtaPkgManagerActivity"));
+              ////  intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT | Intent.FLAG_ACTIVITY_NEW_TASK);
+                //MySymphonyApp.getContext().startActivity(intent1);
+            }
 
             else if(link!=null){
                 Intent intent = new Intent(MySymphonyApp.getContext(), NewsWebActivity.class);

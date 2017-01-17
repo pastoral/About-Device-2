@@ -59,6 +59,7 @@
             android:name=".ui.NewsActivity"
             android:label="News" />
 
+
         <service
             android:name=".onesignal.MyNotificationExtenderService"
             android:exported="false">
