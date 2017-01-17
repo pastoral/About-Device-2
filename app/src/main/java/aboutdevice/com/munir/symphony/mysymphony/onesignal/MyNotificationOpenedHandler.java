@@ -13,6 +13,8 @@ import org.json.JSONObject;
 import aboutdevice.com.munir.symphony.mysymphony.MainActivity;
 import aboutdevice.com.munir.symphony.mysymphony.MySymphonyApp;
 import aboutdevice.com.munir.symphony.mysymphony.ui.NewsActivity;
+import aboutdevice.com.munir.symphony.mysymphony.ui.NewsWebActivity;
+
 
 /**
  * Created by munirul.hoque on 1/12/2017.
@@ -25,6 +27,7 @@ public class MyNotificationOpenedHandler implements OneSignal.NotificationOpened
     public void notificationOpened(OSNotificationOpenResult result) {
         OSNotificationAction.ActionType actionType = result.action.type;
         JSONObject data = result.notification.payload.additionalData;
+        String link = result.notification.payload.launchURL;
         String activityToBeOpened;
 
         //While sending a Push notification from OneSignal dashboard
@@ -44,14 +47,26 @@ public class MyNotificationOpenedHandler implements OneSignal.NotificationOpened
                 Log.i("OneSignalExample", "customkey set with value: " + activityToBeOpened);
                 Intent intent = new Intent(MySymphonyApp.getContext(), MainActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT | Intent.FLAG_ACTIVITY_NEW_TASK);
+                MySymphonyApp.getContext().startActivity(intent);            }
+
+            else if(link!=null){
+                Intent intent = new Intent(MySymphonyApp.getContext(), NewsWebActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT | Intent.FLAG_ACTIVITY_NEW_TASK);
+                intent.putExtra("targetUrl", link);
                 MySymphonyApp.getContext().startActivity(intent);
             }
+
             else{
                 Intent intent = new Intent(MySymphonyApp.getContext(), MainActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT | Intent.FLAG_ACTIVITY_NEW_TASK);
                 MySymphonyApp.getContext().startActivity(intent);
             }
+
         }
+
+
+
+
 
         //If we send notification with action buttons we need to specidy the button id's and retrieve it to
         //do the necessary operation.

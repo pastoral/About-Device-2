@@ -9,4 +9,10 @@
     <string name="four">FOUR</string>
     <string name="runtime_permissions_txt">Please enable ALL permissions from app settings</string>
     <string name="title_activity_maps">CC Map</string>
+
+    <string name="title_activity_news_web_acivity">NewsWebAcivity</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
+
+    <string name="title_activity_news_web">NewsWebActivity</string>
 </resources>
