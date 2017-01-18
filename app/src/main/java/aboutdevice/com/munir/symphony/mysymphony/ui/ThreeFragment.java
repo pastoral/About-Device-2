@@ -11,6 +11,7 @@ import android.content.IntentSender;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.location.Location;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
@@ -36,6 +37,8 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.amulyakhare.textdrawable.TextDrawable;
+import com.amulyakhare.textdrawable.util.ColorGenerator;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
@@ -241,6 +244,7 @@ public class ThreeFragment extends Fragment implements GoogleApiClient.Connectio
                         startActivity(intent);
                     }
                 }));
+                viewHolder.ccIcon.setImageDrawable(drawIcon(alphbetSelect(firebaseRecyclerAdapter.getItem(position).getName().toString())));
 
             }
         };
@@ -761,6 +765,36 @@ public class ThreeFragment extends Fragment implements GoogleApiClient.Connectio
     }
 
 
+    public TextDrawable drawIcon(String str)
+    {
+        ColorGenerator generator = ColorGenerator.MATERIAL;
+        int color = generator.getRandomColor();
+        TextDrawable textDrawable = TextDrawable.builder()
+                .beginConfig()
+                .textColor(Color.WHITE)
+                .useFont(Typeface.DEFAULT)
+                .fontSize(40) /* size in px */
+                .bold()
+                .toUpperCase()
+                .endConfig()
+                .buildRound(str, color);
+        return textDrawable;
+    }
 
+    public String alphbetSelect(String str)
+    {
+        String firstAlphabet;
+        String ccName = str.trim();
+        if(ccName != null)
+        {
+            firstAlphabet = ccName.substring(0,1);
+        }
+        else
+        {
+            firstAlphabet = "A";
+        }
+
+        return  firstAlphabet;
+    }
 
 }
