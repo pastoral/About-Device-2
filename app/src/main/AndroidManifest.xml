@@ -55,10 +55,6 @@
         <activity
             android:name=".ui.MapsActivity"
             android:label="@string/title_activity_maps" />
-        <activity
-            android:name=".ui.NewsActivity"
-            android:label="News" />
-
 
         <service
             android:name=".onesignal.MyNotificationExtenderService"
@@ -68,7 +64,11 @@
             </intent-filter>
         </service>
 
-        <activity android:name=".ui.NewsWebActivity"></activity>
+        <activity android:name=".ui.NewsWebActivity" />
+        <activity
+            android:name=".ui.NewsActivity"
+            android:label="@string/title_activity_news"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>

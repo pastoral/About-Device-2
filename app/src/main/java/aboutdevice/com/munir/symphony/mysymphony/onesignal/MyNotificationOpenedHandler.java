@@ -1,8 +1,6 @@
 package aboutdevice.com.munir.symphony.mysymphony.onesignal;
 
-import android.content.ComponentName;
 import android.content.Intent;
-import android.net.Uri;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -39,10 +37,15 @@ public class MyNotificationOpenedHandler implements OneSignal.NotificationOpened
         //Else, if we have not set any additional data MainActivity is opened.
         if(data!= null){
             activityToBeOpened = data.optString("activityToBeOpened", null);
+            String title = data.optString("t", null);
+            String body = data.optString("b", null);
             if(activityToBeOpened != null && activityToBeOpened.equals("NewsActivity")){
                 Log.i("OneSignalExample", "customkey set with value: " + activityToBeOpened);
                 Intent intent = new Intent(MySymphonyApp.getContext(), NewsActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT | Intent.FLAG_ACTIVITY_NEW_TASK);
+
+                intent.putExtra("title", title);
+                intent.putExtra("body", body);
                 MySymphonyApp.getContext().startActivity(intent);
             }
             else if(activityToBeOpened != null && activityToBeOpened.equals("MainActivity")){
