@@ -129,6 +129,7 @@ public class ThreeFragment extends Fragment implements GoogleApiClient.Connectio
     public SharedPreferences sharedpreferences;
     public  SharedPreferences.Editor editor;
     BroadcastReceiver gpsLocationReceiver;
+    public double nearestCCLat, nearestCCLan;
 
     private boolean mapReady;
     public ThreeFragment (){
@@ -144,7 +145,7 @@ public class ThreeFragment extends Fragment implements GoogleApiClient.Connectio
 
         //getContext().registerReceiver(gpsLocationReceiver, new IntentFilter("android.location.PROVIDERS_CHANGED"));
 
-            buildGoogleApiClient();
+        buildGoogleApiClient();
 
         return view;
     }
@@ -160,7 +161,7 @@ public class ThreeFragment extends Fragment implements GoogleApiClient.Connectio
         txtNearestCCAddress = (TextView)view.findViewById(R.id.txtNearestCCAddress);
         nearest_cc_card = (CardView)view.findViewById(R.id.nearest_cc_header);
 
-        btnRefresh = (Button)view.findViewById(R.id.buttonRefresh);
+       // btnRefresh = (Button)view.findViewById(R.id.buttonRefresh);
 
         mLinearLayoutManager = new LinearLayoutManager(getActivity());
         //recyclerView.setLayoutManager(mLinearLayoutManager);
@@ -173,7 +174,7 @@ public class ThreeFragment extends Fragment implements GoogleApiClient.Connectio
         super.onCreate(savedInstanceState);
         mRequestingLocationUpdates = false;
         mLastUpdateTime = "";
-       // gpsLocationReceiver = new GpsLocationReceiver();
+        // gpsLocationReceiver = new GpsLocationReceiver();
         ccLocation = new Location("Location of CC");
         ccLocationMap = new HashMap<>();
         distanceMap = new LinkedHashMap<>();
@@ -189,7 +190,7 @@ public class ThreeFragment extends Fragment implements GoogleApiClient.Connectio
         ccLocation = new Location("CC Location");
         if(googleApiClient != null){
             googleApiClient.connect();
-           // getContext().registerReceiver(gpsLocationReceiver, new IntentFilter("android.location.PROVIDERS_CHANGED"));
+            // getContext().registerReceiver(gpsLocationReceiver, new IntentFilter("android.location.PROVIDERS_CHANGED"));
         }
         if (!calledAlready)
         {
@@ -213,7 +214,7 @@ public class ThreeFragment extends Fragment implements GoogleApiClient.Connectio
         //  askForPermission(permisionList[1],REQUEST_CHECK_SETTINGS);
         //ccAddressList.clear();
 
-         final Intent intent = new Intent(getActivity(),MapsActivity.class);
+        final Intent intent = new Intent(getActivity(),MapsActivity.class);
         firebaseRecyclerAdapter = new FirebaseRecyclerAdapter<CCAddress, CCAddressViewHolder>(
                 CCAddress.class,
                 R.layout.cc_list,
@@ -274,7 +275,7 @@ public class ThreeFragment extends Fragment implements GoogleApiClient.Connectio
             Toast.makeText(getActivity(), "No layout manager attached; skipping layout",Toast.LENGTH_SHORT).show();
         }
         else{
-           // Toast.makeText(getActivity(), "Got it",Toast.LENGTH_SHORT).show();
+            // Toast.makeText(getActivity(), "Got it",Toast.LENGTH_SHORT).show();
             isFirebaseReady = true;
             recyclerView.setLayoutManager(mLinearLayoutManager);
             recyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -286,21 +287,28 @@ public class ThreeFragment extends Fragment implements GoogleApiClient.Connectio
                 nearest_cc_card.setVisibility(VISIBLE);
                 txtNearestCCAddress.setText(sharedpreferences.getString("NEARESTCC_ADDRESS", null));
                 txtNearestCCName.setText(sharedpreferences.getString("NEARESTCC_NAME", null));
-            }
 
+            }
 
         }
 
 
         LocationAsyncRunner runner = new LocationAsyncRunner();
         runner.execute();
-        btnRefresh.setOnClickListener(new View.OnClickListener() {
+
+        nearest_cc_card.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(getActivity(), "Refresh me", Toast.LENGTH_SHORT).show();
+                Intent i = new Intent(getActivity(),MapsActivity.class);
+                i.putExtra("Latitude" , String.valueOf(nearestCCLat));
+                i.putExtra("Langitude", String.valueOf(nearestCCLan));
+                i.putExtra("CCName" ,strNearestCCName );
+                i.putExtra("CCAddress", strNearestCCAddress );
+                startActivity(i);
             }
         });
-         gpsLocationReceiver = new BroadcastReceiver() {
+
+        gpsLocationReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
                 //here you can parse intent and get sms fields.
@@ -336,7 +344,7 @@ public class ThreeFragment extends Fragment implements GoogleApiClient.Connectio
         super.onPause();
         this.getContext().unregisterReceiver(gpsLocationReceiver);
 
-            stopLocationUpdates();
+        stopLocationUpdates();
 
 
     }
@@ -345,7 +353,7 @@ public class ThreeFragment extends Fragment implements GoogleApiClient.Connectio
     public void onStop() {
         super.onStop();
 
-            googleApiClient.disconnect();
+        googleApiClient.disconnect();
 
     }
 
@@ -372,7 +380,7 @@ public class ThreeFragment extends Fragment implements GoogleApiClient.Connectio
                 // Toast.makeText(getActivity(),String.valueOf(sortedDistanceMap.size()),Toast.LENGTH_SHORT).show();
                 sortedDistanceMap = sortByValue(distanceMap);
                 if (sortedDistanceMap.size() > 0) {
-                   // Map.Entry<String, Float> entry = sortedDistanceMap.entrySet().iterator().next();
+                    // Map.Entry<String, Float> entry = sortedDistanceMap.entrySet().iterator().next();
                     Map.Entry<String, Float> entry = sortedDistanceMap.entrySet().iterator().next();
 
                     strNearestCCName = entry.getKey();
@@ -510,7 +518,7 @@ public class ThreeFragment extends Fragment implements GoogleApiClient.Connectio
         mCurrentlocation = location;
         mLastUpdateTime = java.text.DateFormat.getDateTimeInstance().format(new Date());
         ///////////////////////////////////////////Update your UI now ////////////////////////////////
-       // checkLocationSettings();
+        // checkLocationSettings();
         setDistanceMap(ccLocationMap);
         updateUI();
 
@@ -641,7 +649,7 @@ public class ThreeFragment extends Fragment implements GoogleApiClient.Connectio
             createLocationRequest();
             buildLocationSettingRequest();
             checkLocationSettings();
-           // fillDistanceMap();
+            // fillDistanceMap();
             return null;
         }
 
@@ -678,40 +686,42 @@ public class ThreeFragment extends Fragment implements GoogleApiClient.Connectio
 
         @Override
         protected Void doInBackground(Void... voids) {
-           // sortedDistanceMap = sortByValue(distanceMap);
-          //  if (sortedDistanceMap.size() > 0) {
+            // sortedDistanceMap = sortByValue(distanceMap);
+            //  if (sortedDistanceMap.size() > 0) {
 
 
-                ChildEventListener listner = new ChildEventListener() {
-                    @Override
-                    public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                        Map<String, Object> map = (Map<String,Object>)dataSnapshot.getValue();
-                        //txtNearestCCAddress.setText(map.get("address").toString());
-                        strNearestCCAddress = map.get("address").toString();
-                    }
+            ChildEventListener listner = new ChildEventListener() {
+                @Override
+                public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                    Map<String, Object> map = (Map<String,Object>)dataSnapshot.getValue();
+                    //txtNearestCCAddress.setText(map.get("address").toString());
+                    strNearestCCAddress = map.get("address").toString();
+                    nearestCCLat = Double.parseDouble(map.get("lat").toString());
+                    nearestCCLan = Double.parseDouble(map.get("lan").toString());
+                }
 
-                    @Override
-                    public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                @Override
+                public void onChildChanged(DataSnapshot dataSnapshot, String s) {
 
-                    }
+                }
 
-                    @Override
-                    public void onChildRemoved(DataSnapshot dataSnapshot) {
+                @Override
+                public void onChildRemoved(DataSnapshot dataSnapshot) {
 
-                    }
+                }
 
-                    @Override
-                    public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+                @Override
+                public void onChildMoved(DataSnapshot dataSnapshot, String s) {
 
-                    }
+                }
 
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
 
-                    }
-                };
-                query.addChildEventListener(listner);
-           // }
+                }
+            };
+            query.addChildEventListener(listner);
+            // }
             return null;
         }
 
@@ -729,23 +739,23 @@ public class ThreeFragment extends Fragment implements GoogleApiClient.Connectio
     }
 
 
-   private void showSnack(boolean isConnected){
-       String message;
-       int color;
-       if(!isConnected){
-           message = "Sorry! Not connected to internet";
-           color = Color.RED;
-       }
-       else{
-           message = "Good! Connected to Internet";
-           color = Color.WHITE;
-       }
-       Snackbar snackbar = Snackbar.make(view.findViewById(android.R.id.content), message, Snackbar.LENGTH_LONG);
-       View sbView = snackbar.getView();
-       TextView textView = (TextView)sbView.findViewById(android.support.design.R.id.snackbar_text);
-       textView.setTextColor(color);
-       snackbar.show();
-   }
+    private void showSnack(boolean isConnected){
+        String message;
+        int color;
+        if(!isConnected){
+            message = "Sorry! Not connected to internet";
+            color = Color.RED;
+        }
+        else{
+            message = "Good! Connected to Internet";
+            color = Color.WHITE;
+        }
+        Snackbar snackbar = Snackbar.make(view.findViewById(android.R.id.content), message, Snackbar.LENGTH_LONG);
+        View sbView = snackbar.getView();
+        TextView textView = (TextView)sbView.findViewById(android.support.design.R.id.snackbar_text);
+        textView.setTextColor(color);
+        snackbar.show();
+    }
 
     private boolean haveNetworkConnection() {
         boolean haveConnectedWifi = false;

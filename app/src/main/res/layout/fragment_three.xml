@@ -6,10 +6,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="aboutdevice.com.munir.symphony.mysymphony.ui.ThreeFragment">
 
-     <FrameLayout
-         android:layout_width="wrap_content"
-         android:layout_height="wrap_content"
-         android:id="@+id/nearest_cc_frame">
+    <FrameLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/nearest_cc_frame">
         <ProgressBar
             style="?android:attr/progressBarStyle"
             android:layout_width="wrap_content"
@@ -17,7 +17,7 @@
             android:id="@+id/progressBarCC"
             android:layout_gravity="center"/>
 
-            <android.support.v7.widget.CardView
+        <android.support.v7.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:minHeight="100dp"
@@ -78,7 +78,7 @@
                     />
             </RelativeLayout>
         </android.support.v7.widget.CardView>
-     </FrameLayout>
+    </FrameLayout>
 
 
     <FrameLayout
@@ -96,11 +96,11 @@
             android:id="@+id/progressBar"
             android:layout_gravity="center"/>
 
-            <android.support.v7.widget.RecyclerView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:id="@+id/cc_recycler"
-                android:scrollbars="vertical" />
+        <android.support.v7.widget.RecyclerView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/cc_recycler"
+            android:scrollbars="vertical" />
 
     </FrameLayout>
 </RelativeLayout>
