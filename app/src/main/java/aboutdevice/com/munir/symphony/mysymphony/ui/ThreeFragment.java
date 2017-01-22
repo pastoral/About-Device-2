@@ -300,10 +300,11 @@ public class ThreeFragment extends Fragment implements GoogleApiClient.Connectio
             @Override
             public void onClick(View view) {
                 Intent i = new Intent(getActivity(),MapsActivity.class);
-                i.putExtra("Latitude" , String.valueOf(nearestCCLat));
-                i.putExtra("Langitude", String.valueOf(nearestCCLan));
-                i.putExtra("CCName" ,strNearestCCName );
-                i.putExtra("CCAddress", strNearestCCAddress );
+
+                i.putExtra("CCName", strNearestCCName);
+                i.putExtra("CCAddress", strNearestCCAddress);
+                i.putExtra("Latitude", String.valueOf(nearestCCLat));
+                i.putExtra("Longitude" , String.valueOf(nearestCCLan));
                 startActivity(i);
             }
         });
