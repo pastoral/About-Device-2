@@ -10,6 +10,7 @@ import android.content.IntentFilter;
 import android.content.IntentSender;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.location.Location;
@@ -130,6 +131,9 @@ public class ThreeFragment extends Fragment implements GoogleApiClient.Connectio
     public  SharedPreferences.Editor editor;
     BroadcastReceiver gpsLocationReceiver;
     public double nearestCCLat, nearestCCLan;
+    protected final static String KEY_REQUESTING_LOCATION_UPDATES = "requesting-location-updates";
+    protected final static String KEY_LOCATION = "location";
+    protected final static String KEY_LAST_UPDATED_TIME_STRING = "last-updated-time-string";
 
     private boolean mapReady;
     public ThreeFragment (){
@@ -181,7 +185,17 @@ public class ThreeFragment extends Fragment implements GoogleApiClient.Connectio
         sortedDistanceMap = new LinkedHashMap<>();
         sharedpreferences = getContext().getSharedPreferences("mysymphonyapp_data", Context.MODE_PRIVATE);
 
+    }
 
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        if(newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE){
+            loadSP();
+        }
+        else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT){
+            loadSP();
+        }
     }
 
     @Override
@@ -281,14 +295,8 @@ public class ThreeFragment extends Fragment implements GoogleApiClient.Connectio
             recyclerView.setItemAnimator(new DefaultItemAnimator());
             recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), LinearLayoutManager.VERTICAL));
             recyclerView.setAdapter(firebaseRecyclerAdapter);
+            loadSP();
 
-            if(sharedpreferences.getString("NEARESTCC_ADDRESS", null) != null  && sharedpreferences.getString("NEARESTCC_NAME", null) != null){
-
-                nearest_cc_card.setVisibility(VISIBLE);
-                txtNearestCCAddress.setText(sharedpreferences.getString("NEARESTCC_ADDRESS", null));
-                txtNearestCCName.setText(sharedpreferences.getString("NEARESTCC_NAME", null));
-
-            }
 
         }
 
@@ -329,6 +337,8 @@ public class ThreeFragment extends Fragment implements GoogleApiClient.Connectio
                 else{
                     LocationAsyncRunner runner = new LocationAsyncRunner();
                     runner.execute();
+
+                    updateUI();
                 }
             }
         };
@@ -385,14 +395,19 @@ public class ThreeFragment extends Fragment implements GoogleApiClient.Connectio
                     Map.Entry<String, Float> entry = sortedDistanceMap.entrySet().iterator().next();
 
                     strNearestCCName = entry.getKey();
-                    query = mDatabaseReference.orderByChild("name").equalTo(entry.getKey());
+
                     Location lc = mCurrentlocation;
-                    NearestCCFinder runner = new NearestCCFinder();
-                    runner.execute();
+                   
+
+                        query = mDatabaseReference.orderByChild("name").equalTo(entry.getKey());
+                        NearestCCFinder runner = new NearestCCFinder();
+                        runner.execute();
+
                 }
 
             } else {
-                Toast.makeText(getActivity(), "Mara Kha ", Toast.LENGTH_SHORT).show();
+               // Toast.makeText(getActivity(), "Mara Kha ", Toast.LENGTH_SHORT).show();
+                Log.d("Mara Kha " , "Mara Kha");
                 //LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient,);
             }
         }
@@ -636,7 +651,7 @@ public class ThreeFragment extends Fragment implements GoogleApiClient.Connectio
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            progressDialog = ProgressDialog.show(getActivity(),"Patience", "Searching your location");
+           // progressDialog = ProgressDialog.show(getActivity(),"Patience", "Searching your location");
         }
 
         @Override
@@ -658,7 +673,7 @@ public class ThreeFragment extends Fragment implements GoogleApiClient.Connectio
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
             updateUI();
-            progressDialog.dismiss();
+           // progressDialog.dismiss();
         }
     }
 
@@ -677,7 +692,7 @@ public class ThreeFragment extends Fragment implements GoogleApiClient.Connectio
     }
 
 
-    public class NearestCCFinder extends AsyncTask<Void,Void,Void>{
+    public class NearestCCFinder extends AsyncTask<Void,Void,String>{
 
         @Override
         protected void onProgressUpdate(Void... values) {
@@ -686,11 +701,11 @@ public class ThreeFragment extends Fragment implements GoogleApiClient.Connectio
         }
 
         @Override
-        protected Void doInBackground(Void... voids) {
+        protected String doInBackground(Void... voids) {
             // sortedDistanceMap = sortByValue(distanceMap);
             //  if (sortedDistanceMap.size() > 0) {
 
-
+            String nearestCCAddress = "";
             ChildEventListener listner = new ChildEventListener() {
                 @Override
                 public void onChildAdded(DataSnapshot dataSnapshot, String s) {
@@ -723,19 +738,27 @@ public class ThreeFragment extends Fragment implements GoogleApiClient.Connectio
             };
             query.addChildEventListener(listner);
             // }
-            return null;
+            return strNearestCCAddress;
         }
 
         @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-            nearest_cc_card.setVisibility(VISIBLE);
-            editor = sharedpreferences.edit();
-            editor.putString("NEARESTCC_ADDRESS", strNearestCCAddress);
-            editor.putString( "NEARESTCC_NAME", strNearestCCName);
-            editor.commit();
-            txtNearestCCName.setText(strNearestCCName);
-            txtNearestCCAddress.setText(strNearestCCAddress);
+        protected void onPostExecute(String nearestCCAddress) {
+            super.onPostExecute(nearestCCAddress);
+            if (nearestCCAddress == null){
+                nearest_cc_card.setVisibility(GONE);
+            }
+            else {
+                nearest_cc_card.setVisibility(VISIBLE);
+                editor = sharedpreferences.edit();
+                editor.putString("NEARESTCC_ADDRESS", nearestCCAddress);
+                editor.putString("NEARESTCC_NAME", strNearestCCName);
+                editor.putString("NEARESTCC_LAT", String.valueOf(nearestCCLat));
+                editor.putString("NEARESTCC_LAN", String.valueOf(nearestCCLan));
+
+                editor.commit();
+                txtNearestCCName.setText(strNearestCCName);
+                txtNearestCCAddress.setText(strNearestCCAddress);
+            }
         }
     }
 
@@ -806,6 +829,17 @@ public class ThreeFragment extends Fragment implements GoogleApiClient.Connectio
         }
 
         return  firstAlphabet;
+    }
+
+
+   public void loadSP(){
+        if(sharedpreferences.getString("NEARESTCC_ADDRESS", null) != null  && sharedpreferences.getString("NEARESTCC_NAME", null) != null){
+
+            nearest_cc_card.setVisibility(VISIBLE);
+            txtNearestCCAddress.setText(sharedpreferences.getString("NEARESTCC_ADDRESS", null));
+            txtNearestCCName.setText(sharedpreferences.getString("NEARESTCC_NAME", null));
+
+        }
     }
 
 }

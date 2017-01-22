@@ -15,7 +15,7 @@
     <string name="dummy_content">DUMMY\nCONTENT</string>
 
     <string name="title_activity_news_web">NewsWebActivity</string>
-    <string name="title_activity_news">NewsActivity</string>
+    <string name="title_activity_news"></string>
     <string name="large_text">
         "Material is the metaphor.\n\n"
 
