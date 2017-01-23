@@ -397,7 +397,7 @@ public class ThreeFragment extends Fragment implements GoogleApiClient.Connectio
                     strNearestCCName = entry.getKey();
 
                     Location lc = mCurrentlocation;
-                   
+
 
                         query = mDatabaseReference.orderByChild("name").equalTo(entry.getKey());
                         NearestCCFinder runner = new NearestCCFinder();

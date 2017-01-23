@@ -22,10 +22,11 @@ import aboutdevice.com.munir.symphony.mysymphony.ui.NewsWebActivity;
 
 public class MyNotificationOpenedHandler implements OneSignal.NotificationOpenedHandler {
     // This fires when a notification is opened by tapping on it.
-
+    String bigPicture;
     @Override
     public void notificationOpened(OSNotificationOpenResult result) {
         OSNotificationAction.ActionType actionType = result.action.type;
+        bigPicture = result.notification.payload.bigPicture;
         JSONObject data = result.notification.payload.additionalData;
         String link = result.notification.payload.launchURL;
         String activityToBeOpened;
@@ -46,6 +47,9 @@ public class MyNotificationOpenedHandler implements OneSignal.NotificationOpened
 
                 intent.putExtra("title", title);
                 intent.putExtra("body", body);
+                if(bigPicture != null){
+                    intent.putExtra("IMAGEURL", bigPicture);
+                }
                 MySymphonyApp.getContext().startActivity(intent);
             }
             else if(activityToBeOpened != null && activityToBeOpened.equals("MainActivity")){
@@ -76,6 +80,8 @@ public class MyNotificationOpenedHandler implements OneSignal.NotificationOpened
                 MySymphonyApp.getContext().startActivity(intent);
             }
 
+            //else if(result.notification.payload.)
+
             else{
                 Intent intent = new Intent(MySymphonyApp.getContext(), MainActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT | Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -98,6 +104,8 @@ public class MyNotificationOpenedHandler implements OneSignal.NotificationOpened
                 Toast.makeText(MySymphonyApp.getContext(), "ActionTwo Button was pressed", Toast.LENGTH_LONG).show();
             }
         }
+
+
 
     }
 }
