@@ -42,7 +42,7 @@ public class NewsActivity extends AppCompatActivity {
             }
         });*/
         if(bundle.getString("IMAGEURL") != null){
-            Picasso.with(getApplicationContext()).load(bundle.getString("IMAGEURL")).centerCrop().into(image_banner);
+            Picasso.with(getApplicationContext()).load(bundle.getString("IMAGEURL")).into(image_banner);
         }
     }
 }
