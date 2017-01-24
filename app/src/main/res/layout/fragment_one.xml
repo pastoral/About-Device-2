@@ -112,6 +112,7 @@
                                     android:orientation="horizontal"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
+                                    android:id="@+id/hotline1"
                                     android:layout_alignTop="@+id/labelHotline1"
                                     android:layout_toEndOf="@+id/labelHotline1"
                                     android:background="@drawable/textchips">
@@ -138,6 +139,7 @@
                                     android:layout_height="wrap_content"
                                     android:layout_alignTop="@+id/labelHotline2"
                                     android:layout_toEndOf="@+id/labelHotline2"
+                                    android:id="@+id/hotline2"
                                     android:background="@drawable/textchips">
                                     <TextView
                                         android:layout_width="wrap_content"

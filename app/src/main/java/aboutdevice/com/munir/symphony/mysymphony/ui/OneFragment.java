@@ -2,6 +2,8 @@ package aboutdevice.com.munir.symphony.mysymphony.ui;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
@@ -13,6 +15,7 @@ import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -32,6 +35,7 @@ public class OneFragment extends Fragment {
    // private TileAdapter mTileAdapter;
    // private RecyclerView.LayoutManager mLayoutManager;
    // private TileSpacesItemDecoration tileSpacesItemDecoration;
+   public LinearLayout contactline1, contactline2;
     public OneFragment (){
 
     }
@@ -44,6 +48,8 @@ public class OneFragment extends Fragment {
         mLayoutManager = new StaggeredGridLayoutManager(2,StaggeredGridLayoutManager.VERTICAL);
         mTileAdapter = new TileAdapter(getActivity());
         tileSpacesItemDecoration = new TileSpacesItemDecoration(16);*/
+        contactline1 = (LinearLayout)view.findViewById(R.id.contactline1);
+        contactline2 = (LinearLayout)view.findViewById(R.id.contactline2);
         return view;
     }
 
@@ -58,6 +64,24 @@ public class OneFragment extends Fragment {
         super.onResume();
 
         isGooglePlayServicesAvailable(getActivity());
+
+        contactline1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(Intent.ACTION_DIAL);
+                intent.setData(Uri.parse("tel:16272"));
+                startActivity(intent);
+            }
+        });
+
+        contactline2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(Intent.ACTION_DIAL);
+                intent.setData(Uri.parse("tel:0966670066"));
+                startActivity(intent);
+            }
+        });
 
 
     }

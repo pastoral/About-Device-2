@@ -4,24 +4,29 @@
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
    >
 
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+
         <android.support.v7.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:minHeight="200dp"
+            android:minHeight="240dp"
             card_view:cardUseCompatPadding="true"
-            android:layout_margin="10dp"
             >
 
 
-
+            <ImageView
+                android:id="@+id/background_image_view"
+                android:layout_width="match_parent"
+                android:layout_height="240dp"
+                android:scaleType="centerCrop"
+                android:layout_centerInParent="true"
+                android:src="@drawable/four_background" />
                 <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="200dp"
+                    android:layout_height="wrap_content"
+                    android:minHeight="140dp"
                     android:background="#e0ebeb"
+                   android:layout_gravity="bottom"
+                    android:alpha=".7"
                     >
 
 
@@ -78,7 +83,6 @@
                         android:id="@+id/contactline2"
                         android:orientation="horizontal"
                         android:layout_below="@+id/contactline1"
-                        android:layout_marginTop="6dp"
                         android:padding="6dp"
                         >
 
@@ -104,7 +108,6 @@
                         android:id="@+id/facebookarea"
                         android:orientation="horizontal"
                         android:layout_below="@+id/contactline2"
-                        android:layout_marginTop="8dp"
                         android:padding="6dp"
                         >
 
@@ -113,13 +116,13 @@
                             android:layout_height="wrap_content"
                             android:text="Facebook"
                             android:textStyle="bold"
-                            android:textSize="19sp" />
+                            android:textSize="17sp" />
                         <ImageView
                             android:layout_height="37dp"
                             android:layout_width="37dp"
                             android:src="@drawable/facebook"
                             android:layout_gravity="center_vertical"
-                            android:layout_marginLeft="3dp"
+                            android:layout_marginLeft="15dp"
                             android:layout_marginRight="5dp" />
 
                     </LinearLayout>
@@ -127,7 +130,7 @@
             </RelativeLayout>
 
         </android.support.v7.widget.CardView>
-    </LinearLayout>
+
 
 
 </RelativeLayout>
