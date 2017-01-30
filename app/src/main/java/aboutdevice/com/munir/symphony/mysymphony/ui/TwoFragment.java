@@ -1,5 +1,6 @@
 package aboutdevice.com.munir.symphony.mysymphony.ui;
 
+import android.hardware.camera2.CameraManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -25,6 +26,7 @@ import java.util.List;
 import aboutdevice.com.munir.symphony.mysymphony.R;
 import aboutdevice.com.munir.symphony.mysymphony.adapter.FeatureAdapter;
 import aboutdevice.com.munir.symphony.mysymphony.utils.FetchJson;
+import aboutdevice.com.munir.symphony.mysymphony.utils.SpecException;
 
 
 /**
@@ -57,8 +59,15 @@ public class TwoFragment extends Fragment  {
         LinearLayoutManager lm = new LinearLayoutManager(getActivity());
         lm.setOrientation(LinearLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(lm);
-        modelName = "Z8";
+        modelName = getSystemProperty("ro.build.device");
         fetchJson = new FetchJson(getContext());
+        if(!fetchJson.searchModelName(modelName)) {
+            modelName = getSystemProperty("ro.build.product");
+        }
+       /* if(!fetchJson.searchModelName(modelName)) {
+            modelName = getSystemProperty("ro.product.name");
+        }*/
+
         String read = fetchJson.readJSONFromAsset();
         try{
             fetchJson.jsonToMap(read);
@@ -76,6 +85,7 @@ public class TwoFragment extends Fragment  {
             txtModelName.setText(modelName);
             featureMap = fetchJson.createFeatureMap(featureList);
         }
+
         else{
             txtModelName.setText("This model is not enlisted");
         }
@@ -84,14 +94,30 @@ public class TwoFragment extends Fragment  {
     @Override
     public void onResume() {
         super.onResume();
+
+
         if(featureMap.size() > 0){
             mAdapter = new FeatureAdapter(getContext(),featureMap);
             recyclerView.setAdapter(mAdapter);
+            //Toast.makeText(getActivity(),se.exceptionSpec[2],Toast.LENGTH_SHORT).show();
         }
 
         else{
             txtModelName.setText("No feature found");
         }
+    }
+
+    public String getSystemProperty(String key) {
+        String value = null;
+
+        try {
+            value = (String) Class.forName("android.os.SystemProperties")
+                    .getMethod("get", String.class).invoke(null, key);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return value;
     }
 
 }

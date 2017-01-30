@@ -165,7 +165,7 @@ public class ThreeFragment extends Fragment implements GoogleApiClient.Connectio
         txtNearestCCAddress = (TextView)view.findViewById(R.id.txtNearestCCAddress);
         nearest_cc_card = (CardView)view.findViewById(R.id.nearest_cc_header);
 
-       // btnRefresh = (Button)view.findViewById(R.id.buttonRefresh);
+        // btnRefresh = (Button)view.findViewById(R.id.buttonRefresh);
 
         mLinearLayoutManager = new LinearLayoutManager(getActivity());
         //recyclerView.setLayoutManager(mLinearLayoutManager);
@@ -399,14 +399,14 @@ public class ThreeFragment extends Fragment implements GoogleApiClient.Connectio
                     Location lc = mCurrentlocation;
 
 
-                        query = mDatabaseReference.orderByChild("name").equalTo(entry.getKey());
-                        NearestCCFinder runner = new NearestCCFinder();
-                        runner.execute();
+                    query = mDatabaseReference.orderByChild("name").equalTo(entry.getKey());
+                    NearestCCFinder runner = new NearestCCFinder();
+                    runner.execute();
 
                 }
 
             } else {
-               // Toast.makeText(getActivity(), "Mara Kha ", Toast.LENGTH_SHORT).show();
+                // Toast.makeText(getActivity(), "Mara Kha ", Toast.LENGTH_SHORT).show();
                 Log.d("Mara Kha " , "Mara Kha");
                 //LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient,);
             }
@@ -651,7 +651,7 @@ public class ThreeFragment extends Fragment implements GoogleApiClient.Connectio
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-           // progressDialog = ProgressDialog.show(getActivity(),"Patience", "Searching your location");
+            // progressDialog = ProgressDialog.show(getActivity(),"Patience", "Searching your location");
         }
 
         @Override
@@ -673,7 +673,7 @@ public class ThreeFragment extends Fragment implements GoogleApiClient.Connectio
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
             updateUI();
-           // progressDialog.dismiss();
+            // progressDialog.dismiss();
         }
     }
 
@@ -832,7 +832,7 @@ public class ThreeFragment extends Fragment implements GoogleApiClient.Connectio
     }
 
 
-   public void loadSP(){
+    public void loadSP(){
         if(sharedpreferences.getString("NEARESTCC_ADDRESS", null) != null  && sharedpreferences.getString("NEARESTCC_NAME", null) != null){
 
             nearest_cc_card.setVisibility(VISIBLE);

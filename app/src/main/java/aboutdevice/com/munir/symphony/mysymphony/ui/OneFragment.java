@@ -48,24 +48,15 @@ public class OneFragment extends Fragment {
         mLayoutManager = new StaggeredGridLayoutManager(2,StaggeredGridLayoutManager.VERTICAL);
         mTileAdapter = new TileAdapter(getActivity());
         tileSpacesItemDecoration = new TileSpacesItemDecoration(16);*/
-        contactline1 = (LinearLayout)view.findViewById(R.id.contactline1);
-        contactline2 = (LinearLayout)view.findViewById(R.id.contactline2);
+        contactline1 = (LinearLayout)view.findViewById(R.id.hotline1);
+        contactline2 = (LinearLayout)view.findViewById(R.id.hotline2);
         return view;
     }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        isGooglePlayServicesAvailable(getActivity());
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-
-        isGooglePlayServicesAvailable(getActivity());
-
-        contactline1.setOnClickListener(new View.OnClickListener() {
+       /* contactline1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(Intent.ACTION_DIAL);
@@ -81,23 +72,20 @@ public class OneFragment extends Fragment {
                 intent.setData(Uri.parse("tel:0966670066"));
                 startActivity(intent);
             }
-        });
+        });*/
+
+
+        //isGooglePlayServicesAvailable(getActivity());
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+
 
 
     }
 
-    public boolean isGooglePlayServicesAvailable(Activity activity) {
-        GoogleApiAvailability googleApiAvailability = GoogleApiAvailability.getInstance();
-        int status = googleApiAvailability.isGooglePlayServicesAvailable(activity);
-        if (status != ConnectionResult.SUCCESS) {
-            if (googleApiAvailability.isUserResolvableError(status)) {
-                Dialog df = googleApiAvailability.getErrorDialog(activity, status, 2404);
-                df.setCancelable(false);
-                df.show();
-                //googleApiAvailability.getErrorDialog(activity, status, 2404).show();
-            }
-            return false;
-        }
-        return true;
-    }
+
 }

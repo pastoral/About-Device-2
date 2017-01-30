@@ -8,11 +8,36 @@
     "processor" : "Qualcom Snapdragon",
     "camera" : "8MP",
     "display" : "5 inch",
+    "memory" : "128GB",
     "os" : "Android Nougat 7.0",
     "data_connection" : "4G LTE ",
     "connectivity" : "WiFi MIMO",
     "battery" : "10000mAh",
     "sim" : "dual"
 
+  },
+
+  "R100" :{
+    "processor" : "1.3 GHz Quad core",
+    "camera" : "13MP + 5MP",
+    "display" : "5 inch",
+    "memory" : "128GB + 8GB",
+    "os" : "Android Nougat 7.0",
+    "data_connection" : "4G LTE ",
+    "connectivity" : "WiFi MIMO",
+    "battery" : "10000mAh",
+    "sim" : "dual"
+  },
+
+  "V46" :{
+    "processor" : "1.3 GHz Quad core",
+    "camera" : "13MP + 5MP",
+    "display" : "5 inch",
+    "memory" : "128GB + 8GB",
+    "os" : "Android Nougat 7.0",
+    "data_connection" : "4G LTE ",
+    "connectivity" : "WiFi MIMO",
+    "battery" : "10000mAh",
+    "sim" : "dual"
   }
 }

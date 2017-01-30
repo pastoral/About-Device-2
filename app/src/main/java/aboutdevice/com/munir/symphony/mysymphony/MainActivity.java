@@ -1,5 +1,7 @@
 package aboutdevice.com.munir.symphony.mysymphony;
 
+import android.app.Activity;
+import android.app.Dialog;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.TabLayout;
@@ -25,6 +27,8 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.firebase.database.DatabaseReference;
 
 import aboutdevice.com.munir.symphony.mysymphony.adapter.SectionAdapter;
@@ -108,6 +112,7 @@ public class MainActivity extends BaseActivity {
                         .setAction("Action", null).show();
             }
         });*/
+        isGooglePlayServicesAvailable(this);
         MainActivity.super.requestAppPermissions(permisionList, R.string.runtime_permissions_txt, permsRequestCode);
 
     }
@@ -115,7 +120,7 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
-
+        isGooglePlayServicesAvailable(this);
 
     }
 
@@ -139,6 +144,19 @@ public class MainActivity extends BaseActivity {
         Toast.makeText(this, "Permissions Received.", Toast.LENGTH_LONG).show();
     }*/
 
-
+    public boolean isGooglePlayServicesAvailable(Activity activity) {
+        GoogleApiAvailability googleApiAvailability = GoogleApiAvailability.getInstance();
+        int status = googleApiAvailability.isGooglePlayServicesAvailable(activity);
+        if (status != ConnectionResult.SUCCESS) {
+            if (googleApiAvailability.isUserResolvableError(status)) {
+                Dialog df = googleApiAvailability.getErrorDialog(activity, status, 2404);
+                df.setCancelable(false);
+                df.show();
+                //googleApiAvailability.getErrorDialog(activity, status, 2404).show();
+            }
+            return false;
+        }
+        return true;
+    }
 
 }

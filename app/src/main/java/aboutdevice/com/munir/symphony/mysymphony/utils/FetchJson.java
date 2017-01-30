@@ -8,6 +8,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -15,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 
 import aboutdevice.com.munir.symphony.mysymphony.R;
+import aboutdevice.com.munir.symphony.mysymphony.model.ExceptionModels;
 
 /**
  * Created by munirul.hoque on 11/15/2016.
@@ -26,7 +28,7 @@ public class FetchJson {
     private ArrayList<String> featureList = new ArrayList<String>();
     public ArrayList<String> featureNameList = new ArrayList<String>();
     private JSONObject jObject;
-    private int [] allIcons = {R.mipmap.processor, R.mipmap.camera, R.mipmap.display, R.mipmap.os,
+    private int [] allIcons = {R.mipmap.processor, R.mipmap.camera, R.mipmap.display, R.mipmap.memory, R.mipmap.os,
             R.mipmap.data_connection, R.mipmap.connectivity,R.mipmap.battery,
             R.mipmap.sim, R.mipmap.sensor,R.mipmap.others};
     //private InputStream is ;
@@ -76,6 +78,9 @@ public class FetchJson {
             Object value = jOj.get(key);
             featureList.add(String.valueOf(value));
             featureNameList.add(key);
+        }
+        if(isExceptional(model)){
+            loadExceptionFeature();
         }
         return featureList;
     }
@@ -149,5 +154,32 @@ public class FetchJson {
         }
 
         return linkedHashMap;
+    }
+    public boolean isExceptional(String modelName){
+        boolean exceptional = false;
+        ExceptionModels exceptionModels = new ExceptionModels();
+        if(Arrays.asList(exceptionModels.exceptionModelList).contains(modelName)){
+            exceptional = true;
+        }
+        return exceptional;
+    }
+
+    public void loadExceptionFeature(){
+        SpecException se = new SpecException();
+        double ramSize = se.getTotalRAM();
+        se.setRAM(ramSize);
+
+        long romSize = se.getTotalROM();
+        se.setROM(romSize);
+
+
+        se.getCameraPixel();
+        se.setCameraPixel(se.cam1,se.cam2);
+
+        featureList.remove(1);
+        featureList.add(1,se.exceptionSpec[2]);
+        featureList.remove(3);
+        featureList.add(3,se.exceptionSpec[1] + " + " + se.exceptionSpec[0]);
+
     }
 }
