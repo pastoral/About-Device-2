@@ -39,5 +39,16 @@
     "connectivity" : "WiFi MIMO",
     "battery" : "10000mAh",
     "sim" : "dual"
+  },
+  "V47" :{
+    "processor" : "1.3 GHz Quad core",
+    "camera" : "8MP + 5MP",
+    "display" : "4.5” FWVGA TN display",
+    "memory" : "8GB ROM + 1GB RAM",
+    "os" : "Android Nougat 7.0",
+    "data_connection" : "3G, HSPA+ ",
+    "connectivity" : "WIFi, Bluetooth",
+    "battery" : "1800mAh",
+    "sim" : "dual"
   }
 }

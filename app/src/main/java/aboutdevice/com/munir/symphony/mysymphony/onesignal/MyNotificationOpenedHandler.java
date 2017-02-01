@@ -73,6 +73,12 @@ public class MyNotificationOpenedHandler implements OneSignal.NotificationOpened
                 //MySymphonyApp.getContext().startActivity(intent1);
             }
 
+            else if(activityToBeOpened != null && activityToBeOpened.equals("SpedturmFOTA")){
+                Log.i("OneSignalExample", "customkey set with value: " + activityToBeOpened);
+                Intent LaunchIntent = MySymphonyApp.getContext().getPackageManager().getLaunchIntentForPackage("com.megafone.systemupdate");
+                MySymphonyApp.getContext().startActivity(LaunchIntent);
+            }
+
             else if(link!=null){
                 Intent intent = new Intent(MySymphonyApp.getContext(), NewsWebActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT | Intent.FLAG_ACTIVITY_NEW_TASK);

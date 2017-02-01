@@ -1,0 +1,126 @@
+package aboutdevice.com.munir.symphony.mysymphony.utils;
+
+import android.content.ContentValues;
+import android.content.Context;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import aboutdevice.com.munir.symphony.mysymphony.model.NotificationStore;
+
+/**
+ * Created by admin on 1/31/2017.
+ */
+
+public class DatabaseHandler extends SQLiteOpenHelper {
+    // All Static variables
+    // Database Version
+    private static final int DATABASE_VERSION = 1;
+
+    // Database Name
+    private static final String DATABASE_NAME = "AboutDeviceManager";
+
+    // Contacts table name
+    private static final String TABLE_NOTIFICATIONS = "notifications";
+
+    // Contacts Table Columns names
+    private static final String key_id = "key_id";
+    private static final String notification_title = "notification_title";
+    private static  final String notification_content = "notification_content";
+    private static final  String activityToBeOpened = "activitytobeopened";
+    private static final String model_sw_version = "model_sw_version";
+    private static  final String t = "t";
+    private static  final String b = "b";
+    private static  final String link = "link";
+    private static  final String image_url = "image_url";
+    private static  final String insertion_date = "insertion_date";
+
+    public DatabaseHandler(Context context) {
+        super(context, DATABASE_NAME, null, DATABASE_VERSION);
+    }
+
+    @Override
+    public void onCreate(SQLiteDatabase db) {
+        String CREATE_NOTIFICATION_TABLE = "CREATE TABLE " + TABLE_NOTIFICATIONS + " ( "
+                +key_id+ " INTEGER PRIMARY KEY, " + notification_title +" TEXT, "
+                + notification_content +" TEXT, " + activityToBeOpened +" TEXT, "
+                + model_sw_version +" TEXT, " + t +" TEXT, " + b +" TEXT, "
+                + link +" TEXT, " + image_url +" TEXT, " + insertion_date +" TEXT " + " )";
+        db.execSQL(CREATE_NOTIFICATION_TABLE);
+    }
+
+    @Override
+    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        // Drop older table if existed
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_NOTIFICATIONS);
+
+        // Create tables again
+        onCreate(db);
+    }
+
+
+    /**
+     * All CRUD(Create, Read, Update, Delete) Operations
+     */
+    //addNotifications
+    //Adding Notifications
+    public void addNotification(NotificationStore notificationStore){
+        SQLiteDatabase db = getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(notification_title,notificationStore.getNotification_title());
+        contentValues.put(notification_content,notificationStore.getNotification_content());
+        contentValues.put(activityToBeOpened,notificationStore.getActivityToBeOpened());
+        contentValues.put(model_sw_version,notificationStore.getModel_sw_version());
+        contentValues.put(t,notificationStore.getT());
+        contentValues.put(b,notificationStore.getB());
+        contentValues.put(link,notificationStore.getLink());
+        contentValues.put(image_url,notificationStore.getImage_url());
+        contentValues.put(insertion_date,notificationStore.getInsertion_date());
+
+        db.insert(TABLE_NOTIFICATIONS, null, contentValues);
+        db.close();
+    }
+
+    public List<NotificationStore> getAllNotifications(){
+        List<NotificationStore> notificationList = new ArrayList<NotificationStore>();
+        String selectQuery = "SELECT * FROM " +TABLE_NOTIFICATIONS;
+
+        SQLiteDatabase db = getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+        // looping through all rows and adding to list
+        if(cursor.moveToFirst()){
+            do{
+                NotificationStore notificationStore = new NotificationStore();
+                notificationStore.setId(Integer.parseInt(cursor.getString(0)));
+                notificationStore.setNotification_title(cursor.getString(1));
+                notificationStore.setNotification_content(cursor.getString(2));
+                notificationStore.setActivityToBeOpened(cursor.getString(3));
+                notificationStore.setModel_sw_version(cursor.getString(4));
+                notificationStore.setT(cursor.getString(5));
+                notificationStore.setB(cursor.getString(6));
+                notificationStore.setLink(cursor.getString(7));
+                notificationStore.setImage_url(cursor.getString(8));
+                notificationStore.setInsertion_date(cursor.getString(9));
+
+                notificationList.add(notificationStore);
+            }while(cursor.moveToNext());
+        }
+
+        return notificationList;
+    }
+
+    // Getting contacts Count
+    public int getNotificationCount() {
+        String countQuery = "SELECT  * FROM " + TABLE_NOTIFICATIONS;
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(countQuery, null);
+        cursor.close();
+
+        // return count
+        return cursor.getCount();
+    }
+}

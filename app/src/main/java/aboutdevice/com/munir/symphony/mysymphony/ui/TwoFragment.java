@@ -59,11 +59,9 @@ public class TwoFragment extends Fragment  {
         LinearLayoutManager lm = new LinearLayoutManager(getActivity());
         lm.setOrientation(LinearLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(lm);
-        modelName = getSystemProperty("ro.build.device");
+        modelName = getSystemProperty("ro.product.device");
         fetchJson = new FetchJson(getContext());
-        if(!fetchJson.searchModelName(modelName)) {
-            modelName = getSystemProperty("ro.build.product");
-        }
+
        /* if(!fetchJson.searchModelName(modelName)) {
             modelName = getSystemProperty("ro.product.name");
         }*/
@@ -71,6 +69,9 @@ public class TwoFragment extends Fragment  {
         String read = fetchJson.readJSONFromAsset();
         try{
             fetchJson.jsonToMap(read);
+            if(!fetchJson.searchModelName(modelName)) {
+                modelName = getSystemProperty("ro.build.product");
+            }
             featureList = fetchJson.getMapData(modelName);
         }
         catch(JSONException e){

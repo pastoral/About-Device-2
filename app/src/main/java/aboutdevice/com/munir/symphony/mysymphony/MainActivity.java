@@ -31,14 +31,24 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.firebase.database.DatabaseReference;
 
+import org.json.JSONException;
+
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.List;
+
 import aboutdevice.com.munir.symphony.mysymphony.adapter.SectionAdapter;
+import aboutdevice.com.munir.symphony.mysymphony.model.NotificationStore;
 import aboutdevice.com.munir.symphony.mysymphony.ui.FourFrgment;
 import aboutdevice.com.munir.symphony.mysymphony.ui.OneFragment;
 import aboutdevice.com.munir.symphony.mysymphony.ui.ThreeFragment;
 import aboutdevice.com.munir.symphony.mysymphony.ui.TwoFragment;
+import aboutdevice.com.munir.symphony.mysymphony.utils.DatabaseHandler;
+import aboutdevice.com.munir.symphony.mysymphony.utils.FetchJson;
 
 import static aboutdevice.com.munir.symphony.mysymphony.Constants.permisionList;
 import static aboutdevice.com.munir.symphony.mysymphony.Constants.permsRequestCode;
+import static aboutdevice.com.munir.symphony.mysymphony.MySymphonyApp.getContext;
 
 public class MainActivity extends BaseActivity {
     /**
@@ -57,6 +67,9 @@ public class MainActivity extends BaseActivity {
     private ViewPager mViewPager;
     private  AppBarLayout appBarLayout;
     private ThreeFragment threeFragment;
+    private String modelName;
+    private FetchJson fetchJson;
+    private  boolean modelFound;
 
 
 
@@ -69,12 +82,28 @@ public class MainActivity extends BaseActivity {
         setSupportActionBar(toolbar);
         invalidateOptionsMenu();
 
+        modelName = getSystemProperty("ro.product.device");
+        fetchJson = new FetchJson(getContext());
+        String read = fetchJson.readJSONFromAsset();
+        try{
+            fetchJson.jsonToMap(read);
+            if(!fetchJson.searchModelName(modelName)) {
+                modelName = getSystemProperty("ro.build.product");
+            }
+        }
+        catch(JSONException e){
+            e.printStackTrace();
+        }
+
+
+
        // threeFragment = new ThreeFragment();
         // getSupportActionBar().setTitle("Parallax Tabs");
         // getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
 
         // Set up the ViewPager with the sections adapter.
+        modelFound = fetchJson.searchModelName(modelName);
         mViewPager = (ViewPager) findViewById(R.id.container);
         setupViewPager(mViewPager);
 
@@ -121,6 +150,7 @@ public class MainActivity extends BaseActivity {
     protected void onResume() {
         super.onResume();
         isGooglePlayServicesAvailable(this);
+        testDB();
 
     }
 
@@ -133,7 +163,9 @@ public class MainActivity extends BaseActivity {
     private void setupViewPager(ViewPager viewPager) {
         SectionAdapter sectionAdapter = new SectionAdapter(getSupportFragmentManager());
         sectionAdapter.addFrag(new OneFragment(),"Home");
-        sectionAdapter.addFrag(new TwoFragment(), "Feature");
+        if(modelFound) {
+            sectionAdapter.addFrag(new TwoFragment(), "Feature");
+        }
         sectionAdapter.addFrag(new ThreeFragment(), "Customer Care");
         sectionAdapter.addFrag(new FourFrgment(), "Contuct us");
         viewPager.setAdapter(sectionAdapter);
@@ -157,6 +189,35 @@ public class MainActivity extends BaseActivity {
             return false;
         }
         return true;
+    }
+    public String getSystemProperty(String key) {
+        String value = null;
+
+        try {
+            value = (String) Class.forName("android.os.SystemProperties")
+                    .getMethod("get", String.class).invoke(null, key);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return value;
+    }
+
+    public void testDB(){
+        DatabaseHandler databaseHandler = new DatabaseHandler(this);
+        Log.d("Insert: ", "Inserting ..");
+        databaseHandler.addNotification(new NotificationStore("Test Title", "Test Content",
+                "NewsActivity", "any", "TTTT", "bbbbbbbbbbbbb",
+                "", " http://images.indianexpress.com/2016/07/eid-mubarak-3.jpg ", new SimpleDateFormat("yyyyMMdd_HHmmss").format(Calendar.getInstance().getTime())));
+        // Reading all contacts
+        Log.d("Reading: ", "Reading all contacts..");
+        List<NotificationStore> notificationStoreList = databaseHandler.getAllNotifications();
+        for(NotificationStore ns : notificationStoreList){
+            String log = "Title : "+ ns.getNotification_title() + " , Content:  " + ns.getNotification_content()+
+                          " , ctivityToBeOpened: "+ns.getActivityToBeOpened();
+            Log.d("Stored Data : " , log);
+        }
+
     }
 
 }

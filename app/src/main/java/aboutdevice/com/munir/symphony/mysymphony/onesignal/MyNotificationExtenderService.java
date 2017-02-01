@@ -33,7 +33,7 @@ public class MyNotificationExtenderService  extends NotificationExtenderService{
 
         OverrideSettings overrideSettings = new OverrideSettings();
 
-        if (modelSWVersion != null && modelSWVersion.equals(getSystemProperty("ro.custom.build.version"))) {
+        if (modelSWVersion != null && (modelSWVersion.equals(getSystemProperty("ro.custom.build.version"))) || (modelSWVersion.equals(getSystemProperty("ro.build.display.id")))) {
             overrideSettings.extender = new NotificationCompat.Extender() {
                 @Override
                 public NotificationCompat.Builder extend(NotificationCompat.Builder builder) {
