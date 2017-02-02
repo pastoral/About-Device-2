@@ -35,8 +35,9 @@ public class NotificationStore {
     }
 
     public NotificationStore( String notification_content, String notification_title, String activityToBeOpened, String model_sw_version, String t, String b, String link, String image_url, String insertion_date) {
-        this.notification_content = notification_content;
+
         this.notification_title = notification_title;
+        this.notification_content = notification_content;
         this.activityToBeOpened = activityToBeOpened;
         this.model_sw_version = model_sw_version;
         this.t = t;

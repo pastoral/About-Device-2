@@ -14,6 +14,8 @@ import com.onesignal.OSNotificationReceivedResult;
 import org.json.JSONObject;
 
 import java.math.BigInteger;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
 import aboutdevice.com.munir.symphony.mysymphony.MainActivity;
 import aboutdevice.com.munir.symphony.mysymphony.MySymphonyApp;
@@ -30,7 +32,7 @@ public class MyNotificationExtenderService  extends NotificationExtenderService{
     String activityToBeOpened;
     String link;
     String modelSWVersion;
-    String title,body;
+    String title,body, t,b;
     boolean returnVal;
     JSONObject data;
     DatabaseHandler databaseHandler;
@@ -42,6 +44,9 @@ public class MyNotificationExtenderService  extends NotificationExtenderService{
         modelSWVersion = data.optString("modelSWVersion", null);
         title = notification.payload.title;
         body = notification.payload.body;
+        activityToBeOpened = data.optString("activityToBeOpened", null);
+        activityToBeOpened = data.optString("t", null); // useless
+        activityToBeOpened = data.optString("b", null); // useless
 
         OverrideSettings overrideSettings = new OverrideSettings();
 
@@ -63,6 +68,7 @@ public class MyNotificationExtenderService  extends NotificationExtenderService{
         }
 
         else if(modelSWVersion != null && modelSWVersion.equals("any")){
+            insertDB();
             overrideSettings.extender = new NotificationCompat.Extender() {
                 @Override
                 public NotificationCompat.Builder extend(NotificationCompat.Builder builder) {
@@ -74,7 +80,7 @@ public class MyNotificationExtenderService  extends NotificationExtenderService{
                 }
             };
 
-            databaseHandler = new DatabaseHandler(getApplicationContext());
+           // databaseHandler = new DatabaseHandler(getApplicationContext());
            // databaseHandler.addNotification(new NotificationStore(data.optString()));
 
             OSNotificationDisplayedResult displayedResult = displayNotification(overrideSettings);
@@ -94,5 +100,12 @@ public class MyNotificationExtenderService  extends NotificationExtenderService{
         }
 
         return value;
+    }
+
+    public void insertDB(){
+        DatabaseHandler databaseHandler = new DatabaseHandler(getApplicationContext());
+        Log.d("Insert: ", "Inserting ..");
+        databaseHandler.addNotification(new NotificationStore(title,body,activityToBeOpened,modelSWVersion,t,b,link,bigPicture,new SimpleDateFormat("yyyyMMdd_HHmmss").format(Calendar.getInstance().getTime())));
+        String temp = null;
     }
 }

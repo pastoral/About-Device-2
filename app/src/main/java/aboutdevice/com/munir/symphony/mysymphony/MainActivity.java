@@ -2,6 +2,7 @@ package aboutdevice.com.munir.symphony.mysymphony;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.Intent;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.TabLayout;
@@ -24,6 +25,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -41,6 +43,7 @@ import aboutdevice.com.munir.symphony.mysymphony.adapter.SectionAdapter;
 import aboutdevice.com.munir.symphony.mysymphony.model.NotificationStore;
 import aboutdevice.com.munir.symphony.mysymphony.ui.FourFrgment;
 import aboutdevice.com.munir.symphony.mysymphony.ui.OneFragment;
+import aboutdevice.com.munir.symphony.mysymphony.ui.StoredNewsList;
 import aboutdevice.com.munir.symphony.mysymphony.ui.ThreeFragment;
 import aboutdevice.com.munir.symphony.mysymphony.ui.TwoFragment;
 import aboutdevice.com.munir.symphony.mysymphony.utils.DatabaseHandler;
@@ -70,6 +73,7 @@ public class MainActivity extends BaseActivity {
     private String modelName;
     private FetchJson fetchJson;
     private  boolean modelFound;
+    private Button newsButton;
 
 
 
@@ -81,6 +85,8 @@ public class MainActivity extends BaseActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.main_toolbar);
         setSupportActionBar(toolbar);
         invalidateOptionsMenu();
+
+        newsButton = (Button)findViewById(R.id.buttonNews) ;
 
         modelName = getSystemProperty("ro.product.device");
         fetchJson = new FetchJson(getContext());
@@ -150,7 +156,7 @@ public class MainActivity extends BaseActivity {
     protected void onResume() {
         super.onResume();
         isGooglePlayServicesAvailable(this);
-        testDB();
+        //testDB();
 
     }
 
@@ -203,7 +209,7 @@ public class MainActivity extends BaseActivity {
         return value;
     }
 
-    public void testDB(){
+   /* public void testDB(){
         DatabaseHandler databaseHandler = new DatabaseHandler(this);
         Log.d("Insert: ", "Inserting ..");
         databaseHandler.addNotification(new NotificationStore("Test Title", "Test Content",
@@ -218,6 +224,10 @@ public class MainActivity extends BaseActivity {
             Log.d("Stored Data : " , log);
         }
 
+    }*/
+    public void loadNews(View view){
+        Intent intent = new Intent(getContext(), StoredNewsList.class);
+        startActivity(intent);
     }
 
 }
