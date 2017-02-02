@@ -18,14 +18,15 @@
             android:layout_height="wrap_content"
             android:minHeight="180dp"
             card_view:cardUseCompatPadding="true"
-            android:layout_margin="10dp"
+            android:layout_marginTop="10dp"
+            app:cardElevation="4dp"
             >
 
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:minHeight="180dp"
-                android:background="#e0ebeb">
+                android:background="#EEEEEE">
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -34,12 +35,12 @@
                         android:textStyle="bold"
                         android:id="@+id/txttitle"
                         android:layout_marginLeft="7dp"
-                        android:textColor="#000003"
+                        android:textColor="#000000"
 
                         />
                     <View
                         android:layout_width="match_parent"
-                        android:layout_height="3dp"
+                        android:layout_height="2dp"
                         android:background="@color/colorViewLine"
                         android:layout_margin="1dp"
                         android:layout_below="@+id/txttitle"

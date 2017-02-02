@@ -38,20 +38,26 @@ public class MyNotificationOpenedHandler implements OneSignal.NotificationOpened
         //Else, if we have not set any additional data MainActivity is opened.
         if(data!= null){
             activityToBeOpened = data.optString("activityToBeOpened", null);
-            String title = data.optString("t", null);
-            String body = data.optString("b", null);
+           // String title = data.optString("t", null);
+           // String body = data.optString("b", null);
+            String str1 = result.notification.payload.title;
+            String str2 = result.notification.payload.body;
             if(activityToBeOpened != null && activityToBeOpened.equals("NewsActivity")){
                 Log.i("OneSignalExample", "customkey set with value: " + activityToBeOpened);
                 Intent intent = new Intent(MySymphonyApp.getContext(), NewsActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT | Intent.FLAG_ACTIVITY_NEW_TASK);
 
-                intent.putExtra("title", title);
-                intent.putExtra("body", body);
+               // intent.putExtra("title", title);
+                //intent.putExtra("body", body);
+                intent.putExtra("title", str1);
+                intent.putExtra("body", str2);
                 if(bigPicture != null){
                     intent.putExtra("IMAGEURL", bigPicture);
                 }
                 MySymphonyApp.getContext().startActivity(intent);
             }
+
+
             else if(activityToBeOpened != null && activityToBeOpened.equals("MainActivity")){
                 Log.i("OneSignalExample", "customkey set with value: " + activityToBeOpened);
                 Intent intent = new Intent(MySymphonyApp.getContext(), MainActivity.class);
@@ -64,12 +70,13 @@ public class MyNotificationOpenedHandler implements OneSignal.NotificationOpened
                 Intent LaunchIntent = MySymphonyApp.getContext().getPackageManager().getLaunchIntentForPackage("com.mediatek.systemupdate");
                 MySymphonyApp.getContext().startActivity(LaunchIntent);
 
+
                 //Intent intent1 = new Intent(Intent.)
                 //Uri fotaActivity = Uri.parse("com.mediatek.systemupdate.OtaPkgManagerActivity");
-               //// Intent intent1 = new Intent(Intent.ACTION_VIEW, fotaActivity);
+                //// Intent intent1 = new Intent(Intent.ACTION_VIEW, fotaActivity);
                 ////Intent intent = new Intent();
-               // intent.setComponent(new ComponentName("com.mediatek.systemupdate","com.mediatek.systemupdate.OtaPkgManagerActivity"));
-              ////  intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT | Intent.FLAG_ACTIVITY_NEW_TASK);
+                // intent.setComponent(new ComponentName("com.mediatek.systemupdate","com.mediatek.systemupdate.OtaPkgManagerActivity"));
+                ////  intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT | Intent.FLAG_ACTIVITY_NEW_TASK);
                 //MySymphonyApp.getContext().startActivity(intent1);
             }
 

@@ -18,18 +18,30 @@ import java.math.BigInteger;
 import aboutdevice.com.munir.symphony.mysymphony.MainActivity;
 import aboutdevice.com.munir.symphony.mysymphony.MySymphonyApp;
 import aboutdevice.com.munir.symphony.mysymphony.R;
+import aboutdevice.com.munir.symphony.mysymphony.model.NotificationStore;
+import aboutdevice.com.munir.symphony.mysymphony.utils.DatabaseHandler;
 
 /**
  * Created by munirul.hoque on 1/12/2017.
  */
 
 public class MyNotificationExtenderService  extends NotificationExtenderService{
+    String bigPicture;
+    String activityToBeOpened;
+    String link;
+    String modelSWVersion;
+    String title,body;
+    boolean returnVal;
+    JSONObject data;
+    DatabaseHandler databaseHandler;
     @Override
     protected boolean onNotificationProcessing(OSNotificationReceivedResult notification) {
-        JSONObject data = notification.payload.additionalData;
-        String modelSWVersion;
-        boolean returnVal;
+        data = notification.payload.additionalData;
+        link = notification.payload.launchURL;
+        bigPicture = notification.payload.bigPicture;
         modelSWVersion = data.optString("modelSWVersion", null);
+        title = notification.payload.title;
+        body = notification.payload.body;
 
         OverrideSettings overrideSettings = new OverrideSettings();
 
@@ -61,6 +73,9 @@ public class MyNotificationExtenderService  extends NotificationExtenderService{
                     return builder.setColor(new BigInteger("FF0000FF", 16).intValue());
                 }
             };
+
+            databaseHandler = new DatabaseHandler(getApplicationContext());
+           // databaseHandler.addNotification(new NotificationStore(data.optString()));
 
             OSNotificationDisplayedResult displayedResult = displayNotification(overrideSettings);
             Log.d("OneSignalExample", "Notification displayed with id: " + displayedResult.androidNotificationId);
