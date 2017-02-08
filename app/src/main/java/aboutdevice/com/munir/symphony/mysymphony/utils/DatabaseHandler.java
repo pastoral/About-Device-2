@@ -3,6 +3,7 @@ package aboutdevice.com.munir.symphony.mysymphony.utils;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
@@ -31,13 +32,15 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     private static final String key_id = "key_id";
     private static final String notification_title = "notification_title";
     private static  final String notification_content = "notification_content";
-    private static final  String activityToBeOpened = "activitytobeopened";
-    private static final String model_sw_version = "model_sw_version";
+    public static final  String activityToBeOpened = "activitytobeopened";
+    public static final String model_sw_version = "model_sw_version";
     private static  final String t = "t";
     private static  final String b = "b";
     private static  final String link = "link";
     private static  final String image_url = "image_url";
     private static  final String insertion_date = "insertion_date";
+    public static  final String notification_id = "notification_id";
+    public static  final String notification_type = "notification_type";
 
     public DatabaseHandler(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -49,7 +52,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 +key_id+ " INTEGER PRIMARY KEY, " + notification_title +" TEXT, "
                 + notification_content +" TEXT, " + activityToBeOpened +" TEXT, "
                 + model_sw_version +" TEXT, " + t +" TEXT, " + b +" TEXT, "
-                + link +" TEXT, " + image_url +" TEXT, " + insertion_date +" TEXT " + " )";
+                + link +" TEXT, " + image_url +" TEXT, " + insertion_date +" TEXT, "  + notification_id +" TEXT, " + notification_type +" TEXT " + " )";
         db.execSQL(CREATE_NOTIFICATION_TABLE);
     }
 
@@ -80,6 +83,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         contentValues.put(link,notificationStore.getLink());
         contentValues.put(image_url,notificationStore.getImage_url());
         contentValues.put(insertion_date,notificationStore.getInsertion_date());
+        contentValues.put(notification_id,notificationStore.getNotification_id());
+        contentValues.put(notification_type,notificationStore.getNotification_type());
 
         db.insert(TABLE_NOTIFICATIONS, null, contentValues);
         db.close();
@@ -105,6 +110,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 notificationStore.setLink(cursor.getString(7));
                 notificationStore.setImage_url(cursor.getString(8));
                 notificationStore.setInsertion_date(cursor.getString(9));
+                notificationStore.setNotification_id(cursor.getString(10));
+                notificationStore.setNotification_type(cursor.getString(11));
 
                 notificationList.add(notificationStore);
             }while(cursor.moveToNext());
@@ -114,13 +121,42 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     }
 
     // Getting contacts Count
-    public int getNotificationCount() {
-        String countQuery = "SELECT  * FROM " + TABLE_NOTIFICATIONS;
+    public long getNotificationCount() {
+        /*String countQuery = "SELECT  * FROM " + TABLE_NOTIFICATIONS;
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(countQuery, null);
         cursor.close();
 
         // return count
-        return cursor.getCount();
+        return cursor.getCount();*/
+        SQLiteDatabase db = this.getReadableDatabase();
+        long numRows = DatabaseUtils.queryNumEntries(db, TABLE_NOTIFICATIONS);
+
+        return numRows;
+    }
+
+    public void deleteAll(NotificationStore notificationStore){
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.execSQL("delete from " + TABLE_NOTIFICATIONS);
+    }
+
+    public boolean CheckIsDataAlreadyInDBorNot(String dbfield, String fieldValue) {
+       /* SQLiteDatabase db = getWritableDatabase();
+        String Query = "Select * from  " + TABLE_NOTIFICATIONS + " where " + dbfield + " = " + fieldValue;
+        Cursor cursor = db.rawQuery(Query, null);
+        if(cursor.getCount() <= 0){
+            cursor.close();
+            return false;
+        }
+        cursor.close();
+        return true; */
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        long numRows = DatabaseUtils.queryNumEntries(db, TABLE_NOTIFICATIONS,
+                dbfield="?", new String[] {fieldValue});
+        if(numRows <= 0){
+            return false;
+        }
+        return true;
     }
 }

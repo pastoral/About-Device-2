@@ -17,11 +17,13 @@ public class NotificationStore {
     private String link;
     private String image_url;
     private String insertion_date;
+    private String notification_id;
+    private String notification_type;
 
     public NotificationStore(){}
 
 
-    public NotificationStore( int id, String notification_content, String notification_title, String activityToBeOpened, String model_sw_version, String t, String b, String link, String image_url, String insertion_date) {
+    public NotificationStore( int id, String notification_content, String notification_title, String activityToBeOpened, String model_sw_version, String t, String b, String link, String image_url, String insertion_date, String notification_id, String notification_type) {
         this.id = id;
         this.notification_content = notification_content;
         this.notification_title = notification_title;
@@ -32,9 +34,11 @@ public class NotificationStore {
         this.link = link;
         this.image_url = image_url;
         this.insertion_date = insertion_date;
+        this.notification_id = notification_id;
+        this.notification_type = notification_type;
     }
 
-    public NotificationStore( String notification_content, String notification_title, String activityToBeOpened, String model_sw_version, String t, String b, String link, String image_url, String insertion_date) {
+    public NotificationStore( String notification_content, String notification_title, String activityToBeOpened, String model_sw_version, String t, String b, String link, String image_url, String insertion_date, String notification_id, String notification_type) {
 
         this.notification_title = notification_title;
         this.notification_content = notification_content;
@@ -45,6 +49,8 @@ public class NotificationStore {
         this.link = link;
         this.image_url = image_url;
         this.insertion_date = insertion_date;
+        this.notification_id = notification_id;
+        this.notification_type = notification_type;
     }
 
     public int getId() {
@@ -127,5 +133,21 @@ public class NotificationStore {
 
     public void setInsertion_date(String insertion_date) {
         this.insertion_date = insertion_date;
+    }
+
+    public String getNotification_id() {
+        return notification_id;
+    }
+
+    public void setNotification_id(String notification_id) {
+        this.notification_id = notification_id;
+    }
+
+    public String getNotification_type() {
+        return notification_type;
+    }
+
+    public void setNotification_type(String notification_type) {
+        this.notification_type = notification_type;
     }
 }
