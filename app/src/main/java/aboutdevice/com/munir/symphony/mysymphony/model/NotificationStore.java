@@ -1,6 +1,15 @@
 package aboutdevice.com.munir.symphony.mysymphony.model;
 
+import android.support.v7.widget.RecyclerView;
+import android.view.View;
+import android.widget.TextView;
+
+import com.google.firebase.messaging.RemoteMessage;
+
 import java.util.Date;
+import java.util.List;
+
+import aboutdevice.com.munir.symphony.mysymphony.R;
 
 /**
  * Created by admin on 1/31/2017.
@@ -8,22 +17,24 @@ import java.util.Date;
 
 public class NotificationStore {
     private int id;
-    private String notification_title;
-    private String notification_content;
+    public String notification_title;
+    public String notification_content;
     private String activityToBeOpened;
     private String model_sw_version;
     private String t;
     private String b;
     private String link;
-    private String image_url;
+    public String image_url;
     private String insertion_date;
     private String notification_id;
     private String notification_type;
 
+   // public static TextView txtnotification_title, txtnotification_content;
+
     public NotificationStore(){}
 
 
-    public NotificationStore( int id, String notification_content, String notification_title, String activityToBeOpened, String model_sw_version, String t, String b, String link, String image_url, String insertion_date, String notification_id, String notification_type) {
+    public NotificationStore( int id, String notification_title, String notification_content, String activityToBeOpened, String model_sw_version, String t, String b, String link, String image_url, String insertion_date, String notification_id, String notification_type) {
         this.id = id;
         this.notification_content = notification_content;
         this.notification_title = notification_title;
@@ -38,7 +49,7 @@ public class NotificationStore {
         this.notification_type = notification_type;
     }
 
-    public NotificationStore( String notification_content, String notification_title, String activityToBeOpened, String model_sw_version, String t, String b, String link, String image_url, String insertion_date, String notification_id, String notification_type) {
+    public NotificationStore( String notification_title, String notification_content, String activityToBeOpened, String model_sw_version, String t, String b, String link, String image_url, String insertion_date, String notification_id, String notification_type) {
 
         this.notification_title = notification_title;
         this.notification_content = notification_content;
@@ -51,6 +62,7 @@ public class NotificationStore {
         this.insertion_date = insertion_date;
         this.notification_id = notification_id;
         this.notification_type = notification_type;
+
     }
 
     public int getId() {
@@ -150,4 +162,8 @@ public class NotificationStore {
     public void setNotification_type(String notification_type) {
         this.notification_type = notification_type;
     }
+
+
+
+
 }

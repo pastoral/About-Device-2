@@ -29,7 +29,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     private static final String TABLE_NOTIFICATIONS = "notifications";
 
     // Contacts Table Columns names
-    private static final String key_id = "key_id";
+    public static final String key_id = "key_id";
     private static final String notification_title = "notification_title";
     private static  final String notification_content = "notification_content";
     public static final  String activityToBeOpened = "activitytobeopened";
@@ -141,22 +141,46 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     }
 
     public boolean CheckIsDataAlreadyInDBorNot(String dbfield, String fieldValue) {
-       /* SQLiteDatabase db = getWritableDatabase();
-        String Query = "Select * from  " + TABLE_NOTIFICATIONS + " where " + dbfield + " = " + fieldValue;
+        SQLiteDatabase db = getReadableDatabase();
+        String Query = "Select * from  " + TABLE_NOTIFICATIONS + " where " + dbfield + " = " + "'"+ fieldValue + "'";
         Cursor cursor = db.rawQuery(Query, null);
         if(cursor.getCount() <= 0){
             cursor.close();
             return false;
         }
         cursor.close();
-        return true; */
-
-        SQLiteDatabase db = this.getReadableDatabase();
-        long numRows = DatabaseUtils.queryNumEntries(db, TABLE_NOTIFICATIONS,
-                dbfield="?", new String[] {fieldValue});
-        if(numRows <= 0){
-            return false;
-        }
         return true;
+
+    }
+
+    public List<NotificationStore> getRecord(String dbfield, int fieldValue) {
+        List<NotificationStore> notificationList = new ArrayList<NotificationStore>();
+        SQLiteDatabase db = getReadableDatabase();
+        String selectQuery = "Select * from  " + TABLE_NOTIFICATIONS + " where " + dbfield + " = " + fieldValue;
+        Cursor cursor = db.rawQuery(selectQuery, null);
+        // looping through all rows and adding to list
+        if(cursor.moveToFirst()){
+            do{
+                NotificationStore notificationStore = new NotificationStore();
+                notificationStore.setId(Integer.parseInt(cursor.getString(0)));
+                notificationStore.setNotification_title(cursor.getString(1));
+                notificationStore.setNotification_content(cursor.getString(2));
+                notificationStore.setActivityToBeOpened(cursor.getString(3));
+                notificationStore.setModel_sw_version(cursor.getString(4));
+                notificationStore.setT(cursor.getString(5));
+                notificationStore.setB(cursor.getString(6));
+                notificationStore.setLink(cursor.getString(7));
+                notificationStore.setImage_url(cursor.getString(8));
+                notificationStore.setInsertion_date(cursor.getString(9));
+                notificationStore.setNotification_id(cursor.getString(10));
+                notificationStore.setNotification_type(cursor.getString(11));
+
+                notificationList.add(notificationStore);
+            }while(cursor.moveToNext());
+        }
+
+        return notificationList;
+
+
     }
 }
