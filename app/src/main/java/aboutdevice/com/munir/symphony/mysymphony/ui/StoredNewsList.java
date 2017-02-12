@@ -1,5 +1,6 @@
 package aboutdevice.com.munir.symphony.mysymphony.ui;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -20,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import aboutdevice.com.munir.symphony.mysymphony.MySymphonyApp;
 import aboutdevice.com.munir.symphony.mysymphony.R;
 import aboutdevice.com.munir.symphony.mysymphony.adapter.StoredNewsListAdapter;
 import aboutdevice.com.munir.symphony.mysymphony.model.NotificationStore;
@@ -50,14 +52,14 @@ public class StoredNewsList extends AppCompatActivity {
         notificationRecyclerView.setHasFixedSize(true);
 
         //  notificationStoreFastItemAdapter = new FastItemAdapter();
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+      /*  FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
             }
-        });
+        });*/
 
         // NotificationStore nsi = new NotificationStore();
         // databaseHandler.deleteAll(nsi);
@@ -103,10 +105,43 @@ public class StoredNewsList extends AppCompatActivity {
             @Override
             public void onItemClick(View view, int position) {
                 long i = mAdapter.getItemId(position);
-               // Toast.makeText(StoredNewsList.this, String.valueOf(i), Toast.LENGTH_SHORT).show();
+                //Toast.makeText(StoredNewsList.this, String.valueOf(i), Toast.LENGTH_SHORT).show();
                 int id = Integer.valueOf(String.valueOf(i));
                 List<NotificationStore> ns = databaseHandler.getRecord(DatabaseHandler.key_id, id);
+                String str = null;
+                String title = ns.get(0).getNotification_title();
+                String content = ns.get(0).getNotification_content();
+                String link = ns.get(0).getLink();
+                String image_url = ns.get(0).getImage_url();
+                String activityToBeOpened = ns.get(0).getActivityToBeOpened();
+                String notification_type = ns.get(0).getNotification_type();
 
+               if(notification_type.equals("promo")){
+                    Intent intent = new Intent(getApplication(),NewsWebActivity.class);
+                    intent.putExtra("targetUrl", link);
+                    startActivity(intent);
+                }
+
+                else if(notification_type.equals("fota")){
+                    if(activityToBeOpened.equals("MediaTekFOTA")){
+                        Intent LaunchIntent = MySymphonyApp.getContext().getPackageManager().getLaunchIntentForPackage("com.mediatek.systemupdate");
+                        startActivity(LaunchIntent);
+                    }
+                    else if(activityToBeOpened.equals("SpedturmFOTA")){
+                        Intent LaunchIntent = MySymphonyApp.getContext().getPackageManager().getLaunchIntentForPackage("com.megafone.systemupdate");
+                        startActivity(LaunchIntent);
+                    }
+                }
+
+                else if(notification_type.equals("engage")){
+                    Intent intent = new Intent(MySymphonyApp.getContext(), NewsActivity.class);
+                    intent.putExtra("title", title);
+                    intent.putExtra("body", content);
+                    if(image_url != null){
+                        intent.putExtra("IMAGEURL", image_url);
+                    }
+                    startActivity(intent);
+                }
             }
         }));
 

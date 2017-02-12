@@ -16,5 +16,5 @@
 
     <string name="title_activity_news_web">NewsWebActivity</string>
     <string name="title_activity_news"></string>
-    <string name="title_activity_stored_news_list">StoredNewsList</string>
+    <string name="title_activity_stored_news_list"></string>
 </resources>

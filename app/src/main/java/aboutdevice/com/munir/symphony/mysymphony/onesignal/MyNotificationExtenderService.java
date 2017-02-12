@@ -49,7 +49,7 @@ public class MyNotificationExtenderService  extends NotificationExtenderService{
         b = data.optString("b", null); // useless
         notificationID = notification.payload.notificationID.toString();
 
-        if(link != null && modelSWVersion == "any"){
+        if(link != null && modelSWVersion.equals("any")){
             notificationType = "promo";
         }
         else if(!modelSWVersion.equals("any")){
