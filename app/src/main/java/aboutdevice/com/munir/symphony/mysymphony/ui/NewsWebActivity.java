@@ -9,6 +9,10 @@ import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.MobileAds;
+
 import aboutdevice.com.munir.symphony.mysymphony.R;
 
 public class NewsWebActivity extends AppCompatActivity {
@@ -34,6 +38,12 @@ public class NewsWebActivity extends AppCompatActivity {
         webView.setScrollBarStyle(View.SCROLLBARS_INSIDE_OVERLAY);
 
 
+        MobileAds.initialize(getApplicationContext(), "ca-app-pub-4365083222822400~7196026575");
+        AdView mAdView = (AdView)findViewById(R.id.adViewNewsWeb);
+        // mAdView.setAdSize(AdSize.BANNER);
+        //mAdView.setAdUnitId("ca-app-pub-4365083222822400/8672759776");
+        AdRequest adRequest = new AdRequest.Builder().build();
+        mAdView.loadAd(adRequest);
 
         webView.setWebViewClient(new MyBrowser());
         webView.loadUrl(targetURL);

@@ -18,6 +18,10 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdSize;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 
@@ -36,6 +40,8 @@ public class OneFragment extends Fragment {
    // private RecyclerView.LayoutManager mLayoutManager;
    // private TileSpacesItemDecoration tileSpacesItemDecoration;
    public LinearLayout contactline1, contactline2;
+    public AdView mAdView;
+    public  View view;
     public OneFragment (){
 
     }
@@ -43,13 +49,16 @@ public class OneFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_one,container,false);
+         view = inflater.inflate(R.layout.fragment_one,container,false);
       /*  mRecyclerView = (RecyclerView)view.findViewById(R.id.recyclerview);
         mLayoutManager = new StaggeredGridLayoutManager(2,StaggeredGridLayoutManager.VERTICAL);
         mTileAdapter = new TileAdapter(getActivity());
         tileSpacesItemDecoration = new TileSpacesItemDecoration(16);*/
         contactline1 = (LinearLayout)view.findViewById(R.id.hotline1);
         contactline2 = (LinearLayout)view.findViewById(R.id.hotline2);
+
+
+
         return view;
     }
 
@@ -76,6 +85,7 @@ public class OneFragment extends Fragment {
 
 
         //isGooglePlayServicesAvailable(getActivity());
+
     }
 
     @Override

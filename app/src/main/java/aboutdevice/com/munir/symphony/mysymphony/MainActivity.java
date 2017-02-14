@@ -29,6 +29,9 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.firebase.database.DatabaseReference;
@@ -74,6 +77,8 @@ public class MainActivity extends BaseActivity {
     private FetchJson fetchJson;
     private  boolean modelFound;
     private Button newsButton;
+    public AdView mAdView;
+
 
 
 
@@ -88,7 +93,11 @@ public class MainActivity extends BaseActivity {
         setSupportActionBar(toolbar);
         invalidateOptionsMenu();
 
+
+
+
         newsButton = (Button)findViewById(R.id.buttonNews) ;
+
 
         modelName = getSystemProperty("ro.product.device");
         fetchJson = new FetchJson(getContext());
@@ -149,9 +158,16 @@ public class MainActivity extends BaseActivity {
                         .setAction("Action", null).show();
             }
         });*/
+
         isGooglePlayServicesAvailable(this);
         MainActivity.super.requestAppPermissions(permisionList, R.string.runtime_permissions_txt, permsRequestCode);
 
+        MobileAds.initialize(getContext(), "ca-app-pub-4365083222822400~7196026575");
+        mAdView = (AdView)findViewById(R.id.adView);
+        // mAdView.setAdSize(AdSize.BANNER);
+        //mAdView.setAdUnitId("ca-app-pub-4365083222822400/8672759776");
+        AdRequest adRequest = new AdRequest.Builder().build();
+        mAdView.loadAd(adRequest);
     }
 
     @Override

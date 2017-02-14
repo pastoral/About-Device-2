@@ -14,4 +14,7 @@ public class Constants {
     public static final int permsRequestCode = 20;
     public static String[] permisionList = { "android.permission.ACCESS_FINE_LOCATION" , "android.permission.ACCESS_COARSE_LOCATION", "android.permission.INTERNET", "android.permission.ACCESS_NETWORK_STATE"};
     public static boolean isFirebaseReady = false;
+    public static final String CONFIG_IS_ADMOB_ON = "is_admob_on";
+    public static final String CONFIG_DISABLE_ADMOB_FOR = "disable_admob_for";
+   // public static final String CONFIG_COLOR_PRIMARY_ORANGE = "disable_admob_for";
 }

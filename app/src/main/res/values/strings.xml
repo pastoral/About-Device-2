@@ -17,4 +17,6 @@
     <string name="title_activity_news_web">NewsWebActivity</string>
     <string name="title_activity_news"></string>
     <string name="title_activity_stored_news_list"></string>
+    <string name="main_ad_id">ca-app-pub-4365083222822400/8672759776</string>
+    <string name="news_ad_id">ca-app-pub-4365083222822400/5102014575</string>
 </resources>

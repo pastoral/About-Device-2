@@ -54,6 +54,17 @@
                         android:layout_marginStart="10dp"
                         android:layout_marginTop="34dp"
                         android:id="@+id/txtbody" />
+                <TextView
+                    android:text="Promotion going on... "
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="34dp"
+                    android:textColor="#BF360C"
+                    android:id="@+id/txtconfig"
+                    android:layout_below="@+id/txtbody"
+                    android:visibility="gone"/>
             </RelativeLayout>
 
         </android.support.v7.widget.CardView>
