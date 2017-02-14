@@ -24,6 +24,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import aboutdevice.com.munir.symphony.mysymphony.R;
+import aboutdevice.com.munir.symphony.mysymphony.firebase.RemoteConfig;
 
 import static aboutdevice.com.munir.symphony.mysymphony.MySymphonyApp.getContext;
 
@@ -34,6 +35,7 @@ public class NewsActivity extends AppCompatActivity {
     public String sBody = "";
     private AdView mAdView;
     private FirebaseRemoteConfig mFirebaseRemoteConfig;
+    private RemoteConfig remoteConfig;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,6 +43,7 @@ public class NewsActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         ImageView image_banner = (ImageView)findViewById(R.id.image_banner);
         setSupportActionBar(toolbar);
+        remoteConfig = new RemoteConfig();
         title = (TextView)findViewById(R.id.txttitle) ;
         body = (TextView)findViewById(R.id.txtbody) ;
         promo_view = (TextView)findViewById(R.id.txtconfig);
@@ -64,8 +67,8 @@ public class NewsActivity extends AppCompatActivity {
         mAdView = (AdView)findViewById(R.id.adViewNews);
         // mAdView.setAdSize(AdSize.BANNER);
         //mAdView.setAdUnitId("ca-app-pub-4365083222822400/8672759776");
-        AdRequest adRequest = new AdRequest.Builder().build();
-        mAdView.loadAd(adRequest);
+        mFirebaseRemoteConfig = remoteConfig.getmFirebaseRemoteConfig();
+        fetchRemoteConfig();
 
         if(bundle.getString("IMAGEURL") != null){
             Picasso.with(getApplicationContext()).load(bundle.getString("IMAGEURL")).into(image_banner);
@@ -73,15 +76,7 @@ public class NewsActivity extends AppCompatActivity {
 
 
 
-        mFirebaseRemoteConfig = FirebaseRemoteConfig.getInstance();
-        FirebaseRemoteConfigSettings remoteConfigSettings = new FirebaseRemoteConfigSettings.Builder()
-                .setDeveloperModeEnabled(true)
-                .build();
-        mFirebaseRemoteConfig.setConfigSettings(remoteConfigSettings);
 
-        mFirebaseRemoteConfig.setDefaults(R.xml.remote_config);
-
-        fetchRemoteConfig();
     }
 
     private void fetchRemoteConfig() {
@@ -93,29 +88,37 @@ public class NewsActivity extends AppCompatActivity {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 if(task.isSuccessful()){
-                    Toast.makeText(NewsActivity.this, "Fetch Succeeded",
-                            Toast.LENGTH_SHORT).show();
+
                     mFirebaseRemoteConfig.activateFetched();
-                    String m = null;
+
                 }
                 else{
-                    Toast.makeText(NewsActivity.this, "Fetch Failed",
-                            Toast.LENGTH_SHORT).show();
+
                 }
-                updateUIRemote();
+                loadAdvertige();
             }
         });
     }
 
-    private void updateUIRemote() {
-        boolean isPromoOn = mFirebaseRemoteConfig.getBoolean("is_promotion_on");
-        String pro_devices = "R100,ZVII,L23,L26,M95";
-        List<String> pro_device_list = Arrays.asList(pro_devices.split("\\s*,\\s*"));
-        if(isPromoOn){
-            promo_view.setVisibility(View.VISIBLE);
+    private void loadAdvertige() {
+        boolean modelExists = false;
+        boolean isAdmobOn = mFirebaseRemoteConfig.getBoolean("is_admob_on");
+        String restrictedDevices = mFirebaseRemoteConfig.getString("disable_admob_for");
+        List<String> restricted_device_list = Arrays.asList(restrictedDevices.split("\\s*,\\s*"));
+        if(isAdmobOn){
+            modelExists = restricted_device_list.contains(remoteConfig.getModelName());
+            if(modelExists){
+               return;
+            }
+            else{
+                AdRequest adRequest = new AdRequest.Builder().build();
+                mAdView.loadAd(adRequest);
+            }
         }
+
         else{
-            promo_view.setVisibility(View.GONE);
+            return;
         }
+
     }
 }
