@@ -91,14 +91,14 @@ public class MainActivity extends BaseActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        setTheme(R.style.AppTheme_NoActionBar);
+        //setTheme(R.style.AppTheme_NoActionBar);
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_main);
         remoteConfig = new RemoteConfig();
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.main_toolbar);
-        setSupportActionBar(toolbar);
+       // setSupportActionBar(toolbar);
         invalidateOptionsMenu();
 
 
