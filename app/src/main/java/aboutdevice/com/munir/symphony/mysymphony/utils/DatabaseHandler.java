@@ -2,10 +2,13 @@ package aboutdevice.com.munir.symphony.mysymphony.utils;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.database.sqlite.SQLiteStatement;
+import android.text.TextUtils;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -180,7 +183,47 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         }
 
         return notificationList;
+    }
 
+    public int getMinRowId(){
+        int rowid = 1;
+        SQLiteDatabase db = getReadableDatabase();
+        String query = "SELECT MIN(" + key_id +") FROM " + TABLE_NOTIFICATIONS ;
+        Cursor cursor = db.rawQuery(query, null);
+        if(cursor != null){
+            cursor.moveToFirst();
+            rowid = Integer.parseInt(cursor.getString(0));
+        }
 
+        return rowid;
+    }
+
+    public void deleteRows(List rewsToDeleteArray){
+       // String idCSV = TextUtils.join("," , rewsToDeleteArray);
+        String idCSV = TextUtils.join("," , rewsToDeleteArray);
+        SQLiteDatabase db = getWritableDatabase();
+        if(db != null){
+            db.delete(TABLE_NOTIFICATIONS, " key_id " + " IN ( " +idCSV +" )" , null);
+            db.close();
+        }
+    }
+
+    public List<NotificationStore> getAllNotificationKeys(){
+        List<NotificationStore> notificationList = new ArrayList<NotificationStore>();
+        String selectQuery = "SELECT " + key_id + " FROM " +TABLE_NOTIFICATIONS;
+
+        SQLiteDatabase db = getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+        // looping through all rows and adding to list
+        if(cursor.moveToFirst()){
+            do{
+                NotificationStore notificationStore = new NotificationStore();
+                notificationStore.setId(Integer.parseInt(cursor.getString(0)));
+
+                notificationList.add(notificationStore);
+            }while(cursor.moveToNext());
+        }
+
+        return notificationList;
     }
 }

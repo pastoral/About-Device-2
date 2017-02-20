@@ -15,7 +15,9 @@ import org.json.JSONObject;
 
 import java.math.BigInteger;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 import aboutdevice.com.munir.symphony.mysymphony.MainActivity;
 import aboutdevice.com.munir.symphony.mysymphony.MySymphonyApp;
@@ -36,6 +38,12 @@ public class MyNotificationExtenderService  extends NotificationExtenderService{
     boolean returnVal;
     JSONObject data;
     DatabaseHandler databaseHandler;
+    int totalSize, rowId;
+    List<Integer> rowsToDelete;
+    ArrayList<NotificationStore> notificationStoreKeyList;
+
+    int maxStoredNews = 7;
+
     @Override
     protected boolean onNotificationProcessing(OSNotificationReceivedResult notification) {
         data = notification.payload.additionalData;
@@ -48,6 +56,7 @@ public class MyNotificationExtenderService  extends NotificationExtenderService{
         t = data.optString("t", null); // useless
         b = data.optString("b", null); // useless
         notificationID = notification.payload.notificationID.toString();
+
 
         if(link != null && modelSWVersion.equals("any")){
             notificationType = "promo";
@@ -63,6 +72,13 @@ public class MyNotificationExtenderService  extends NotificationExtenderService{
         OverrideSettings overrideSettings = new OverrideSettings();
 
         databaseHandler = new DatabaseHandler(getApplicationContext());
+
+        //int minKey = databaseHandler.getMinRowId();
+        rowsToDelete = null;
+       // if(databaseHandler.getNotificationCount() > maxStoredNews) {
+         //   autoDeleteFromList();
+        //}
+
 
         if (modelSWVersion != null && (modelSWVersion.equals(getSystemProperty("ro.custom.build.version"))) || (modelSWVersion.equals(getSystemProperty("ro.build.display.id")))) {
             if(!databaseHandler.CheckIsDataAlreadyInDBorNot(DatabaseHandler.notification_id, notificationID)){
@@ -105,6 +121,7 @@ public class MyNotificationExtenderService  extends NotificationExtenderService{
             Log.d("OneSignalExample", "Notification displayed with id: " + displayedResult.androidNotificationId);
         }
        // databaseHandler.deleteAll(new NotificationStore(title,body,activityToBeOpened,modelSWVersion,t,b,link,bigPicture,new SimpleDateFormat("yyyyMMdd_HHmmss").format(Calendar.getInstance().getTime()),notificationID, notificationType));
+        totalSize = (int)databaseHandler.getNotificationCount();
         databaseHandler.close();
         return true;
     }
@@ -128,4 +145,6 @@ public class MyNotificationExtenderService  extends NotificationExtenderService{
         databaseHandler.addNotification(new NotificationStore(title,body,activityToBeOpened,modelSWVersion,t,b,link,bigPicture,new SimpleDateFormat("yyyyMMdd_HHmmss").format(Calendar.getInstance().getTime()),notificationID,notificationType));
         String temp = null;
     }
+
+
 }

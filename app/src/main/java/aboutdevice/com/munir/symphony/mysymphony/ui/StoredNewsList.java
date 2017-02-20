@@ -15,6 +15,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -30,12 +31,18 @@ import aboutdevice.com.munir.symphony.mysymphony.utils.DividerItemDecoration;
 import aboutdevice.com.munir.symphony.mysymphony.utils.RecyclerTouchListener;
 
 public class StoredNewsList extends AppCompatActivity {
-    DatabaseHandler databaseHandler;
+    //DatabaseHandler databaseHandler;
     RecyclerView notificationRecyclerView;
     private RecyclerView.Adapter mAdapter;
     private List<NotificationStore> notificationStoreList , sortedNotificationStoreList;
     LinearLayoutManager lm;
     //FastItemAdapter notificationStoreFastItemAdapter;
+    DatabaseHandler databaseHandler;
+    int totalSize, rowId;
+    List<Integer> rowsToDelete;
+    ArrayList<NotificationStore> notificationStoreKeyList;
+
+    int maxStoredNews = 7;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,7 +57,7 @@ public class StoredNewsList extends AppCompatActivity {
         lm.setOrientation(LinearLayoutManager.VERTICAL);
         notificationRecyclerView.setLayoutManager(lm);
         notificationRecyclerView.setHasFixedSize(true);
-
+        rowsToDelete = new ArrayList<Integer>();
         //  notificationStoreFastItemAdapter = new FastItemAdapter();
       /*  FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -73,6 +80,9 @@ public class StoredNewsList extends AppCompatActivity {
 
         // notificationRecyclerView.setAdapter(notificationStoreFastItemAdapter);
         notificationStoreList = databaseHandler.getAllNotifications();
+       /*  if( databaseHandler.getNotificationCount() > maxStoredNews) {
+           autoDeleteFromList();
+        }*/
 
     }
 
@@ -144,6 +154,30 @@ public class StoredNewsList extends AppCompatActivity {
                 }
             }
         }));
+
+    }
+
+    public void autoDeleteFromList (){
+        notificationStoreKeyList = (ArrayList<NotificationStore>) databaseHandler.getAllNotificationKeys();
+        // NotificationStore[] notificationStoreKey= (NotificationStore[]) notificationStoreKeyList.toArray();
+        int [] notificationStoreKeyArray = new int[notificationStoreKeyList.size()];
+        for(int i =0; i <=notificationStoreKeyArray.length; i++ ){
+            try {
+                notificationStoreKeyArray[i] = notificationStoreKeyList.get(i).getId();
+                // notificationStoreKeyArray[i] = Integer.parseInt(notificationStoreKeyList.get(i).toString());
+                // String m = null;
+            }
+            catch (IndexOutOfBoundsException e){
+                e.printStackTrace();
+            }
+        }
+
+        int j = notificationStoreKeyArray.length;
+
+        for(int i = 0; i <=notificationStoreKeyArray.length - maxStoredNews; i++){
+            rowsToDelete.add(notificationStoreKeyArray[i]);
+        }
+        databaseHandler.deleteRows(rowsToDelete);
 
     }
 
