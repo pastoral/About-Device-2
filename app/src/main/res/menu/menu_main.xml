@@ -3,4 +3,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="aboutdevice.com.munir.symphony.mysymphony.MainActivity">
 
+    <item
+        android:id="@+id/action_news"
+        android:orderInCategory="100"
+        android:title="News"
+        app:showAsAction="never|ifRoom" />
+
 </menu>

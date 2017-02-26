@@ -10,7 +10,6 @@
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context=".MainActivity"
     tools:showIn="@layout/activity_main">
-
     <android.support.v7.widget.RecyclerView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -34,256 +33,261 @@
             android:layout_height="match_parent"
             android:orientation="vertical">
 
-                <LinearLayout
-                    android:orientation="horizontal"
-                    android:layout_marginTop="10dp"
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_marginTop="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <android.support.v7.widget.CardView
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-                    <android.support.v7.widget.CardView
+                    android:layout_height="wrap_content"
+                    android:minHeight="140dp"
+                    card_view:cardUseCompatPadding="true"
+                    >
+                    <RelativeLayout
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:minHeight="140dp"
-                        card_view:cardUseCompatPadding="true"
-                        >
+                        android:layout_height="wrap_content">
+                        <ImageView
+                            android:id="@+id/countryImage"
+                            android:layout_width="match_parent"
+                            android:layout_height="140dp"
+                            android:scaleType="centerCrop"
+                            android:layout_centerInParent="true"
+                            android:src="@drawable/headers"
+
+                            />
                         <RelativeLayout
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content">
-                            <ImageView
-                                android:id="@+id/countryImage"
+                            android:layout_height="90dp"
+                            android:layout_marginTop="50dp"
+                            android:background="#ffffff"
+                            android:alpha=".6">
+
+
+
+                            <TextView
                                 android:layout_width="match_parent"
-                                android:layout_height="140dp"
-                                android:scaleType="centerCrop"
-                                android:layout_centerInParent="true"
-                                android:src="@drawable/headers"
+                                android:layout_height="wrap_content"
+                                android:textSize="19sp"
+                                android:text="Hotline Numbers"
+                                android:textStyle="bold"
+                                android:id="@+id/hotlinetext"
+                                android:layout_marginLeft="7dp"
+                                android:textColor="#000003"
 
                                 />
-                            <RelativeLayout
+                            <View
                                 android:layout_width="match_parent"
-                                android:layout_height="90dp"
-                                android:layout_marginTop="50dp"
-                                android:background="#ffffff"
-                                android:alpha=".6">
+                                android:layout_height="2dp"
+                                android:background="@color/colorViewLine"
+                                android:layout_margin="1dp"
+                                android:id="@+id/hotlineview"
+                                android:layout_below="@+id/hotlinetext"
+
+                                />
+
+                            <TextView
+                                android:text="Hotline 1 : "
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_centerVertical="true"
+                                android:layout_alignStart="@+id/hotlinetext"
+                                android:id="@+id/labelHotline1"
+                                android:textAppearance="@style/TextAppearance.AppCompat.Body2" />
 
 
 
+
+                            <TextView
+                                android:text="Hotline 2 : "
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentBottom="true"
+                                android:layout_alignStart="@+id/hotlinetext"
+                                android:layout_marginBottom="10dp"
+                                android:id="@+id/labelHotline2"
+                                android:textAppearance="@style/TextAppearance.AppCompat.Body2" />
+
+                            <LinearLayout
+                                android:orientation="horizontal"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:id="@+id/hotline1"
+                                android:layout_alignTop="@+id/labelHotline1"
+                                android:layout_toEndOf="@+id/labelHotline1"
+                                android:background="@drawable/textchips">
                                 <TextView
-                                    android:layout_width="match_parent"
+                                    android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:textSize="19sp"
-                                    android:text="Hotline Numbers"
+                                    android:text="16272"
+                                    android:id="@+id/txtHotline1"
                                     android:textStyle="bold"
-                                    android:id="@+id/hotlinetext"
-                                    android:layout_marginLeft="7dp"
-                                    android:textColor="#000003"
+                                    android:textSize="18sp" />
+                                <ImageView
+                                    android:layout_height="25dp"
+                                    android:layout_width="25dp"
+                                    android:src="@drawable/phoneicon"
+                                    android:layout_gravity="center_vertical"
+                                    android:layout_marginLeft="3dp"
+                                    android:layout_marginRight="5dp" />
 
-                                    />
-                                <View
-                                    android:layout_width="match_parent"
-                                    android:layout_height="2dp"
-                                    android:background="@color/colorViewLine"
-                                    android:layout_margin="1dp"
-                                    android:id="@+id/hotlineview"
-                                    android:layout_below="@+id/hotlinetext"
+                            </LinearLayout>
 
-                                    />
-
+                            <LinearLayout
+                                android:orientation="horizontal"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_alignTop="@+id/labelHotline2"
+                                android:layout_toEndOf="@+id/labelHotline2"
+                                android:id="@+id/hotline2"
+                                android:background="@drawable/textchips">
                                 <TextView
-                                    android:text="Hotline 1 : "
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:layout_centerVertical="true"
-                                    android:layout_alignStart="@+id/hotlinetext"
-                                    android:id="@+id/labelHotline1"
-                                    android:textAppearance="@style/TextAppearance.AppCompat.Body2" />
+                                    android:text=" 09666700666"
+                                    android:id="@+id/txtHotline2"
+                                    android:textStyle="bold"
+                                    android:textSize="18sp" />
+                                <ImageView
+                                    android:layout_height="25dp"
+                                    android:layout_width="25dp"
+                                    android:src="@drawable/phoneicon"
+                                    android:layout_gravity="center_vertical"
+                                    android:layout_marginLeft="3dp"
+                                    android:layout_marginRight="5dp" />
+                            </LinearLayout>
 
 
-
-
-                                <TextView
-                                    android:text="Hotline 2 : "
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_alignParentBottom="true"
-                                    android:layout_alignStart="@+id/hotlinetext"
-                                    android:layout_marginBottom="10dp"
-                                    android:id="@+id/labelHotline2"
-                                    android:textAppearance="@style/TextAppearance.AppCompat.Body2" />
-
-                                <LinearLayout
-                                    android:orientation="horizontal"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:id="@+id/hotline1"
-                                    android:layout_alignTop="@+id/labelHotline1"
-                                    android:layout_toEndOf="@+id/labelHotline1"
-                                    android:background="@drawable/textchips">
-                                    <TextView
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:text="16272"
-                                        android:id="@+id/txtHotline1"
-                                        android:textStyle="bold"
-                                        android:textSize="18sp" />
-                                    <ImageView
-                                        android:layout_height="25dp"
-                                        android:layout_width="25dp"
-                                        android:src="@drawable/phoneicon"
-                                        android:layout_gravity="center_vertical"
-                                        android:layout_marginLeft="3dp"
-                                        android:layout_marginRight="5dp" />
-
-                                </LinearLayout>
-
-                                <LinearLayout
-                                    android:orientation="horizontal"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_alignTop="@+id/labelHotline2"
-                                    android:layout_toEndOf="@+id/labelHotline2"
-                                    android:id="@+id/hotline2"
-                                    android:background="@drawable/textchips">
-                                    <TextView
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:text=" 09666700666"
-                                        android:id="@+id/txtHotline2"
-                                        android:textStyle="bold"
-                                        android:textSize="18sp" />
-                                    <ImageView
-                                        android:layout_height="25dp"
-                                        android:layout_width="25dp"
-                                        android:src="@drawable/phoneicon"
-                                        android:layout_gravity="center_vertical"
-                                        android:layout_marginLeft="3dp"
-                                        android:layout_marginRight="5dp" />
-                                </LinearLayout>
-
-
-                            </RelativeLayout>
                         </RelativeLayout>
-                    </android.support.v7.widget.CardView>
-                </LinearLayout>
+                    </RelativeLayout>
+                </android.support.v7.widget.CardView>
+            </LinearLayout>
 
 
-                <LinearLayout
-                    android:orientation="horizontal"
-                    android:layout_marginTop="8dp"
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_marginTop="8dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/feature_area"
+                android:onClick="loadFeatureFragment"
+                android:visibility="gone">
+                <android.support.v7.widget.CardView
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-                    <android.support.v7.widget.CardView
+                    android:layout_height="wrap_content"
+                    android:minHeight="120dp"
+                    card_view:cardUseCompatPadding="true"
+                    >
+                    <RelativeLayout
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:minHeight="120dp"
-                        card_view:cardUseCompatPadding="true"
-                        >
+                        android:layout_height="wrap_content">
+                        <ImageView
+                            android:layout_width="match_parent"
+                            android:layout_height="120dp"
+                            android:scaleType="centerCrop"
+                            android:layout_centerInParent="true"
+                            android:src="@drawable/features"
+                            />
                         <RelativeLayout
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content">
-                            <ImageView
+                            android:layout_height="70dp"
+                            android:layout_marginTop="50dp"
+                            android:background="#ffffff"
+                            android:alpha=".6">
+
+                            <TextView
                                 android:layout_width="match_parent"
-                                android:layout_height="120dp"
-                                android:scaleType="centerCrop"
-                                android:layout_centerInParent="true"
-                                android:src="@drawable/features"
+                                android:layout_height="wrap_content"
+                                android:textSize="19sp"
+                                android:text="Feature"
+                                android:textStyle="bold"
+                                android:id="@+id/txtFeature"
+                                android:layout_marginLeft="7dp"
+                                android:textColor="#000003"
+
                                 />
-                            <RelativeLayout
+                            <View
                                 android:layout_width="match_parent"
-                                android:layout_height="70dp"
-                                android:layout_marginTop="50dp"
-                                android:background="#ffffff"
-                                android:alpha=".6">
+                                android:layout_height="2dp"
+                                android:background="@color/colorViewLine"
+                                android:layout_margin="1dp"
+                                android:layout_below="@+id/txtFeature"
+                                />
 
-                                <TextView
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:textSize="19sp"
-                                    android:text="Feature"
-                                    android:textStyle="bold"
-                                    android:id="@+id/txtFeature"
-                                    android:layout_marginLeft="7dp"
-                                    android:textColor="#000003"
-
-                                    />
-                                <View
-                                    android:layout_width="match_parent"
-                                    android:layout_height="2dp"
-                                    android:background="@color/colorViewLine"
-                                    android:layout_margin="1dp"
-                                    android:layout_below="@+id/txtFeature"
-                                    />
-
-                                <TextView
-                                    android:text="See all the features"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_alignParentStart="true"
-                                    android:layout_marginStart="10dp"
-                                    android:layout_marginTop="34dp"
-                                    android:id="@+id/textView3" />
-                            </RelativeLayout>
+                            <TextView
+                                android:text="See all the features"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentStart="true"
+                                android:layout_marginStart="10dp"
+                                android:layout_marginTop="34dp"
+                                android:id="@+id/textView3" />
                         </RelativeLayout>
-                    </android.support.v7.widget.CardView>
-                </LinearLayout>
+                    </RelativeLayout>
+                </android.support.v7.widget.CardView>
+            </LinearLayout>
 
-                <LinearLayout
-                    android:orientation="horizontal"
-                    android:layout_marginTop="8dp"
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_marginTop="8dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:onClick="loadContactFragment"
+                android:id="@+id/contact_area">
+                <android.support.v7.widget.CardView
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-                    <android.support.v7.widget.CardView
+                    android:layout_height="wrap_content"
+                    android:minHeight="120dp"
+                    card_view:cardUseCompatPadding="true"
+                    >
+                    <RelativeLayout
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:minHeight="120dp"
-                        card_view:cardUseCompatPadding="true"
-                        >
+                        android:layout_height="wrap_content">
+                        <ImageView
+                            android:layout_width="match_parent"
+                            android:layout_height="120dp"
+                            android:scaleType="centerCrop"
+                            android:layout_centerInParent="true"
+                            android:src="@drawable/customer_care"
+                            />
                         <RelativeLayout
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content">
-                            <ImageView
+                            android:layout_height="70dp"
+                            android:layout_marginTop="50dp"
+                            android:background="#ffffff"
+                            android:alpha=".6">
+
+                            <TextView
                                 android:layout_width="match_parent"
-                                android:layout_height="120dp"
-                                android:scaleType="centerCrop"
-                                android:layout_centerInParent="true"
-                                android:src="@drawable/customer_care"
+                                android:layout_height="wrap_content"
+                                android:textSize="19sp"
+                                android:text="Customer Care"
+                                android:textStyle="bold"
+                                android:id="@+id/txtCcustomerCare"
+                                android:layout_marginLeft="7dp"
+                                android:textColor="#000003"
+
                                 />
-                            <RelativeLayout
+                            <View
                                 android:layout_width="match_parent"
-                                android:layout_height="70dp"
-                                android:layout_marginTop="50dp"
-                                android:background="#ffffff"
-                                android:alpha=".6">
+                                android:layout_height="2dp"
+                                android:background="@color/colorViewLine"
+                                android:layout_margin="1dp"
+                                android:layout_below="@+id/txtCcustomerCare"
+                                />
 
-                                <TextView
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:textSize="19sp"
-                                    android:text="Customer Care"
-                                    android:textStyle="bold"
-                                    android:id="@+id/txtCcustomerCare"
-                                    android:layout_marginLeft="7dp"
-                                    android:textColor="#000003"
-
-                                    />
-                                <View
-                                    android:layout_width="match_parent"
-                                    android:layout_height="2dp"
-                                    android:background="@color/colorViewLine"
-                                    android:layout_margin="1dp"
-                                    android:layout_below="@+id/txtCcustomerCare"
-                                    />
-
-                                <TextView
-                                    android:text="See all the Customer care centers"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_alignParentStart="true"
-                                    android:layout_marginStart="10dp"
-                                    android:layout_marginTop="34dp"
-                                    android:id="@+id/textView4" />
-                            </RelativeLayout>
+                            <TextView
+                                android:text="See all the Customer care centers"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentStart="true"
+                                android:layout_marginStart="10dp"
+                                android:layout_marginTop="34dp"
+                                android:id="@+id/textView4" />
                         </RelativeLayout>
-                    </android.support.v7.widget.CardView>
-                </LinearLayout>
+                    </RelativeLayout>
+                </android.support.v7.widget.CardView>
+            </LinearLayout>
 
         </LinearLayout>
     </android.support.v4.widget.NestedScrollView>

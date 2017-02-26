@@ -2,6 +2,7 @@ package aboutdevice.com.munir.symphony.mysymphony;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
@@ -27,6 +28,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -81,11 +83,14 @@ public class MainActivity extends BaseActivity {
     private ThreeFragment threeFragment;
     private String modelName;
     private FetchJson fetchJson;
-    private  boolean modelFound;
+    public  boolean modelFound;
     private Button newsButton;
     public AdView mAdView;
     private FirebaseRemoteConfig mFirebaseRemoteConfig;
     private RemoteConfig remoteConfig;
+    private LinearLayout featureArea, contactArea;
+    private SectionAdapter sectionAdapter;
+
 
 
 
@@ -95,16 +100,19 @@ public class MainActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_main);
+        featureArea = (LinearLayout)findViewById(R.id.feature_area) ;
+        contactArea = (LinearLayout)findViewById(R.id.contact_area) ;
         remoteConfig = new RemoteConfig();
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.main_toolbar);
-       // setSupportActionBar(toolbar);
+        setSupportActionBar(toolbar);
         invalidateOptionsMenu();
+        //supportInvalidateOptionsMenu();
 
 
 
 
-        newsButton = (Button)findViewById(R.id.buttonNews) ;
+       // newsButton = (Button)findViewById(R.id.buttonNews) ;
 
 
         modelName = getSystemProperty("ro.product.device");
@@ -167,9 +175,9 @@ public class MainActivity extends BaseActivity {
             }
         });*/
 
-        isGooglePlayServicesAvailable(this);
-        MainActivity.super.requestAppPermissions(permisionList, R.string.runtime_permissions_txt, permsRequestCode);
 
+        MainActivity.super.requestAppPermissions(permisionList, R.string.runtime_permissions_txt, permsRequestCode);
+        isGooglePlayServicesAvailable(this);
         MobileAds.initialize(getContext(), "ca-app-pub-4365083222822400~7196026575");
         mAdView = (AdView)findViewById(R.id.adView);
         // mAdView.setAdSize(AdSize.BANNER);
@@ -194,10 +202,11 @@ public class MainActivity extends BaseActivity {
      */
 
     private void setupViewPager(ViewPager viewPager) {
-        SectionAdapter sectionAdapter = new SectionAdapter(getSupportFragmentManager());
+        sectionAdapter = new SectionAdapter(getSupportFragmentManager());
         sectionAdapter.addFrag(new OneFragment(),"Home");
         if(modelFound) {
             sectionAdapter.addFrag(new TwoFragment(), "Feature");
+            //featureArea.setVisibility(View.VISIBLE);
         }
         sectionAdapter.addFrag(new ThreeFragment(), "Customer Care");
         sectionAdapter.addFrag(new FourFrgment(), "Contuct us");
@@ -298,6 +307,55 @@ public class MainActivity extends BaseActivity {
             return;
         }
 
+    }
+
+
+   /*
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+
+        if (id == R.id.action_news) {
+            Intent i = new Intent(getApplicationContext(), StoredNewsList.class);
+            startActivity(i);
+        }
+
+        return super.onOptionsItemSelected(item);
+    } */
+
+    public void loadFeatureFragment(View v){
+       // Fragment fg = new TwoFragment();
+       // FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+       // SectionAdapter sectionAdapter = new SectionAdapter(getSupportFragmentManager());
+       // fragmentTransaction.replace(mViewPager.getCurrentItem(),f);
+       // Intent i = new Intent(getContext(),fg.getClass());
+        //startActivity(i);
+       // int pos = sectionAdapter.getItemPosition(TwoFragment.class);
+        mViewPager.setCurrentItem(1);
+    }
+
+    public void loadContactFragment(View v){
+       // Fragment fg = new TwoFragment();
+       // FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+        // SectionAdapter sectionAdapter = new SectionAdapter(getSupportFragmentManager());
+        // fragmentTransaction.replace(mViewPager.getCurrentItem(),f);
+        // Intent i = new Intent(getContext(),fg.getClass());
+        //startActivity(i);
+       // int pos = sectionAdapter.getItemPosition(TwoFragment.class);
+        mViewPager.setCurrentItem(2);
     }
 
 }

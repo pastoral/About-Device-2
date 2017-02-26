@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import aboutdevice.com.munir.symphony.mysymphony.MainActivity;
 import aboutdevice.com.munir.symphony.mysymphony.MySymphonyApp;
 import aboutdevice.com.munir.symphony.mysymphony.R;
 import aboutdevice.com.munir.symphony.mysymphony.adapter.StoredNewsListAdapter;
@@ -41,8 +42,9 @@ public class StoredNewsList extends AppCompatActivity {
     int totalSize, rowId;
     List<Integer> rowsToDelete;
     ArrayList<NotificationStore> notificationStoreKeyList;
+    TextView noNitifaication;
 
-    int maxStoredNews = 7;
+    int maxStoredNews = 100;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,6 +57,8 @@ public class StoredNewsList extends AppCompatActivity {
         notificationRecyclerView = (RecyclerView) findViewById(R.id.notification_recycler);
          lm = new LinearLayoutManager(getApplicationContext());
         lm.setOrientation(LinearLayoutManager.VERTICAL);
+        noNitifaication = (TextView)findViewById(R.id.nonotification);
+        noNitifaication.setVisibility(View.INVISIBLE);
         notificationRecyclerView.setLayoutManager(lm);
         notificationRecyclerView.setHasFixedSize(true);
         rowsToDelete = new ArrayList<Integer>();
@@ -109,6 +113,9 @@ public class StoredNewsList extends AppCompatActivity {
         notificationRecyclerView.setAdapter(mAdapter);
 
         int curSize = mAdapter.getItemCount();
+        if(curSize < 1){
+            noNitifaication.setVisibility(View.VISIBLE);
+        }
         mAdapter.notifyDataSetChanged();
 
         notificationRecyclerView.addOnItemTouchListener(new RecyclerTouchListener(this, new RecyclerTouchListener.OnItemClickListener() {
@@ -181,10 +188,12 @@ public class StoredNewsList extends AppCompatActivity {
 
     }
 
-
-
-
-
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        Intent i = new Intent(getApplicationContext(), MainActivity.class);
+        startActivity(i);
+    }
 }
 
 

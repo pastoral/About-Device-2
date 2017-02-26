@@ -28,6 +28,16 @@
             app:expandedTitleMarginEnd="64dp"
 
             >
+            <Button
+                android:layout_width="50dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/buttonNews"
+                android:text="News"
+                android:layout_gravity="right"
+                android:background="?android:attr/selectableItemBackground"
+                android:onClick="loadNews"
+                app:layout_collapseMode = "pin"/>
+
 
             <ImageView
                 android:layout_width="match_parent"
@@ -49,14 +59,7 @@
                 android:gravity="top"
                 app:titleTextAppearance="@style/Toolbar.TitleText"
                 android:elevation="1dp">
-                <Button
-                    android:layout_width="50dp"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/buttonNews"
-                    android:text="News"
-                    android:layout_gravity="right"
-                    android:background="?android:attr/selectableItemBackground"
-                    android:onClick="loadNews"/>
+
             </android.support.v7.widget.Toolbar>
 
             <android.support.design.widget.TabLayout
