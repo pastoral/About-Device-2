@@ -89,7 +89,7 @@ public class MyNotificationExtenderService  extends NotificationExtenderService{
                 public NotificationCompat.Builder extend(NotificationCompat.Builder builder) {
                     // Sets the background notification color to Red on Android 5.0+ devices.
                     Bitmap icon = BitmapFactory.decodeResource(MySymphonyApp.getContext().getResources(),
-                            R.drawable.smiley);
+                            R.drawable.ic_launcher);
                     builder.setLargeIcon(icon);
                     return builder.setColor(new BigInteger("FF0000FF", 16).intValue());
                 }
@@ -111,7 +111,7 @@ public class MyNotificationExtenderService  extends NotificationExtenderService{
                 public NotificationCompat.Builder extend(NotificationCompat.Builder builder) {
                     // Sets the background notification color to Red on Android 5.0+ devices.
                     Bitmap icon = BitmapFactory.decodeResource(MySymphonyApp.getContext().getResources(),
-                            R.drawable.smiley);
+                            R.drawable.ic_launcher);
                     builder.setLargeIcon(icon);
                     return builder.setColor(new BigInteger("FF0000FF", 16).intValue());
                 }

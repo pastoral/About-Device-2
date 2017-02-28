@@ -2,6 +2,7 @@ package aboutdevice.com.munir.symphony.mysymphony.ui;
 
 import android.annotation.TargetApi;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -10,6 +11,7 @@ import android.view.View;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.ProgressBar;
 
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
@@ -28,6 +30,7 @@ import aboutdevice.com.munir.symphony.mysymphony.firebase.RemoteConfig;
 public class NewsWebActivity extends AppCompatActivity {
 
     public WebView webView;
+    public ProgressBar progressBar;
     private FirebaseRemoteConfig mFirebaseRemoteConfig;
     private RemoteConfig remoteConfig;
     private  AdView mAdView;
@@ -43,6 +46,7 @@ public class NewsWebActivity extends AppCompatActivity {
         Systray = bundle.getString("SYSTRAY");
 
         webView = (WebView)findViewById(R.id.webView);
+        progressBar = (ProgressBar)findViewById(R.id.webprogressbar) ;
 
 
 // Enable responsive layout
@@ -82,6 +86,18 @@ public class NewsWebActivity extends AppCompatActivity {
         public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
             view.loadUrl(request.getUrl().toString());
             return true;
+        }
+
+        @Override
+        public void onPageStarted(WebView view, String url, Bitmap favicon) {
+            super.onPageStarted(view, url, favicon);
+            progressBar.setVisibility(View.VISIBLE);
+        }
+
+        @Override
+        public void onPageFinished(WebView view, String url) {
+            super.onPageFinished(view, url);
+            progressBar.setVisibility(View.GONE);
         }
     }
 
