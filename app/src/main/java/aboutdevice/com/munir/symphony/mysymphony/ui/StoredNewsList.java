@@ -55,7 +55,7 @@ public class StoredNewsList extends AppCompatActivity {
         databaseHandler = new DatabaseHandler(getApplicationContext());
 
         notificationRecyclerView = (RecyclerView) findViewById(R.id.notification_recycler);
-         lm = new LinearLayoutManager(getApplicationContext());
+        lm = new LinearLayoutManager(getApplicationContext());
         lm.setOrientation(LinearLayoutManager.VERTICAL);
         noNitifaication = (TextView)findViewById(R.id.nonotification);
         noNitifaication.setVisibility(View.INVISIBLE);
@@ -94,12 +94,11 @@ public class StoredNewsList extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
-         Collections.reverse(notificationStoreList);
+        Collections.reverse(notificationStoreList);
         // Reading all contacts
         Log.d("Reading: ", "Reading all contacts..");
         // List<NotificationStore> notificationStoreList = databaseHandler.getAllNotifications();
         /*for (NotificationStore ns : notificationStoreList)
-
         {
             String log = "Title : " + ns.getNotification_title() + " , Content:  " + ns.getNotification_content() +
                     " , ctivityToBeOpened: " + ns.getActivityToBeOpened();
@@ -133,7 +132,7 @@ public class StoredNewsList extends AppCompatActivity {
                 String activityToBeOpened = ns.get(0).getActivityToBeOpened();
                 String notification_type = ns.get(0).getNotification_type();
 
-               if(notification_type.equals("promo")){
+                if(notification_type.equals("promo")){
                     Intent intent = new Intent(getApplication(),NewsWebActivity.class);
                     intent.putExtra("targetUrl", link);
                     startActivity(intent);
@@ -146,6 +145,10 @@ public class StoredNewsList extends AppCompatActivity {
                     }
                     else if(activityToBeOpened.equals("SpedturmFOTA")){
                         Intent LaunchIntent = MySymphonyApp.getContext().getPackageManager().getLaunchIntentForPackage("com.megafone.systemupdate");
+                        startActivity(LaunchIntent);
+                    }
+                    else if(activityToBeOpened.equals("UniversalFOTA")){
+                        Intent LaunchIntent = MySymphonyApp.getContext().getPackageManager().getLaunchIntentForPackage("com.google.android.gms");
                         startActivity(LaunchIntent);
                     }
                 }
@@ -195,5 +198,4 @@ public class StoredNewsList extends AppCompatActivity {
         startActivity(i);
     }
 }
-
 

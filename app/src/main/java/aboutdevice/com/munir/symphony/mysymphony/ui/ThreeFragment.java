@@ -134,6 +134,7 @@ public class ThreeFragment extends Fragment implements GoogleApiClient.Connectio
     protected final static String KEY_REQUESTING_LOCATION_UPDATES = "requesting-location-updates";
     protected final static String KEY_LOCATION = "location";
     protected final static String KEY_LAST_UPDATED_TIME_STRING = "last-updated-time-string";
+    private Snackbar snackbar;
 
     private boolean mapReady;
     public ThreeFragment (){
@@ -148,6 +149,7 @@ public class ThreeFragment extends Fragment implements GoogleApiClient.Connectio
         view = inflater.inflate(R.layout.fragment_three,container,false);
 
         //getContext().registerReceiver(gpsLocationReceiver, new IntentFilter("android.location.PROVIDERS_CHANGED"));
+
 
         buildGoogleApiClient();
 
@@ -257,7 +259,12 @@ public class ThreeFragment extends Fragment implements GoogleApiClient.Connectio
                         intent.putExtra("Latitude",String.valueOf(firebaseRecyclerAdapter.getItem(position).getLat()) );
                         intent.putExtra("Longitude" , String.valueOf(firebaseRecyclerAdapter.getItem(position).getLan()));
                         scrollToPosition = position ;
-                        startActivity(intent);
+                        if(haveNetworkConnection()) {
+                            startActivity(intent);
+                        }
+                        else{
+                            showSnack(false);
+                        }
                     }
                 }));
                 viewHolder.ccIcon.setImageDrawable(drawIcon(alphbetSelect(firebaseRecyclerAdapter.getItem(position).getName().toString())));
@@ -325,7 +332,7 @@ public class ThreeFragment extends Fragment implements GoogleApiClient.Connectio
             }
         });
 
-        gpsLocationReceiver = new BroadcastReceiver() {
+       /* gpsLocationReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
                 //here you can parse intent and get sms fields.
@@ -349,7 +356,7 @@ public class ThreeFragment extends Fragment implements GoogleApiClient.Connectio
                     updateUI();
                 }
             }
-        };
+        }; */
         IntentFilter filter = new IntentFilter("android.location.PROVIDERS_CHANGED");
         this.getContext().registerReceiver(gpsLocationReceiver, filter);
 
@@ -361,9 +368,9 @@ public class ThreeFragment extends Fragment implements GoogleApiClient.Connectio
     @Override
     public void onPause() {
         super.onPause();
-        this.getContext().unregisterReceiver(gpsLocationReceiver);
+       // this.getContext().unregisterReceiver(gpsLocationReceiver);
 
-        stopLocationUpdates();
+       // stopLocationUpdates();
 
 
     }
@@ -671,8 +678,8 @@ public class ThreeFragment extends Fragment implements GoogleApiClient.Connectio
         @Override
         protected Void doInBackground(Void... voids) {
             createLocationRequest();
-            buildLocationSettingRequest();
-            checkLocationSettings();
+            //buildLocationSettingRequest();
+            //checkLocationSettings();
             // fillDistanceMap();
             return null;
         }
@@ -788,7 +795,7 @@ public class ThreeFragment extends Fragment implements GoogleApiClient.Connectio
             message = "Good! Connected to Internet";
             color = Color.WHITE;
         }
-        Snackbar snackbar = Snackbar.make(view.findViewById(android.R.id.content), message, Snackbar.LENGTH_LONG);
+        snackbar = Snackbar.make(view, message, Snackbar.LENGTH_LONG);
         View sbView = snackbar.getView();
         TextView textView = (TextView)sbView.findViewById(android.support.design.R.id.snackbar_text);
         textView.setTextColor(color);

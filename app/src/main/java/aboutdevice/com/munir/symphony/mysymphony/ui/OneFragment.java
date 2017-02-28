@@ -1,5 +1,7 @@
 package aboutdevice.com.munir.symphony.mysymphony.ui;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
@@ -51,11 +53,29 @@ public class OneFragment extends Fragment {
         mLayoutManager = new StaggeredGridLayoutManager(2,StaggeredGridLayoutManager.VERTICAL);
         mTileAdapter = new TileAdapter(getActivity());
         tileSpacesItemDecoration = new TileSpacesItemDecoration(16);*/
-       // contactline1 = (LinearLayout)view.findViewById(R.id.hotline1);
-      //  contactline2 = (LinearLayout)view.findViewById(R.id.hotline2);
+        contactline1 = (LinearLayout)view.findViewById(R.id.hotline1);
+        contactline2 = (LinearLayout)view.findViewById(R.id.hotline2);
 
         featureArea = (LinearLayout)view.findViewById(R.id.feature_area) ;
         contactArea = (LinearLayout)view.findViewById(R.id.contact_area) ;
+
+        contactline1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(Intent.ACTION_DIAL);
+                intent.setData(Uri.parse("tel:16272"));
+                startActivity(intent);
+            }
+        });
+
+        contactline2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(Intent.ACTION_DIAL);
+                intent.setData(Uri.parse("tel:0966670066"));
+                startActivity(intent);
+            }
+        });
 
         return view;
     }
@@ -99,6 +119,7 @@ public class OneFragment extends Fragment {
 
 
         //isGooglePlayServicesAvailable(getActivity());
+
 
     }
 

@@ -38,8 +38,8 @@ public class MyNotificationOpenedHandler implements OneSignal.NotificationOpened
         //Else, if we have not set any additional data MainActivity is opened.
         if(data!= null){
             activityToBeOpened = data.optString("activityToBeOpened", null);
-           // String title = data.optString("t", null);
-           // String body = data.optString("b", null);
+            // String title = data.optString("t", null);
+            // String body = data.optString("b", null);
             String str1 = result.notification.payload.title;
             String str2 = result.notification.payload.body;
             if(activityToBeOpened != null && activityToBeOpened.equals("NewsActivity")){
@@ -47,7 +47,7 @@ public class MyNotificationOpenedHandler implements OneSignal.NotificationOpened
                 Intent intent = new Intent(MySymphonyApp.getContext(), NewsActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT | Intent.FLAG_ACTIVITY_NEW_TASK);
 
-               // intent.putExtra("title", title);
+                // intent.putExtra("title", title);
                 //intent.putExtra("body", body);
                 intent.putExtra("title", str1);
                 intent.putExtra("body", str2);
@@ -83,6 +83,12 @@ public class MyNotificationOpenedHandler implements OneSignal.NotificationOpened
             else if(activityToBeOpened != null && activityToBeOpened.equals("SpedturmFOTA")){
                 Log.i("OneSignalExample", "customkey set with value: " + activityToBeOpened);
                 Intent LaunchIntent = MySymphonyApp.getContext().getPackageManager().getLaunchIntentForPackage("com.megafone.systemupdate");
+                MySymphonyApp.getContext().startActivity(LaunchIntent);
+            }
+
+            else if(activityToBeOpened != null && activityToBeOpened.equals("UniversalFOTA")){
+                Log.i("OneSignalExample", "customkey set with value: " + activityToBeOpened);
+                Intent LaunchIntent = MySymphonyApp.getContext().getPackageManager().getLaunchIntentForPackage("com.google.android.gms");
                 MySymphonyApp.getContext().startActivity(LaunchIntent);
             }
 
