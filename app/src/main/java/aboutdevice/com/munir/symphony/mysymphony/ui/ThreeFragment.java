@@ -97,7 +97,7 @@ import static android.view.View.VISIBLE;
 public class ThreeFragment extends Fragment implements GoogleApiClient.ConnectionCallbacks,GoogleApiClient.OnConnectionFailedListener,
         LocationListener, ResultCallback<LocationSettingsResult> {
     public String name;
-    public int pos;
+    public int pos, scrollToPosition = 0;
     public ProgressBar progressBar, progressBarCC;
     public RecyclerView recyclerView;
     private List<CCAddress> ccAddressList;
@@ -256,6 +256,7 @@ public class ThreeFragment extends Fragment implements GoogleApiClient.Connectio
                         intent.putExtra("CCAddress", firebaseRecyclerAdapter.getItem(position).getAddress());
                         intent.putExtra("Latitude",String.valueOf(firebaseRecyclerAdapter.getItem(position).getLat()) );
                         intent.putExtra("Longitude" , String.valueOf(firebaseRecyclerAdapter.getItem(position).getLan()));
+                        scrollToPosition = position ;
                         startActivity(intent);
                     }
                 }));
@@ -263,7 +264,7 @@ public class ThreeFragment extends Fragment implements GoogleApiClient.Connectio
 
             }
         };
-        firebaseRecyclerAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver(){
+        /*firebaseRecyclerAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver(){
             @Override
             public void onItemRangeInserted(int positionStart, int itemCount) {
                 super.onItemRangeInserted(positionStart, itemCount);
@@ -273,8 +274,9 @@ public class ThreeFragment extends Fragment implements GoogleApiClient.Connectio
                     recyclerView.scrollToPosition(positionStart);
 
                 }
+                //recyclerView.scrollToPosition(positionStart);
             }
-        });
+        });*/
 
 
 
@@ -291,13 +293,19 @@ public class ThreeFragment extends Fragment implements GoogleApiClient.Connectio
         else{
             // Toast.makeText(getActivity(), "Got it",Toast.LENGTH_SHORT).show();
             isFirebaseReady = true;
+
+            if(scrollToPosition != 0){
+                mLinearLayoutManager.scrollToPositionWithOffset(scrollToPosition,0);
+            }
+            else{
+                mLinearLayoutManager.scrollToPositionWithOffset(0,0);
+            }
             recyclerView.setLayoutManager(mLinearLayoutManager);
             recyclerView.setItemAnimator(new DefaultItemAnimator());
             recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), LinearLayoutManager.VERTICAL));
             recyclerView.setAdapter(firebaseRecyclerAdapter);
+
             loadSP();
-
-
         }
 
 
@@ -695,6 +703,12 @@ public class ThreeFragment extends Fragment implements GoogleApiClient.Connectio
     public class NearestCCFinder extends AsyncTask<Void,Void,String>{
 
         @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+
+        }
+
+        @Override
         protected void onProgressUpdate(Void... values) {
             super.onProgressUpdate(values);
             progressBarCC.isIndeterminate();
@@ -712,8 +726,8 @@ public class ThreeFragment extends Fragment implements GoogleApiClient.Connectio
                     Map<String, Object> map = (Map<String,Object>)dataSnapshot.getValue();
                     //txtNearestCCAddress.setText(map.get("address").toString());
                     strNearestCCAddress = map.get("address").toString();
-                    nearestCCLat = Double.parseDouble(map.get("lat").toString());
-                    nearestCCLan = Double.parseDouble(map.get("lan").toString());
+                  //  nearestCCLat = Double.parseDouble(map.get("lat").toString());
+                    //nearestCCLan = Double.parseDouble(map.get("lan").toString());
                 }
 
                 @Override
@@ -748,7 +762,7 @@ public class ThreeFragment extends Fragment implements GoogleApiClient.Connectio
                 nearest_cc_card.setVisibility(GONE);
             }
             else {
-                nearest_cc_card.setVisibility(VISIBLE);
+                nearest_cc_card.setVisibility(GONE);
                 editor = sharedpreferences.edit();
                 editor.putString("NEARESTCC_ADDRESS", nearestCCAddress);
                 editor.putString("NEARESTCC_NAME", strNearestCCName);
@@ -757,7 +771,7 @@ public class ThreeFragment extends Fragment implements GoogleApiClient.Connectio
 
                 editor.commit();
                 txtNearestCCName.setText(strNearestCCName);
-                txtNearestCCAddress.setText(strNearestCCAddress);
+                txtNearestCCAddress.setText(nearestCCAddress);
             }
         }
     }
@@ -835,7 +849,7 @@ public class ThreeFragment extends Fragment implements GoogleApiClient.Connectio
     public void loadSP(){
         if(sharedpreferences.getString("NEARESTCC_ADDRESS", null) != null  && sharedpreferences.getString("NEARESTCC_NAME", null) != null){
 
-            nearest_cc_card.setVisibility(VISIBLE);
+            nearest_cc_card.setVisibility(GONE);
             txtNearestCCAddress.setText(sharedpreferences.getString("NEARESTCC_ADDRESS", null));
             txtNearestCCName.setText(sharedpreferences.getString("NEARESTCC_NAME", null));
 
