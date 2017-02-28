@@ -45,6 +45,7 @@ public class MyNotificationOpenedHandler implements OneSignal.NotificationOpened
             if(activityToBeOpened != null && activityToBeOpened.equals("NewsActivity")){
                 Log.i("OneSignalExample", "customkey set with value: " + activityToBeOpened);
                 Intent intent = new Intent(MySymphonyApp.getContext(), NewsActivity.class);
+                intent.putExtra("SYSTRAY","systray");
                 intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT | Intent.FLAG_ACTIVITY_NEW_TASK);
 
                 // intent.putExtra("title", title);
@@ -61,13 +62,16 @@ public class MyNotificationOpenedHandler implements OneSignal.NotificationOpened
             else if(activityToBeOpened != null && activityToBeOpened.equals("MainActivity")){
                 Log.i("OneSignalExample", "customkey set with value: " + activityToBeOpened);
                 Intent intent = new Intent(MySymphonyApp.getContext(), MainActivity.class);
+                intent.putExtra("SYSTRAY","systray");
                 intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT | Intent.FLAG_ACTIVITY_NEW_TASK);
                 MySymphonyApp.getContext().startActivity(intent);
             }
 
             else if(activityToBeOpened != null && activityToBeOpened.equals("MediaTekFOTA")){
                 Log.i("OneSignalExample", "customkey set with value: " + activityToBeOpened);
+
                 Intent LaunchIntent = MySymphonyApp.getContext().getPackageManager().getLaunchIntentForPackage("com.mediatek.systemupdate");
+                LaunchIntent.putExtra("SYSTRAY","systray");
                 MySymphonyApp.getContext().startActivity(LaunchIntent);
 
 
@@ -83,12 +87,14 @@ public class MyNotificationOpenedHandler implements OneSignal.NotificationOpened
             else if(activityToBeOpened != null && activityToBeOpened.equals("SpedturmFOTA")){
                 Log.i("OneSignalExample", "customkey set with value: " + activityToBeOpened);
                 Intent LaunchIntent = MySymphonyApp.getContext().getPackageManager().getLaunchIntentForPackage("com.megafone.systemupdate");
+                LaunchIntent.putExtra("SYSTRAY","systray");
                 MySymphonyApp.getContext().startActivity(LaunchIntent);
             }
 
             else if(activityToBeOpened != null && activityToBeOpened.equals("UniversalFOTA")){
                 Log.i("OneSignalExample", "customkey set with value: " + activityToBeOpened);
                 Intent LaunchIntent = MySymphonyApp.getContext().getPackageManager().getLaunchIntentForPackage("com.google.android.gms");
+                LaunchIntent.putExtra("SYSTRAY","systray");
                 MySymphonyApp.getContext().startActivity(LaunchIntent);
             }
 
@@ -96,6 +102,7 @@ public class MyNotificationOpenedHandler implements OneSignal.NotificationOpened
                 Intent intent = new Intent(MySymphonyApp.getContext(), NewsWebActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT | Intent.FLAG_ACTIVITY_NEW_TASK);
                 intent.putExtra("targetUrl", link);
+                intent.putExtra("SYSTRAY","systray");
                 MySymphonyApp.getContext().startActivity(intent);
             }
 

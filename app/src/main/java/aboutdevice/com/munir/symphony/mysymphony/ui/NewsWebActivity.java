@@ -1,6 +1,7 @@
 package aboutdevice.com.munir.symphony.mysymphony.ui;
 
 import android.annotation.TargetApi;
+import android.content.Intent;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -20,6 +21,7 @@ import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import java.util.Arrays;
 import java.util.List;
 
+import aboutdevice.com.munir.symphony.mysymphony.MainActivity;
 import aboutdevice.com.munir.symphony.mysymphony.R;
 import aboutdevice.com.munir.symphony.mysymphony.firebase.RemoteConfig;
 
@@ -29,6 +31,7 @@ public class NewsWebActivity extends AppCompatActivity {
     private FirebaseRemoteConfig mFirebaseRemoteConfig;
     private RemoteConfig remoteConfig;
     private  AdView mAdView;
+    String Systray;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,6 +40,7 @@ public class NewsWebActivity extends AppCompatActivity {
 
         Bundle bundle = getIntent().getExtras();
         String targetURL = bundle.getString("targetUrl");
+        Systray = bundle.getString("SYSTRAY");
 
         webView = (WebView)findViewById(R.id.webView);
 
@@ -122,5 +126,18 @@ public class NewsWebActivity extends AppCompatActivity {
             return;
         }
 
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        Intent i;
+        if(Systray == null){
+            i = new Intent(getApplicationContext(),StoredNewsList.class);
+        }
+        else{
+            i = new Intent(getApplicationContext(),MainActivity.class);
+        }
+        startActivity(i);
     }
 }

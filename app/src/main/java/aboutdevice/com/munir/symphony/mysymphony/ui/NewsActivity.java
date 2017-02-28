@@ -1,5 +1,6 @@
 package aboutdevice.com.munir.symphony.mysymphony.ui;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
@@ -23,6 +24,7 @@ import com.squareup.picasso.Picasso;
 import java.util.Arrays;
 import java.util.List;
 
+import aboutdevice.com.munir.symphony.mysymphony.MainActivity;
 import aboutdevice.com.munir.symphony.mysymphony.R;
 import aboutdevice.com.munir.symphony.mysymphony.firebase.RemoteConfig;
 
@@ -36,6 +38,7 @@ public class NewsActivity extends AppCompatActivity {
     private AdView mAdView;
     private FirebaseRemoteConfig mFirebaseRemoteConfig;
     private RemoteConfig remoteConfig;
+    public String Systray;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,6 +54,7 @@ public class NewsActivity extends AppCompatActivity {
         Bundle bundle = getIntent().getExtras();
         sTitle = bundle.getString("title");
          sBody = bundle.getString("body");
+        Systray = bundle.getString("SYSTRAY");
 
         title.setText(sTitle);
         body.setText(sBody);
@@ -120,5 +124,18 @@ public class NewsActivity extends AppCompatActivity {
             return;
         }
 
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        Intent i;
+        if(Systray == null){
+            i = new Intent(getApplicationContext(),StoredNewsList.class);
+        }
+        else{
+            i = new Intent(getApplicationContext(),MainActivity.class);
+        }
+        startActivity(i);
     }
 }
