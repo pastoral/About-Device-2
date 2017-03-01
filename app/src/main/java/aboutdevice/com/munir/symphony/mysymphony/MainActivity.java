@@ -209,7 +209,7 @@ public class MainActivity extends BaseActivity {
             //featureArea.setVisibility(View.VISIBLE);
         }
         sectionAdapter.addFrag(new ThreeFragment(), "Customer Care");
-        sectionAdapter.addFrag(new FourFrgment(), "Contuct us");
+        sectionAdapter.addFrag(new FourFrgment(), "Contact");
         viewPager.setAdapter(sectionAdapter);
     }
 
@@ -358,4 +358,9 @@ public class MainActivity extends BaseActivity {
         mViewPager.setCurrentItem(2);
     }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finish();
+    }
 }

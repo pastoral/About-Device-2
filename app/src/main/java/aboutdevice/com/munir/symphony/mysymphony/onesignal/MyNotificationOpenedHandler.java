@@ -72,6 +72,7 @@ public class MyNotificationOpenedHandler implements OneSignal.NotificationOpened
 
                 Intent LaunchIntent = MySymphonyApp.getContext().getPackageManager().getLaunchIntentForPackage("com.mediatek.systemupdate");
                 LaunchIntent.putExtra("SYSTRAY","systray");
+                LaunchIntent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT | Intent.FLAG_ACTIVITY_NEW_TASK);
                 MySymphonyApp.getContext().startActivity(LaunchIntent);
 
 
@@ -88,6 +89,7 @@ public class MyNotificationOpenedHandler implements OneSignal.NotificationOpened
                 Log.i("OneSignalExample", "customkey set with value: " + activityToBeOpened);
                 Intent LaunchIntent = MySymphonyApp.getContext().getPackageManager().getLaunchIntentForPackage("com.megafone.systemupdate");
                 LaunchIntent.putExtra("SYSTRAY","systray");
+                LaunchIntent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT | Intent.FLAG_ACTIVITY_NEW_TASK);
                 MySymphonyApp.getContext().startActivity(LaunchIntent);
             }
 
@@ -95,6 +97,7 @@ public class MyNotificationOpenedHandler implements OneSignal.NotificationOpened
                 Log.i("OneSignalExample", "customkey set with value: " + activityToBeOpened);
                 Intent LaunchIntent = MySymphonyApp.getContext().getPackageManager().getLaunchIntentForPackage("com.google.android.gms");
                 LaunchIntent.putExtra("SYSTRAY","systray");
+                LaunchIntent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT | Intent.FLAG_ACTIVITY_NEW_TASK);
                 MySymphonyApp.getContext().startActivity(LaunchIntent);
             }
 
@@ -103,6 +106,7 @@ public class MyNotificationOpenedHandler implements OneSignal.NotificationOpened
                 intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT | Intent.FLAG_ACTIVITY_NEW_TASK);
                 intent.putExtra("targetUrl", link);
                 intent.putExtra("SYSTRAY","systray");
+
                 MySymphonyApp.getContext().startActivity(intent);
             }
 

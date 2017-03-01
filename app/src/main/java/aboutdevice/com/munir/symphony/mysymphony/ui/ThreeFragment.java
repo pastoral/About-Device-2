@@ -386,7 +386,7 @@ public class ThreeFragment extends Fragment implements GoogleApiClient.Connectio
     @Override
     public void onDestroy() {
         super.onDestroy();
-        firebaseRecyclerAdapter.cleanup();
+       // firebaseRecyclerAdapter.cleanup();
     }
 
     @Override

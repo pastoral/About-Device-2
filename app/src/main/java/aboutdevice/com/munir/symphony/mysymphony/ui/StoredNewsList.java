@@ -198,4 +198,3 @@ public class StoredNewsList extends AppCompatActivity {
         startActivity(i);
     }
 }
-
