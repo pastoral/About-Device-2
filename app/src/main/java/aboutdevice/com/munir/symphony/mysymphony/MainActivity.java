@@ -176,7 +176,7 @@ public class MainActivity extends BaseActivity {
         });*/
 
 
-        MainActivity.super.requestAppPermissions(permisionList, R.string.runtime_permissions_txt, permsRequestCode);
+       // MainActivity.super.requestAppPermissions(permisionList, R.string.runtime_permissions_txt, permsRequestCode);
         isGooglePlayServicesAvailable(this);
         MobileAds.initialize(getContext(), "ca-app-pub-4365083222822400~7196026575");
         mAdView = (AdView)findViewById(R.id.adView);
