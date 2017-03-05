@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.app.FragmentTransaction;
 import android.content.Intent;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
@@ -35,8 +36,14 @@ import android.widget.Toast;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.MobileAds;
+import com.google.android.gms.appinvite.AppInvite;
+import com.google.android.gms.appinvite.AppInviteInvitation;
+import com.google.android.gms.appinvite.AppInviteInvitationResult;
+import com.google.android.gms.appinvite.AppInviteReferral;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DatabaseReference;
@@ -64,7 +71,8 @@ import static aboutdevice.com.munir.symphony.mysymphony.Constants.permisionList;
 import static aboutdevice.com.munir.symphony.mysymphony.Constants.permsRequestCode;
 import static aboutdevice.com.munir.symphony.mysymphony.MySymphonyApp.getContext;
 
-public class MainActivity extends BaseActivity {
+public class MainActivity extends BaseActivity implements
+        GoogleApiClient.OnConnectionFailedListener {
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
      * fragments for each of the sections. We use a
@@ -90,6 +98,9 @@ public class MainActivity extends BaseActivity {
     private RemoteConfig remoteConfig;
     private LinearLayout featureArea, contactArea;
     private SectionAdapter sectionAdapter;
+    public static final  int REQUEST_INVITE = 1;
+    private static final String TAG = "MainActivity";
+    private GoogleApiClient mGoogleApiClient;
 
 
 
@@ -192,6 +203,39 @@ public class MainActivity extends BaseActivity {
         super.onResume();
         isGooglePlayServicesAvailable(this);
         //testDB();
+        if(isGooglePlayServicesAvailable(this)){
+            mGoogleApiClient = new GoogleApiClient.Builder(this)
+                    .addApi(AppInvite.API)
+                    .enableAutoManage(this,this).build();
+
+
+            // Check for App Invite invitations and launch deep-link activity if possible.
+            // Requires that an Activity is registered in AndroidManifest.xml to handle
+            // deep-link URLs.
+            boolean autoLaunchDeepLink = true;
+            AppInvite.AppInviteApi.getInvitation(mGoogleApiClient, this, autoLaunchDeepLink)
+                    .setResultCallback(
+                            new ResultCallback<AppInviteInvitationResult>() {
+                                @Override
+                                public void onResult(AppInviteInvitationResult result) {
+                                    Log.d(TAG, "getInvitation:onResult:" + result.getStatus());
+                                    if (result.getStatus().isSuccess()) {
+                                        // Extract information from the intent
+                                        Intent intent = result.getInvitationIntent();
+                                        String deepLink = AppInviteReferral.getDeepLink(intent);
+                                        String invitationId = AppInviteReferral.getInvitationId(intent);
+
+                                        // Because autoLaunchDeepLink = true we don't have to do anything
+                                        // here, but we could set that to false and manually choose
+                                        // an Activity to launch to handle the deep link here.
+                                        // ...
+                                    }
+                                }
+                            });
+
+
+
+        }
 
     }
 
@@ -264,6 +308,19 @@ public class MainActivity extends BaseActivity {
     public void loadNews(View view){
         Intent intent = new Intent(getContext(), StoredNewsList.class);
         startActivity(intent);
+    }
+
+    public void loadInvitation(View view){
+        //return;
+        Intent intent = new AppInviteInvitation.IntentBuilder(getString(R.string.invitation_title))
+                        .setMessage(getString(R.string.invitation_message))
+                        .setDeepLink(Uri.parse(getString(R.string.invitation_deep_link)))
+                        .setCustomImage(Uri.parse(getString(R.string.invitation_custom_image)))
+                        .setCallToActionText(getString(R.string.invitation_cta))
+                        .build();
+
+        startActivityForResult(intent, REQUEST_INVITE);
+
     }
 
     private void fetchRemoteConfig() {
@@ -362,5 +419,49 @@ public class MainActivity extends BaseActivity {
     public void onBackPressed() {
         super.onBackPressed();
         finish();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        Log.d(TAG, "onActivityResult: requestCode=" + requestCode + ", resultCode=" + resultCode);
+        if(requestCode == REQUEST_INVITE){
+            if(resultCode == RESULT_OK){
+                String[] ids = AppInviteInvitation.getInvitationIds(resultCode,data);
+                for(String id : ids){
+                    Log.d(TAG, "onActivityResult: sent invitation " + id);
+                }
+            }
+            else{
+                // Sending failed or it was canceled, show failure message to the user
+                // [START_EXCLUDE]
+
+                //showMessage(getString(R.string.send_failed));
+                Toast.makeText(this,getString(R.string.send_failed),Toast.LENGTH_SHORT).show();
+                // [END_EXCLUDE]
+            }
+        }
+
+    }
+
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) {
+        Log.d(TAG, "onConnectionFailed:" + connectionResult);
+        //showMessage(getString(R.string.google_play_services_error));
+        Toast.makeText(this,getString(R.string.google_play_services_error),Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mGoogleApiClient.stopAutoManage(this);
+        mGoogleApiClient.disconnect();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        mGoogleApiClient.stopAutoManage(this);
+        mGoogleApiClient.disconnect();
     }
 }

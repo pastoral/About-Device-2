@@ -72,7 +72,7 @@ public class OneFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(Intent.ACTION_DIAL);
-                intent.setData(Uri.parse("tel:0966670066"));
+                intent.setData(Uri.parse("tel:09666700666"));
                 startActivity(intent);
             }
         });

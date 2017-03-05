@@ -19,4 +19,21 @@
     <string name="title_activity_stored_news_list"></string>
     <string name="main_ad_id">ca-app-pub-4365083222822400/8672759776</string>
     <string name="news_ad_id">ca-app-pub-4365083222822400/5102014575</string>
+
+
+
+    <string name="invitation_title">Send App Invite Quickstart Invitation</string>
+    <string name="invitation_message">My Symphony app is terrific. It is official app of Symphony Mobiles, Bnladesh. Give a try!</string>
+    <string name="invitation_deep_link">https://pcv59.app.goo.gl/vQaV</string>
+    <string name="invitation_custom_image">http://imgur.com/cUu1myu</string>
+    <string name="invitation_cta">Install!</string>
+
+    <string name="deep_link_fmt" formatted="false">Deep Link: %s</string>
+    <string name="invitation_id_fmt" formatted="false">Invitation ID: %s</string>
+
+    <string name="sent_invitations_fmt" formatted="false">Sent %d invitations</string>
+    <string name="send_failed">Sending invitations failed</string>
+    <string name="invite_dialog_title">You got an invitation!</string>
+
+    <string name="google_play_services_error">Google Play Services Error</string>
 </resources>

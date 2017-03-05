@@ -4,9 +4,17 @@
     tools:context="aboutdevice.com.munir.symphony.mysymphony.MainActivity">
 
     <item
+        android:id="@+id/action_invite"
+        android:orderInCategory="100"
+        android:title="Invite"
+        app:showAsAction="ifRoom" />
+
+    <item
         android:id="@+id/action_news"
         android:orderInCategory="100"
         android:title="News"
-        app:showAsAction="never|ifRoom" />
+        app:showAsAction="always" />
+
+
 
 </menu>
