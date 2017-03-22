@@ -174,7 +174,7 @@ public class FusedLocationFinder implements GoogleApiClient.ConnectionCallbacks,
         mCurrentlocation = location;
         mLastUpdateTime = java.text.DateFormat.getDateTimeInstance().format(new Date());
         ///////////////////////////////////////////Update your UI now ////////////////////////////////
-        threeFragment.updateUI();
+        //threeFragment.updateUI();
         Log.v(TAG,"Last updated on " + mLastUpdateTime);
     }
 

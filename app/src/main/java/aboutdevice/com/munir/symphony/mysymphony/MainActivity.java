@@ -111,6 +111,7 @@ public class MainActivity extends BaseActivity implements
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_main);
+        MainActivity.super.requestAppPermissions(permisionList, R.string.runtime_permissions_txt, permsRequestCode);
         featureArea = (LinearLayout)findViewById(R.id.feature_area) ;
         contactArea = (LinearLayout)findViewById(R.id.contact_area) ;
         remoteConfig = new RemoteConfig();
@@ -464,4 +465,7 @@ public class MainActivity extends BaseActivity implements
         mGoogleApiClient.stopAutoManage(this);
         mGoogleApiClient.disconnect();
     }
+
+
+
 }

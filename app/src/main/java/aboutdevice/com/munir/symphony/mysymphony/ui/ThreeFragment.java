@@ -79,6 +79,8 @@ import aboutdevice.com.munir.symphony.mysymphony.R;
 import aboutdevice.com.munir.symphony.mysymphony.firebase.FireBaseWorker;
 import aboutdevice.com.munir.symphony.mysymphony.model.CCAddress;
 import aboutdevice.com.munir.symphony.mysymphony.receiver.ConnectivityReceiver;
+import aboutdevice.com.munir.symphony.mysymphony.services.BackgroundLocationService;
+import aboutdevice.com.munir.symphony.mysymphony.services.LocationUpdates;
 import aboutdevice.com.munir.symphony.mysymphony.utils.CCAddressViewHolder;
 import aboutdevice.com.munir.symphony.mysymphony.utils.DividerItemDecoration;
 import aboutdevice.com.munir.symphony.mysymphony.utils.FusedLocationFinder;
@@ -94,8 +96,7 @@ import static android.view.View.VISIBLE;
 /**
  * Created by munirul.hoque on 5/16/2016.
  */
-public class ThreeFragment extends Fragment implements GoogleApiClient.ConnectionCallbacks,GoogleApiClient.OnConnectionFailedListener,
-        LocationListener, ResultCallback<LocationSettingsResult> {
+public class ThreeFragment extends Fragment implements  ResultCallback<LocationSettingsResult> {
     public String name;
     public int pos, scrollToPosition = 0;
     public ProgressBar progressBar, progressBarCC;
@@ -109,7 +110,7 @@ public class ThreeFragment extends Fragment implements GoogleApiClient.Connectio
     static boolean calledAlready = false;
     private TextView txtNearestCCAddress,txtNearestCCName;
     private static final String TAG = "FusedLocationFinder";
-    public LocationRequest mLocationRequest;
+
     public LocationSettingsRequest mLocationSettingsRequest;
     public boolean mRequestingLocationUpdates;
     protected String mLastUpdateTime;
@@ -121,6 +122,7 @@ public class ThreeFragment extends Fragment implements GoogleApiClient.Connectio
     private Bundle bundle;
     private BaseActivity baseActivity;
     public Map<String, Location> ccLocationMap;
+    public Map<String, Object> addressMap;
     public Map<String,Float> distanceMap, sortedDistanceMap;
     public Button btnRefresh;
     public CardView nearest_cc_card;
@@ -131,9 +133,9 @@ public class ThreeFragment extends Fragment implements GoogleApiClient.Connectio
     public  SharedPreferences.Editor editor;
     BroadcastReceiver gpsLocationReceiver;
     public double nearestCCLat, nearestCCLan;
-    protected final static String KEY_REQUESTING_LOCATION_UPDATES = "requesting-location-updates";
-    protected final static String KEY_LOCATION = "location";
-    protected final static String KEY_LAST_UPDATED_TIME_STRING = "last-updated-time-string";
+    private IntentFilter filter;
+    private ResponeReceiver receiver;
+
     private Snackbar snackbar;
 
     private boolean mapReady;
@@ -151,7 +153,6 @@ public class ThreeFragment extends Fragment implements GoogleApiClient.Connectio
         //getContext().registerReceiver(gpsLocationReceiver, new IntentFilter("android.location.PROVIDERS_CHANGED"));
 
 
-        buildGoogleApiClient();
 
         return view;
     }
@@ -173,6 +174,10 @@ public class ThreeFragment extends Fragment implements GoogleApiClient.Connectio
         //recyclerView.setLayoutManager(mLinearLayoutManager);
 
         recyclerView.setHasFixedSize(true);
+
+        filter = new IntentFilter(ResponeReceiver.ACTION_RESP);
+        filter.addCategory(Intent.CATEGORY_DEFAULT);
+
     }
 
     @Override
@@ -181,13 +186,16 @@ public class ThreeFragment extends Fragment implements GoogleApiClient.Connectio
         mRequestingLocationUpdates = false;
         mLastUpdateTime = "";
         // gpsLocationReceiver = new GpsLocationReceiver();
+
         ccLocation = new Location("Location of CC");
         ccLocationMap = new HashMap<>();
-        distanceMap = new LinkedHashMap<>();
-        sortedDistanceMap = new LinkedHashMap<>();
+        addressMap = new HashMap<>();
         sharedpreferences = getContext().getSharedPreferences("mysymphonyapp_data", Context.MODE_PRIVATE);
+        receiver = new ResponeReceiver();
+
 
     }
+
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
@@ -203,11 +211,9 @@ public class ThreeFragment extends Fragment implements GoogleApiClient.Connectio
     @Override
     public void onStart() {
         super.onStart();
+        getActivity().registerReceiver(receiver,filter);
         ccLocation = new Location("CC Location");
-        if(googleApiClient != null){
-            googleApiClient.connect();
-            // getContext().registerReceiver(gpsLocationReceiver, new IntentFilter("android.location.PROVIDERS_CHANGED"));
-        }
+
         if (!calledAlready)
         {
             FirebaseDatabase.getInstance().setPersistenceEnabled(true);
@@ -231,6 +237,8 @@ public class ThreeFragment extends Fragment implements GoogleApiClient.Connectio
         //ccAddressList.clear();
 
         final Intent intent = new Intent(getActivity(),MapsActivity.class);
+        LoadCC loadCC = new LoadCC();
+        loadCC.execute();
         firebaseRecyclerAdapter = new FirebaseRecyclerAdapter<CCAddress, CCAddressViewHolder>(
                 CCAddress.class,
                 R.layout.cc_list,
@@ -244,11 +252,13 @@ public class ThreeFragment extends Fragment implements GoogleApiClient.Connectio
                 ccLocation.setLatitude(firebaseRecyclerAdapter.getItem(position).getLat());
                 ccLocation.setLongitude(firebaseRecyclerAdapter.getItem(position).getLan());
                 //Toast.makeText(getActivity(),String.valueOf(mCurrentlocation),Toast.LENGTH_SHORT).show();
-                ccLocationMap.put(firebaseRecyclerAdapter.getItem(position).getName().toString(),ccLocation);
-                ccLocation = new Location("CC Location");
+               // ccLocationMap.put(firebaseRecyclerAdapter.getItem(position).getName().toString(),ccLocation);
+
                 viewHolder.txtCCName.setText(model.getName());
                 viewHolder.txtCCAddress.setText(model.getAddress());
                 pos = position;
+               // ccLocationMap.put(map.get("name").toString(),ccLocation);
+
 
                 recyclerView.addOnItemTouchListener(new RecyclerTouchListener(getActivity(), new RecyclerTouchListener.OnItemClickListener() {
                     @Override
@@ -268,7 +278,7 @@ public class ThreeFragment extends Fragment implements GoogleApiClient.Connectio
                     }
                 }));
                 viewHolder.ccIcon.setImageDrawable(drawIcon(alphbetSelect(firebaseRecyclerAdapter.getItem(position).getName().toString())));
-
+                ccLocation = new Location("");
             }
         };
         /*firebaseRecyclerAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver(){
@@ -291,6 +301,7 @@ public class ThreeFragment extends Fragment implements GoogleApiClient.Connectio
         // recyclerView.setLayoutManager(mLinearLayoutManager);
 
         //recyclerView.setAdapter(firebaseRecyclerAdapter);
+        startLocationUpdate();
         if(firebaseRecyclerAdapter == null){
             Toast.makeText(getActivity(), "No adapter attached; skipping layout",Toast.LENGTH_SHORT).show();
         }
@@ -316,8 +327,8 @@ public class ThreeFragment extends Fragment implements GoogleApiClient.Connectio
         }
 
 
-        LocationAsyncRunner runner = new LocationAsyncRunner();
-        runner.execute();
+      //  LocationAsyncRunner runner = new LocationAsyncRunner();
+      //  runner.execute();
 
         nearest_cc_card.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -371,7 +382,7 @@ public class ThreeFragment extends Fragment implements GoogleApiClient.Connectio
        // this.getContext().unregisterReceiver(gpsLocationReceiver);
 
        // stopLocationUpdates();
-
+       getActivity().unregisterReceiver(receiver);
 
     }
 
@@ -379,7 +390,7 @@ public class ThreeFragment extends Fragment implements GoogleApiClient.Connectio
     public void onStop() {
         super.onStop();
 
-        googleApiClient.disconnect();
+      //  googleApiClient.disconnect();
 
     }
 
@@ -387,46 +398,12 @@ public class ThreeFragment extends Fragment implements GoogleApiClient.Connectio
     public void onDestroy() {
         super.onDestroy();
        // firebaseRecyclerAdapter.cleanup();
+        stopLocationUpdate();
     }
 
-    @Override
-    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-        Log.d("ThirdFragment", "onConnectionFailed:" + connectionResult);
-        Toast.makeText(getActivity(), "Google Play Services error.", Toast.LENGTH_SHORT).show();
-    }
-
-    public void updateUI() {
-        if (mCurrentlocation != null) {
-            //txtLat.setText("Latitude: " + mCurrentlocation.getLatitude());
-            //txtLan.setText("Longitude: " + mCurrentlocation.getLongitude());
-
-            //  Toast.makeText(getActivity(),String.valueOf(distanceMap.size()),Toast.LENGTH_SHORT).show();
-            if (distanceMap.size() > 0) {
-
-                // Toast.makeText(getActivity(),String.valueOf(sortedDistanceMap.size()),Toast.LENGTH_SHORT).show();
-                sortedDistanceMap = sortByValue(distanceMap);
-                if (sortedDistanceMap.size() > 0) {
-                    // Map.Entry<String, Float> entry = sortedDistanceMap.entrySet().iterator().next();
-                    Map.Entry<String, Float> entry = sortedDistanceMap.entrySet().iterator().next();
-
-                    strNearestCCName = entry.getKey();
-
-                    Location lc = mCurrentlocation;
 
 
-                    query = mDatabaseReference.orderByChild("name").equalTo(entry.getKey());
-                    NearestCCFinder runner = new NearestCCFinder();
-                    runner.execute();
 
-                }
-
-            } else {
-                // Toast.makeText(getActivity(), "Mara Kha ", Toast.LENGTH_SHORT).show();
-                Log.d("Mara Kha " , "Mara Kha");
-                //LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient,);
-            }
-        }
-    }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -435,7 +412,7 @@ public class ThreeFragment extends Fragment implements GoogleApiClient.Connectio
             case REQUEST_CHECK_SETTINGS :
                 switch (resultCode){
                     case Activity.RESULT_OK :
-                        startLocationUpdates();
+                        //startLocationUpdates();
                         break;
                     case Activity.RESULT_CANCELED :
                         Log.i("ThreeFragment", "User chose not to make required location settings changes.");
@@ -446,39 +423,6 @@ public class ThreeFragment extends Fragment implements GoogleApiClient.Connectio
     }
 
 
-
-    public synchronized void buildGoogleApiClient(){
-        if(googleApiClient == null){
-            googleApiClient = new GoogleApiClient.Builder(getContext())
-                    .addConnectionCallbacks(this)
-                    .addOnConnectionFailedListener(this)
-                    .addApi(LocationServices.API)
-                    .build();
-        }
-
-
-    }
-
-
-    public  LocationRequest createLocationRequest(){
-        mLocationRequest = new LocationRequest();
-        mLocationRequest.setInterval(10000);
-        mLocationRequest.setFastestInterval(5000);
-        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-        return mLocationRequest;
-    }
-
-
-    /**
-     * Uses a {@link com.google.android.gms.location.LocationSettingsRequest.Builder} to build
-     * a {@link com.google.android.gms.location.LocationSettingsRequest} that is used for checking
-     * if a device has the needed location settings.
-     */
-    public void buildLocationSettingRequest(){
-        LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder();
-        builder.addLocationRequest(mLocationRequest);
-        mLocationSettingsRequest = builder.build();
-    }
 
 
     /**
@@ -506,7 +450,7 @@ public class ThreeFragment extends Fragment implements GoogleApiClient.Connectio
         switch(status.getStatusCode()){
             case LocationSettingsStatusCodes.SUCCESS :
                 Log.i(TAG, "All location settings are satisfied.");
-                startLocationUpdates();
+                //startLocationUpdates();
                 break;
             case LocationSettingsStatusCodes.RESOLUTION_REQUIRED :
                 Log.i(TAG, "Location settings are not satisfied. Show the user a dialog to" +
@@ -526,51 +470,6 @@ public class ThreeFragment extends Fragment implements GoogleApiClient.Connectio
     }
 
 
-    /**
-     * Requests location updates from the FusedLocationApi.
-     */
-    public void startLocationUpdates(){
-        if(ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, mLocationRequest, this)
-                    .setResultCallback(new ResultCallback<Status>() {
-                        @Override
-                        public void onResult(@NonNull Status status) {
-                            mRequestingLocationUpdates = true;
-                        }
-                    });
-        }
-        else{
-            Log.v(TAG,"Start Location update gets hampered :((");
-        }
-    }
-
-    @Override
-    public void onLocationChanged(Location location) {
-        mCurrentlocation = location;
-        mLastUpdateTime = java.text.DateFormat.getDateTimeInstance().format(new Date());
-        ///////////////////////////////////////////Update your UI now ////////////////////////////////
-        // checkLocationSettings();
-        setDistanceMap(ccLocationMap);
-        updateUI();
-
-        Log.v(TAG,"Last updated on " + mLastUpdateTime);
-    }
-
-    @Override
-    public void onConnected(@Nullable Bundle bundle) {
-        Log.i(TAG, "Connected to GoogleApiClient");
-        if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            if(mCurrentlocation == null){
-                mCurrentlocation = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
-                mLastUpdateTime = DateFormat.getDateTimeInstance().format(new Date());
-            }
-        }
-    }
-
-    @Override
-    public void onConnectionSuspended(int i) {
-
-    }
 
 
     public void askForPermission(String permission, Integer requestCode) {
@@ -587,19 +486,7 @@ public class ThreeFragment extends Fragment implements GoogleApiClient.Connectio
         }
     }
 
-    public void stopLocationUpdates(){
-        // It is a good practice to remove location requests when the activity is in a paused or
-        // stopped state. Doing so helps battery performance and is especially
-        // recommended in applications that request frequent location updates.
-        LocationServices.FusedLocationApi.removeLocationUpdates(googleApiClient,this).setResultCallback(
-                new ResultCallback<Status>() {
-                    @Override
-                    public void onResult(@NonNull Status status) {
-                        mRequestingLocationUpdates = false;
-                    }
-                }
-        );
-    }
+
 
 
 
@@ -661,36 +548,7 @@ public class ThreeFragment extends Fragment implements GoogleApiClient.Connectio
 
 
 
-    public class LocationAsyncRunner extends AsyncTask<Void,Void,Void>{
-        ProgressDialog progressDialog;
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            // progressDialog = ProgressDialog.show(getActivity(),"Patience", "Searching your location");
-        }
 
-        @Override
-        protected void onProgressUpdate(Void... values) {
-            super.onProgressUpdate(values);
-            progressBar.isIndeterminate();
-        }
-
-        @Override
-        protected Void doInBackground(Void... voids) {
-            createLocationRequest();
-            //buildLocationSettingRequest();
-            //checkLocationSettings();
-            // fillDistanceMap();
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-            updateUI();
-            // progressDialog.dismiss();
-        }
-    }
 
     class ValueComparator implements Comparator {
         Map map;
@@ -860,6 +718,115 @@ public class ThreeFragment extends Fragment implements GoogleApiClient.Connectio
             txtNearestCCAddress.setText(sharedpreferences.getString("NEARESTCC_ADDRESS", null));
             txtNearestCCName.setText(sharedpreferences.getString("NEARESTCC_NAME", null));
 
+        }
+    }
+
+
+    private void startLocationUpdate(){
+        Log.d("STARTLOC upade", "startLocationUpdate fired");
+        Intent intent = new Intent(getContext(), BackgroundLocationService.class);
+        intent.putExtra("requestId", 101);
+        getActivity().startService(intent);
+
+    }
+
+    private void stopLocationUpdate(){
+        Intent intent = new Intent(getContext(), BackgroundLocationService.class);
+
+        intent.putExtra("requestId", 101);
+        getActivity().stopService(intent);
+
+    }
+
+
+    public class ResponeReceiver extends BroadcastReceiver {
+        public static final String ACTION_RESP = "MESSAGE_PROCESSED";
+        //Log.d("MAP Size " , String.valueOf(locationMap.size()));
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            double[] resultData = new double[2];
+            resultData = intent.getDoubleArrayExtra(LocationUpdates.PARAM_OUT_MSG);
+            if(resultData[0] != 0.0 || resultData[1] != 0.0) {
+                editor = sharedpreferences.edit();
+                editor.putString("LATITUDE", String.valueOf(resultData[0]));
+                editor.putString("LONGITUDE", String.valueOf(resultData[1]));
+                editor.commit();
+                Log.i("LAT LON" , String.valueOf(resultData[0]) + " , " + String.valueOf(resultData[1]));
+                Log.i("MAP Size" , String.valueOf(ccLocationMap.size()));
+                nearest_cc_card.setVisibility(VISIBLE);
+                txtNearestCCName.setText(String.valueOf(resultData[0]) + " , " + String.valueOf(resultData[1]));
+                txtNearestCCAddress.setText(String.valueOf(ccLocationMap.size()));
+
+                //temp.setText(String.valueOf(locationMap.size()));
+
+            }
+        }
+    }
+
+    public class LoadCC extends AsyncTask<Void,Void,Map<String, Location>> {
+        Location location = new Location("");
+        @Override
+        protected Map<String, Location> doInBackground(Void... params) {
+            mDatabaseReference.addChildEventListener(new ChildEventListener() {
+                @Override
+                public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                    Map<String, Object> map = (HashMap<String, Object>)dataSnapshot.getValue();
+
+
+                    location.setLatitude(Double.parseDouble(map.get("lat").toString()));
+                    location.setLongitude(Double.parseDouble(map.get("lan").toString()));
+
+                    ccLocationMap.put(map.get("name").toString() , location);
+                    addressMap.put(map.get("name").toString(), map.get("address").toString());
+
+
+                    Log.d("Map Size : ", String.valueOf(ccLocationMap.size()));
+                    location = new Location("");
+                    publishProgress();
+                }
+
+                @Override
+                public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+                }
+
+                @Override
+                public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+                }
+
+                @Override
+                public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+
+
+
+            });
+            Log.d("Last Map Size : ", String.valueOf(ccLocationMap.size()));
+            return ccLocationMap;
+        }
+
+        @Override
+        protected void onProgressUpdate(Void... values) {
+            super.onProgressUpdate(values);
+            // tmptext.setText("Updating... " + String.valueOf(locationMap.size()));
+
+        }
+
+        @Override
+        protected void onPostExecute(Map<String, Location> stringObjectMap) {
+            super.onPostExecute(stringObjectMap);
+            //Toast.makeText(,String.valueOf(locationMap.size()),Toast.LENGTH_SHORT).show();
+            //Toast.makeText(getApplication(),String.valueOf(locationMap.size()),Toast.LENGTH_SHORT).show();
+            //tmptext.setText(String.valueOf(locationMap.size()));
+           // Toast.makeText(getApplication(),String.valueOf(locationMap.size()),Toast.LENGTH_SHORT).show();
         }
     }
 

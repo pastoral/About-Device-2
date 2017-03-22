@@ -2,11 +2,11 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="aboutdevice.com.munir.symphony.mysymphony">
 
-   <!-- <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" /> -->
+
 
     <application
         android:name=".MySymphonyApp"
@@ -98,6 +98,10 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
         </activity>
+        <service android:name=".services.BackgroundLocationService"
+            android:process=":mysmphony_loc"></service>
+        <service android:name=".services.LocationUpdates"></service>
+
     </application>
 
 </manifest>
