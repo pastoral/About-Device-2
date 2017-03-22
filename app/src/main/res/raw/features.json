@@ -50,5 +50,17 @@
     "connectivity" : "WIFi, Bluetooth",
     "battery" : "1800mAh",
     "sim" : "dual"
+  },
+  "Z9" :{
+    "processor" : "64 bit octa core processor \n Clock speed upto 1.5 GHz ",
+    "camera" : "13MP + 2MP Dual Back Camera \n 8MP Front Camera",
+    "display" : "5.5 inch FHD IPS display \n 2.5D glass",
+    "memory" : "32GB ROM + 3GB RAM",
+    "os" : "Android Nougat 7.0",
+    "data_connection" : "4G, HSPA+ ",
+    "connectivity" : "WiFi, GPS, Bluetooth, OTG",
+    "battery" : "3000mAh Li-on Battery",
+    "sim" : "1 micro SIM \n 1 nano SIM",
+    "sensor" : "Fingerprint"
   }
 }

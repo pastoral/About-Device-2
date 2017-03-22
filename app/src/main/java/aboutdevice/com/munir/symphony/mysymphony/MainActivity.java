@@ -250,7 +250,7 @@ public class MainActivity extends BaseActivity implements
         sectionAdapter = new SectionAdapter(getSupportFragmentManager());
         sectionAdapter.addFrag(new OneFragment(),"Home");
         if(modelFound) {
-            sectionAdapter.addFrag(new TwoFragment(), "Feature");
+            sectionAdapter.addFrag(new TwoFragment(), "Features");
             //featureArea.setVisibility(View.VISIBLE);
         }
         sectionAdapter.addFrag(new ThreeFragment(), "Customer Care");

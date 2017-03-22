@@ -5,10 +5,10 @@ android {
     buildToolsVersion "24.0.3"
     defaultConfig {
         applicationId "aboutdevice.com.munir.symphony.mysymphony"
-        minSdkVersion 21
+        minSdkVersion 19
         targetSdkVersion 24
-        versionCode 3
-        versionName "2.0"
+        versionCode 4
+        versionName "3.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         manifestPlaceholders = [onesignal_app_id               : "ca87c9a3-54e4-47b2-9c04-ffd835d47e17",
                                 onesignal_google_project_number: "303838651450"]
