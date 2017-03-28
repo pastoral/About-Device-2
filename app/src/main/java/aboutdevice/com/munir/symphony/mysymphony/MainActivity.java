@@ -332,15 +332,15 @@ public class MainActivity extends BaseActivity implements
         mFirebaseRemoteConfig.fetch(cacheExpiration).addOnCompleteListener(this, new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
-                if(task.isSuccessful()){
+                if (task.isSuccessful()) {
 
                     mFirebaseRemoteConfig.activateFetched();
 
-                }
-                else{
+                } else {
 
                 }
                 loadAdvertige();
+
             }
         });
     }

@@ -2,6 +2,7 @@ package aboutdevice.com.munir.symphony.mysymphony.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -11,9 +12,15 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -26,6 +33,7 @@ import aboutdevice.com.munir.symphony.mysymphony.MainActivity;
 import aboutdevice.com.munir.symphony.mysymphony.MySymphonyApp;
 import aboutdevice.com.munir.symphony.mysymphony.R;
 import aboutdevice.com.munir.symphony.mysymphony.adapter.StoredNewsListAdapter;
+import aboutdevice.com.munir.symphony.mysymphony.firebase.RemoteConfig;
 import aboutdevice.com.munir.symphony.mysymphony.model.NotificationStore;
 import aboutdevice.com.munir.symphony.mysymphony.utils.DatabaseHandler;
 import aboutdevice.com.munir.symphony.mysymphony.utils.DividerItemDecoration;
@@ -43,8 +51,11 @@ public class StoredNewsList extends AppCompatActivity {
     List<Integer> rowsToDelete;
     ArrayList<NotificationStore> notificationStoreKeyList;
     TextView noNitifaication;
+    private FirebaseRemoteConfig mFirebaseRemoteConfig;
+    private RemoteConfig remoteConfig;
+    public ImageView headerImg;
 
-    int maxStoredNews = 100;
+    int maxStoredNews = 101;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,6 +66,7 @@ public class StoredNewsList extends AppCompatActivity {
         databaseHandler = new DatabaseHandler(getApplicationContext());
 
         notificationRecyclerView = (RecyclerView) findViewById(R.id.notification_recycler);
+        headerImg = (ImageView)findViewById(R.id.image_header) ;
         lm = new LinearLayoutManager(getApplicationContext());
         lm.setOrientation(LinearLayoutManager.VERTICAL);
         noNitifaication = (TextView)findViewById(R.id.nonotification);
@@ -62,6 +74,8 @@ public class StoredNewsList extends AppCompatActivity {
         notificationRecyclerView.setLayoutManager(lm);
         notificationRecyclerView.setHasFixedSize(true);
         rowsToDelete = new ArrayList<Integer>();
+
+        remoteConfig = new RemoteConfig();
         //  notificationStoreFastItemAdapter = new FastItemAdapter();
       /*  FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -74,7 +88,8 @@ public class StoredNewsList extends AppCompatActivity {
 
         // NotificationStore nsi = new NotificationStore();
         // databaseHandler.deleteAll(nsi);
-
+        mFirebaseRemoteConfig = remoteConfig.getmFirebaseRemoteConfig();
+        fetchRemoteConfig();
 
     }
 
@@ -165,6 +180,8 @@ public class StoredNewsList extends AppCompatActivity {
             }
         }));
 
+        autoDeleteFromList();
+
     }
 
     public void autoDeleteFromList (){
@@ -196,5 +213,36 @@ public class StoredNewsList extends AppCompatActivity {
         super.onBackPressed();
         Intent i = new Intent(getApplicationContext(), MainActivity.class);
         startActivity(i);
+    }
+
+    private void fetchRemoteConfig() {
+        long cacheExpiration = 3600;
+        if(mFirebaseRemoteConfig.getInfo().getConfigSettings().isDeveloperModeEnabled()){
+            cacheExpiration = 0;
+        }
+        mFirebaseRemoteConfig.fetch(cacheExpiration).addOnCompleteListener(this, new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if (task.isSuccessful()) {
+
+                    mFirebaseRemoteConfig.activateFetched();
+
+                } else {
+
+                }
+                loadImageHeader();
+            }
+        });
+    }
+
+    private void loadImageHeader(){
+        String imageHeaderURL = mFirebaseRemoteConfig.getString("get_news_image_header");
+        if(imageHeaderURL.equals("none")){
+            headerImg.setImageResource(R.drawable.stored_news);
+        }
+        else{
+            Picasso.with(getApplicationContext()).load(imageHeaderURL).into(headerImg);
+        }
+
     }
 }

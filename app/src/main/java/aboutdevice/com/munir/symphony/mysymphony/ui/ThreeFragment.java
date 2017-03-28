@@ -217,7 +217,7 @@ public class ThreeFragment extends Fragment implements  ResultCallback<LocationS
     @Override
     public void onStart() {
         super.onStart();
-        getActivity().registerReceiver(receiver,filter);
+
         ccLocation = new Location("CC Location");
 
         if (!calledAlready)
@@ -241,7 +241,7 @@ public class ThreeFragment extends Fragment implements  ResultCallback<LocationS
         super.onResume();
         //  askForPermission(permisionList[1],REQUEST_CHECK_SETTINGS);
         //ccAddressList.clear();
-
+        getActivity().registerReceiver(receiver,filter);
         resultReceiver.setmReceiver(this);
         final Intent intent = new Intent(getActivity(),MapsActivity.class);
         LoadCC loadCC = new LoadCC();
