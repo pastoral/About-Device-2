@@ -237,6 +237,9 @@ public class MainActivity extends BaseActivity implements
 
 
         }
+        else{
+            return;
+        }
 
     }
 
@@ -395,14 +398,19 @@ public class MainActivity extends BaseActivity implements
     } */
 
     public void loadFeatureFragment(View v){
-       // Fragment fg = new TwoFragment();
-       // FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+        /*Fragment fg = new TwoFragment();
+        android.support.v4.app.FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
        // SectionAdapter sectionAdapter = new SectionAdapter(getSupportFragmentManager());
-       // fragmentTransaction.replace(mViewPager.getCurrentItem(),f);
-       // Intent i = new Intent(getContext(),fg.getClass());
+        fragmentTransaction.replace(mViewPager.getCurrentItem(),fg);
+        fragmentTransaction.addToBackStack(null);
+        fragmentTransaction.commit();*/
+      //  Intent i = new Intent(getContext(),fg.getClass());
         //startActivity(i);
        // int pos = sectionAdapter.getItemPosition(TwoFragment.class);
+       // mViewPager.setCurrentItem(1);
+
         mViewPager.setCurrentItem(1);
+
     }
 
     public void loadContactFragment(View v){
@@ -413,7 +421,13 @@ public class MainActivity extends BaseActivity implements
         // Intent i = new Intent(getContext(),fg.getClass());
         //startActivity(i);
        // int pos = sectionAdapter.getItemPosition(TwoFragment.class);
-        mViewPager.setCurrentItem(2);
+       // mViewPager.setCurrentItem(2);
+        if(mViewPager.getAdapter().getCount() ==4 ) {
+            mViewPager.setCurrentItem(2);
+        }
+        else{
+            mViewPager.setCurrentItem(1);
+        }
     }
 
     @Override

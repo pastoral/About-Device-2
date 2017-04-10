@@ -1,12 +1,18 @@
 package aboutdevice.com.munir.symphony.mysymphony.ui;
 
+import android.content.ComponentName;
 import android.content.Intent;
+import android.content.pm.ResolveInfo;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.ShareCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -15,12 +21,15 @@ import android.widget.Toast;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.MobileAds;
+import com.google.android.gms.appinvite.AppInviteInvitation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings;
 import com.squareup.picasso.Picasso;
+import com.facebook.FacebookSdk;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -29,6 +38,7 @@ import aboutdevice.com.munir.symphony.mysymphony.R;
 import aboutdevice.com.munir.symphony.mysymphony.firebase.RemoteConfig;
 
 import static aboutdevice.com.munir.symphony.mysymphony.MySymphonyApp.getContext;
+import static aboutdevice.com.munir.symphony.mysymphony.R.string.invitation_deep_link;
 
 
 public class NewsActivity extends AppCompatActivity {
@@ -39,6 +49,7 @@ public class NewsActivity extends AppCompatActivity {
     private FirebaseRemoteConfig mFirebaseRemoteConfig;
     private RemoteConfig remoteConfig;
     public String Systray;
+    private String imgURI;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,6 +65,7 @@ public class NewsActivity extends AppCompatActivity {
         Bundle bundle = getIntent().getExtras();
         sTitle = bundle.getString("title");
          sBody = bundle.getString("body");
+        imgURI = bundle.getString("IMAGEURL");
         Systray = bundle.getString("SYSTRAY");
 
         title.setText(sTitle);
@@ -137,5 +149,49 @@ public class NewsActivity extends AppCompatActivity {
             i = new Intent(getApplicationContext(),MainActivity.class);
         }
         startActivity(i);
+    }
+
+    public void simpleshare(View v){
+        List<Intent> shareIntentsLists = new ArrayList<Intent>();
+        Intent sendIntent = new Intent();
+
+        sendIntent.setAction(Intent.ACTION_SEND);
+        sendIntent.putExtra(Intent.EXTRA_SUBJECT, sTitle);
+        sendIntent.putExtra(Intent.EXTRA_TEXT, sBody + "\n" + getString(R.string.sent_from) + "   "+ getString(R.string.invitation_deep_link));
+        sendIntent.putExtra(Intent.EXTRA_STREAM , imgURI);
+        sendIntent.setType("*/*");
+        List<ResolveInfo> resolveInfos = getPackageManager().queryIntentActivities(sendIntent,0);
+        if(!resolveInfos.isEmpty()){
+            for(ResolveInfo resInfo : resolveInfos){
+                String packageName = resInfo.activityInfo.packageName;
+                if(!packageName.contains("com.facebook.katana")){
+                    Intent intent = new Intent();
+                    intent.setComponent(new ComponentName(packageName, resInfo.activityInfo.name));
+                    intent.setAction(Intent.ACTION_SEND);
+                    intent.putExtra(Intent.EXTRA_SUBJECT, sTitle);
+                    intent.putExtra(Intent.EXTRA_TEXT, sBody + "\n" + getString(R.string.sent_from) + "   "+ getString(R.string.invitation_deep_link));
+                    intent.setType("image/*");
+                    intent.setPackage(packageName);
+                    shareIntentsLists.add(intent);
+                }
+            }
+            if(!shareIntentsLists.isEmpty()){
+
+                Intent chooserIntent = Intent.createChooser(shareIntentsLists.remove(0), "Choose app to share");
+               // chooserIntent.setAction(Intent.ACTION_SEND);
+                //chooserIntent.putExtra(Intent.EXTRA_SUBJECT, sTitle);
+                //chooserIntent.putExtra(Intent.EXTRA_TEXT, sBody + "\n" + getString(R.string.sent_from) + "   "+ getString(R.string.invitation_deep_link));
+                chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, shareIntentsLists.toArray(new Parcelable[]{}));
+
+                //chooserIntent.putExtra(Intent.EXTRA_STREAM , imgURI);
+               // chooserIntent.setType("*/*");
+                startActivity(chooserIntent);
+                //startActivity(chooserIntent);
+            }
+            else{
+                Log.e("Error", "No Apps can perform your task");
+            }
+        }
+
     }
 }

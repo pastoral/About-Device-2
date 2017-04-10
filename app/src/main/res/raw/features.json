@@ -29,7 +29,7 @@
     "os" : "Android Nougat 7.0",
     "data_connection" : "4G, HSPA+ ",
     "connectivity" : "WiFi, GPS, Bluetooth, OTG",
-    "battery" : "3000mAh Li-on Battery",
+    "battery" : "3000mAh Li-polymer Battery",
     "sim" : "1 micro SIM \n 1 nano SIM",
     "sensor" : "Fingerprint"
   },
@@ -55,5 +55,17 @@
     "battery" : "3000mAh Li-Polymer",
     "sim" : "Dual Sim ( Micro )",
     "sensor" : "Gravity, Proximity, Light, Compass, Fingerprint"
+  },
+  "V42" :{
+    "processor" : "1.2 GHz Quad Core",
+    "camera" : "5MP + 2MP",
+    "display" : "4.5 inch FWVGA TN",
+    "memory" : "4GB ROM + 512MB RAM",
+    "os" : "Android Marshmallow 6.0",
+    "data_connection" : "3G",
+    "connectivity" : "WiFi, Bluetooth",
+    "battery" : "1750mAh",
+    "sim" : "dual"
   }
+
 }
