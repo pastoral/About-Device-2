@@ -156,9 +156,7 @@ public class NewsActivity extends AppCompatActivity {
         Intent sendIntent = new Intent();
 
         sendIntent.setAction(Intent.ACTION_SEND);
-        sendIntent.putExtra(Intent.EXTRA_SUBJECT, sTitle);
-        sendIntent.putExtra(Intent.EXTRA_TEXT, sBody + "\n" + getString(R.string.sent_from) + "   "+ getString(R.string.invitation_deep_link));
-        sendIntent.putExtra(Intent.EXTRA_STREAM , imgURI);
+
         sendIntent.setType("*/*");
         List<ResolveInfo> resolveInfos = getPackageManager().queryIntentActivities(sendIntent,0);
         if(!resolveInfos.isEmpty()){
@@ -178,15 +176,11 @@ public class NewsActivity extends AppCompatActivity {
             if(!shareIntentsLists.isEmpty()){
 
                 Intent chooserIntent = Intent.createChooser(shareIntentsLists.remove(0), "Choose app to share");
-               // chooserIntent.setAction(Intent.ACTION_SEND);
-                //chooserIntent.putExtra(Intent.EXTRA_SUBJECT, sTitle);
-                //chooserIntent.putExtra(Intent.EXTRA_TEXT, sBody + "\n" + getString(R.string.sent_from) + "   "+ getString(R.string.invitation_deep_link));
+
                 chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, shareIntentsLists.toArray(new Parcelable[]{}));
 
-                //chooserIntent.putExtra(Intent.EXTRA_STREAM , imgURI);
-               // chooserIntent.setType("*/*");
                 startActivity(chooserIntent);
-                //startActivity(chooserIntent);
+
             }
             else{
                 Log.e("Error", "No Apps can perform your task");

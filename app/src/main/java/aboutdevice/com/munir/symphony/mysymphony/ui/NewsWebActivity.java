@@ -2,11 +2,16 @@ package aboutdevice.com.munir.symphony.mysymphony.ui;
 
 import android.annotation.TargetApi;
 import android.content.Intent;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
@@ -35,14 +40,20 @@ public class NewsWebActivity extends AppCompatActivity {
     private RemoteConfig remoteConfig;
     private  AdView mAdView;
     String Systray;
+    String targetURL , textData;
+    private PackageManager pkm ;
+    private ApplicationInfo applicationInfo;
+    private boolean fb;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_news_web);
         remoteConfig = new RemoteConfig();
+        fb = false;
 
         Bundle bundle = getIntent().getExtras();
-        String targetURL = bundle.getString("targetUrl");
+        targetURL = bundle.getString("targetUrl");
+        textData = bundle.getString("textData");
         Systray = bundle.getString("SYSTRAY");
 
         webView = (WebView)findViewById(R.id.webView);
@@ -155,5 +166,28 @@ public class NewsWebActivity extends AppCompatActivity {
             i = new Intent(getApplicationContext(),MainActivity.class);
         }
         startActivity(i);
+    }
+
+    public void promoshare(View v){
+
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_newsweb, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if(id == R.id.action_share_new_web){
+            Intent sendIntent = new Intent();
+            sendIntent.setAction(Intent.ACTION_SEND);
+            sendIntent.putExtra(Intent.EXTRA_TEXT,targetURL );
+            sendIntent.setType("text/plain");
+            startActivity(Intent.createChooser(sendIntent, getResources().getText(R.string.send_to_news)));
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

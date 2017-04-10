@@ -1,11 +1,17 @@
 package aboutdevice.com.munir.symphony.mysymphony.ui;
 
 import android.Manifest;
+import android.content.ComponentName;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
+import android.net.Uri;
+import android.os.Parcelable;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
+import android.view.View;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -14,6 +20,9 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import aboutdevice.com.munir.symphony.mysymphony.R;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
@@ -21,6 +30,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private GoogleMap mMap;
     public Bundle bundle;
     public Intent intent;
+    public String ccName , ccAddress;
+    public double latitude, langitude;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,7 +62,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap = googleMap;
 
         // Add a marker in Sydney and move the camera
-
+        ccName = intent.getStringExtra("CCName") + " Customer Care";
+        ccAddress = intent.getStringExtra("CCAddress");
+        latitude = Double.parseDouble(intent.getStringExtra("Latitude"));
+        langitude = Double.parseDouble(intent.getStringExtra("Longitude"));
         LatLng sydney = new LatLng(Double.parseDouble(intent.getStringExtra("Latitude")), Double.parseDouble(intent.getStringExtra("Longitude")));
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney,14));
         mMap.animateCamera(CameraUpdateFactory.zoomTo(16), 2000, null);
@@ -69,6 +83,64 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         //}
 
 
+    }
+
+    public void locationshare(View v){
+        /*Double latitude = Double.parseDouble(intent.getStringExtra("Latitude"));
+        Double longitude = Double.parseDouble(intent.getStringExtra("Longitude"));
+        String label = intent.getStringExtra("CCName") + " Customer Care" + "\n" + intent.getStringExtra("CCAddress");
+        String uriBegin = "geo:" + latitude + "," + longitude;
+        String query = latitude + "," + longitude + "(" + label + ")";
+        String encodedQuery = Uri.encode(query);
+        String uriString = uriBegin + "?q=" + encodedQuery + "&z=16";
+        Uri uri = Uri.parse(uriString);
+        Intent mapIntent = new Intent(android.content.Intent.ACTION_VIEW, uri);
+        startActivity(mapIntent);*/
+        List<Intent> shareIntentsLists = new ArrayList<Intent>();
+        Intent sendIntent = new Intent();
+
+        sendIntent.setAction(Intent.ACTION_SEND);
+
+        sendIntent.setType("*/*");
+        List<ResolveInfo> resolveInfos = getPackageManager().queryIntentActivities(sendIntent,0);
+        if(!resolveInfos.isEmpty()){
+            for(ResolveInfo resInfo : resolveInfos){
+                String packageName = resInfo.activityInfo.packageName;
+                if(!packageName.contains("com.facebook.katana")){
+                    Intent intent = new Intent();
+                    if(packageName.contains("com.google.android.apps.maps")){
+                        String label = ccName + "\n" + ccAddress;
+                        String uriBegin = "geo:" + latitude + "," + langitude;
+                        String query = latitude + "," + langitude + "(" + label + ")";
+                        String encodedQuery = Uri.encode(query);
+                        String uriString = uriBegin + "?q=" + encodedQuery + "&z=16";
+                        Uri uri = Uri.parse(uriString);
+                        intent = new Intent(android.content.Intent.ACTION_VIEW, uri);
+                    }
+                    else {
+                        intent.setComponent(new ComponentName(packageName, resInfo.activityInfo.name));
+                        intent.setAction(Intent.ACTION_SEND);
+                        intent.putExtra(Intent.EXTRA_SUBJECT, ccName);
+                        intent.putExtra(Intent.EXTRA_TEXT, ccName + "\n" + ccAddress + "\n" + getString(R.string.sent_from) + "   " + getString(R.string.invitation_deep_link));
+                        intent.setType("image/*");
+                        intent.setPackage(packageName);
+                    }
+                    shareIntentsLists.add(intent);
+                }
+            }
+            if(!shareIntentsLists.isEmpty()){
+
+                Intent chooserIntent = Intent.createChooser(shareIntentsLists.remove(0), "Choose app to share");
+
+                chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, shareIntentsLists.toArray(new Parcelable[]{}));
+
+                startActivity(chooserIntent);
+
+            }
+            else{
+                Log.e("Error", "No Apps can perform your task");
+            }
+        }
     }
 
 

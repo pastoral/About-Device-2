@@ -150,6 +150,7 @@ public class StoredNewsList extends AppCompatActivity {
                 if(notification_type.equals("promo")){
                     Intent intent = new Intent(getApplication(),NewsWebActivity.class);
                     intent.putExtra("targetUrl", link);
+                    intent.putExtra("textData", title + "\n" + content);
                     startActivity(intent);
                 }
 

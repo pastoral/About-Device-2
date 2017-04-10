@@ -12,7 +12,8 @@
 
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:id="@+id/webfrag">
         <ProgressBar
             android:id="@+id/webprogressbar"
             style="?android:attr/progressBarStyle"
@@ -21,6 +22,7 @@
 
             android:indeterminate="true"
              />
+
         <WebView
             android:id="@+id/webView"
             android:layout_width="match_parent"
