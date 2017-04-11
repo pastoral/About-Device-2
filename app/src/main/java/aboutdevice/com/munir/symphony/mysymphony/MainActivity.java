@@ -49,6 +49,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 
+
 import org.json.JSONException;
 
 import java.text.SimpleDateFormat;
@@ -194,16 +195,8 @@ public class MainActivity extends BaseActivity implements
         mAdView = (AdView)findViewById(R.id.adView);
         // mAdView.setAdSize(AdSize.BANNER);
         //mAdView.setAdUnitId("ca-app-pub-4365083222822400/8672759776");
-        mFirebaseRemoteConfig = remoteConfig.getmFirebaseRemoteConfig();
-        fetchRemoteConfig();
 
-    }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        isGooglePlayServicesAvailable(this);
-        //testDB();
         if(isGooglePlayServicesAvailable(this)){
             mGoogleApiClient = new GoogleApiClient.Builder(this)
                     .addApi(AppInvite.API)
@@ -240,6 +233,24 @@ public class MainActivity extends BaseActivity implements
         else{
             return;
         }
+
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if (mGoogleApiClient != null)
+            mGoogleApiClient.connect();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        isGooglePlayServicesAvailable(this);
+        //testDB();
+        mFirebaseRemoteConfig = remoteConfig.getmFirebaseRemoteConfig();
+        fetchRemoteConfig();
+
 
     }
 
@@ -469,15 +480,24 @@ public class MainActivity extends BaseActivity implements
     @Override
     public void onDestroy() {
         super.onDestroy();
-        mGoogleApiClient.stopAutoManage(this);
-        mGoogleApiClient.disconnect();
+       // mGoogleApiClient.stopAutoManage(this);
+       // mGoogleApiClient.disconnect();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
+            mGoogleApiClient.stopAutoManage(this);
+            mGoogleApiClient.disconnect();
+        }
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        mGoogleApiClient.stopAutoManage(this);
-        mGoogleApiClient.disconnect();
+
+        //mGoogleApiClient.disconnect();
     }
 
 

@@ -17,12 +17,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -54,6 +57,7 @@ public class StoredNewsList extends AppCompatActivity {
     private FirebaseRemoteConfig mFirebaseRemoteConfig;
     private RemoteConfig remoteConfig;
     public ImageView headerImg;
+    private AdView adViewStoredNews;
 
     int maxStoredNews = 101;
 
@@ -67,6 +71,7 @@ public class StoredNewsList extends AppCompatActivity {
 
         notificationRecyclerView = (RecyclerView) findViewById(R.id.notification_recycler);
         headerImg = (ImageView)findViewById(R.id.image_header) ;
+        adViewStoredNews = (AdView)findViewById(R.id.adViewStoredNews);
         lm = new LinearLayoutManager(getApplicationContext());
         lm.setOrientation(LinearLayoutManager.VERTICAL);
         noNitifaication = (TextView)findViewById(R.id.nonotification);
@@ -232,6 +237,7 @@ public class StoredNewsList extends AppCompatActivity {
 
                 }
                 loadImageHeader();
+                loadAdvertige();
             }
         });
     }
@@ -243,6 +249,28 @@ public class StoredNewsList extends AppCompatActivity {
         }
         else{
             Picasso.with(getApplicationContext()).load(imageHeaderURL).into(headerImg);
+        }
+
+    }
+
+    private void loadAdvertige() {
+        boolean modelExists = false;
+        boolean isAdmobOn = mFirebaseRemoteConfig.getBoolean("is_admob_on");
+        String restrictedDevices = mFirebaseRemoteConfig.getString("disable_admob_for");
+        List<String> restricted_device_list = Arrays.asList(restrictedDevices.split("\\s*,\\s*"));
+        if(isAdmobOn){
+            modelExists = restricted_device_list.contains(remoteConfig.getModelName());
+            if(modelExists){
+                return;
+            }
+            else{
+                AdRequest adRequest = new AdRequest.Builder().build();
+                adViewStoredNews.loadAd(adRequest);
+            }
+        }
+
+        else{
+            return;
         }
 
     }
