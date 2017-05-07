@@ -7,23 +7,32 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.os.Parcelable;
+import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.View;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import aboutdevice.com.munir.symphony.mysymphony.R;
+import aboutdevice.com.munir.symphony.mysymphony.firebase.RemoteConfig;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
@@ -32,11 +41,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public Intent intent;
     public String ccName , ccAddress;
     public double latitude, langitude;
+    private AdView adViewMaps;
+    private RemoteConfig remoteConfig;
+    private FirebaseRemoteConfig mFirebaseRemoteConfig;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.cc_maps);
+        MobileAds.initialize(getApplicationContext(), "ca-app-pub-4365083222822400~5968883777");
+        adViewMaps = (AdView)findViewById(R.id.adViewMaps);
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         intent = getIntent();
         bundle = intent.getExtras();
@@ -44,6 +58,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+        remoteConfig = new RemoteConfig();
+
+        mFirebaseRemoteConfig = remoteConfig.getmFirebaseRemoteConfig();
+        fetchRemoteConfig();
 
     }
 
@@ -58,6 +77,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
      * installed Google Play services and returned to the app.
      */
     @Override
+    @SuppressWarnings({"MissingPermission"})
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
@@ -70,16 +90,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney,14));
         mMap.animateCamera(CameraUpdateFactory.zoomTo(16), 2000, null);
         mMap.addMarker(new MarkerOptions()
-                         .position(sydney)
-                         .title(intent.getStringExtra("CCName") + " Customer Care")
-                         .snippet(intent.getStringExtra("CCAddress"))
-                         ).showInfoWindow();
+                .position(sydney)
+                .title(intent.getStringExtra("CCName") + " Customer Care")
+                .snippet(intent.getStringExtra("CCAddress"))
+        ).showInfoWindow();
         mMap.setBuildingsEnabled(true);
         if(ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             mMap.setMyLocationEnabled(true);
         }
         //else{
-          //  return;
+        //  return;
         //}
 
 
@@ -143,5 +163,45 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
 
+    private void fetchRemoteConfig() {
+        long cacheExpiration = 3600;
+        if(mFirebaseRemoteConfig.getInfo().getConfigSettings().isDeveloperModeEnabled()){
+            cacheExpiration = 0;
+        }
+        mFirebaseRemoteConfig.fetch(cacheExpiration).addOnCompleteListener(this, new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if (task.isSuccessful()) {
 
+                    mFirebaseRemoteConfig.activateFetched();
+
+                } else {
+
+                }
+                loadAdvertige();
+            }
+        });
+    }
+
+    private void loadAdvertige() {
+        boolean modelExists = false;
+        boolean isAdmobOn = mFirebaseRemoteConfig.getBoolean("is_admob_on");
+        String restrictedDevices = mFirebaseRemoteConfig.getString("disable_admob_for");
+        List<String> restricted_device_list = Arrays.asList(restrictedDevices.split("\\s*,\\s*"));
+        if(isAdmobOn){
+            modelExists = restricted_device_list.contains(remoteConfig.getModelName());
+            if(modelExists){
+                return;
+            }
+            else{
+                AdRequest adRequest = new AdRequest.Builder().build();
+                adViewMaps.loadAd(adRequest);
+            }
+        }
+
+        else{
+            return;
+        }
+
+    }
 }
