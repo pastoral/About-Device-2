@@ -32,8 +32,11 @@ import com.facebook.FacebookSdk;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import aboutdevice.com.munir.symphony.mysymphony.MainActivity;
+import aboutdevice.com.munir.symphony.mysymphony.MySymphonyApp;
 import aboutdevice.com.munir.symphony.mysymphony.R;
 import aboutdevice.com.munir.symphony.mysymphony.firebase.RemoteConfig;
 
@@ -90,7 +93,18 @@ public class NewsActivity extends AppCompatActivity {
             Picasso.with(getApplicationContext()).load(bundle.getString("IMAGEURL")).into(image_banner);
         }
 
-
+        body.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(body.getSelectionStart() ==-1 && body.getSelectionEnd() == -1){
+                    Intent intent = new Intent(getContext(), NewsWebActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT | Intent.FLAG_ACTIVITY_NEW_TASK);
+                    intent.putExtra("targetUrl", extractUrls(sBody));
+                    intent.putExtra("SYSTRAY","systray");
+                    startActivity(intent);
+                }
+            }
+        });
 
 
     }
@@ -187,5 +201,21 @@ public class NewsActivity extends AppCompatActivity {
             }
         }
 
+    }
+
+    public static String extractUrls(String text)
+    {
+        String containedUrls = "";
+        String urlRegex = "((https?|ftp|gopher|telnet|file):((//)|(\\\\))+[\\w\\d:#@%/;$()~_?\\+-=\\\\\\.&]*)";
+        Pattern pattern = Pattern.compile(urlRegex, Pattern.CASE_INSENSITIVE);
+        Matcher urlMatcher = pattern.matcher(text);
+
+        while (urlMatcher.find())
+        {
+            containedUrls = text.substring(urlMatcher.start(0),
+                    urlMatcher.end(0));
+        }
+
+        return containedUrls;
     }
 }

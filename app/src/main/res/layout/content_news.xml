@@ -54,6 +54,7 @@
                         android:layout_marginStart="10dp"
                         android:layout_marginTop="34dp"
                         android:id="@+id/txtbody"
+                        android:linksClickable="false"
                         android:autoLink="web"/>
                 <TextView
                     android:text="Promotion going on... "

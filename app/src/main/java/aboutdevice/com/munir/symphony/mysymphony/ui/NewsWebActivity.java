@@ -31,6 +31,7 @@ import java.util.List;
 import aboutdevice.com.munir.symphony.mysymphony.MainActivity;
 import aboutdevice.com.munir.symphony.mysymphony.R;
 import aboutdevice.com.munir.symphony.mysymphony.firebase.RemoteConfig;
+import aboutdevice.com.munir.symphony.mysymphony.utils.ProgressBarHandler;
 
 public class NewsWebActivity extends AppCompatActivity {
 
@@ -44,6 +45,7 @@ public class NewsWebActivity extends AppCompatActivity {
     private PackageManager pkm ;
     private ApplicationInfo applicationInfo;
     private boolean fb;
+    private ProgressBarHandler mProgressBarHandler;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,8 +58,10 @@ public class NewsWebActivity extends AppCompatActivity {
         textData = bundle.getString("textData");
         Systray = bundle.getString("SYSTRAY");
 
+        mProgressBarHandler = new ProgressBarHandler(this);
+
         webView = (WebView)findViewById(R.id.webView);
-        progressBar = (ProgressBar)findViewById(R.id.webprogressbar) ;
+      //  progressBar = (ProgressBar)findViewById(R.id.webprogressbar) ;
 
 
 // Enable responsive layout
@@ -102,13 +106,15 @@ public class NewsWebActivity extends AppCompatActivity {
         @Override
         public void onPageStarted(WebView view, String url, Bitmap favicon) {
             super.onPageStarted(view, url, favicon);
-            progressBar.setVisibility(View.VISIBLE);
+            //progressBar.setVisibility(View.VISIBLE);
+            mProgressBarHandler.show();
         }
 
         @Override
         public void onPageFinished(WebView view, String url) {
             super.onPageFinished(view, url);
-            progressBar.setVisibility(View.GONE);
+            //progressBar.setVisibility(View.GONE);
+            mProgressBarHandler.hide();
         }
     }
 
