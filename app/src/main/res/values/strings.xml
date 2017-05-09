@@ -23,7 +23,7 @@
 
 
     <string name="invitation_title">Send App Invite Quickstart Invitation</string>
-    <string name="invitation_message">My Symphony app is terrific. It is the official app of Symphony Mobiles, Bangladesh. Give a try!</string>
+    <string name="invitation_message">My Symphony is the official app of Symphony Mobile,Bangladesh. Give a try!</string>
     <string name="invitation_deep_link">https://pcv59.app.goo.gl/vQaV</string>
     <string name="invitation_custom_image">http://imgur.com/cUu1myu</string>
     <string name="invitation_cta">Install!</string>

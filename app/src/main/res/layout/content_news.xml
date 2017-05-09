@@ -30,12 +30,13 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:textSize="19sp"
+                        android:textSize="17sp"
                         android:text="Feature"
                         android:textStyle="bold"
                         android:id="@+id/txttitle"
                         android:layout_marginLeft="7dp"
                         android:textColor="#000000"
+                        android:maxLines="3"
 
                         />
                     <View
