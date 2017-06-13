@@ -59,7 +59,7 @@ public class StoredNewsList extends AppCompatActivity {
     public ImageView headerImg;
     private AdView adViewStoredNews;
 
-    int maxStoredNews = 101;
+    int maxStoredNews = 16;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

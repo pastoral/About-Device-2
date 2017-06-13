@@ -83,7 +83,7 @@
     "processor" : "1.3 GHz Dual Core",
     "camera" : "2MP + VGA",
     "display" : "4 inch",
-    "memory" : "4GB ROM + 512MB RAM",
+    "memory" : "8GB ROM + 512MB RAM",
     "os" : "Android 6.0",
     "data_connection" : "2G, 3G, EDGE",
     "connectivity" : "WiFi,Bluetooth",
@@ -113,6 +113,35 @@
     "connectivity" : "WiFi, EDGE, Bluetooth, GPS",
     "battery" : "3500mAh Li-ion",
     "sim" : "dual"
+  },
+  "P8 PRO" :{
+    "processor" : "Quad Core Processor\n1.3GHz, Cortex A7",
+    "camera" : "13MP + 8MP Camera\nDual Flash",
+    "display" : "5.5” HD IPS Display\nMali-400 MP2 GPU",
+    "memory" : "16GB ROM + 2GB RAM",
+    "os" : "Android Nougat 7.0",
+    "data_connection" : "3G HSPA+, EDGE",
+    "connectivity" : "WiFi, GPS, BT, OTG",
+    "battery" : "2800mAh Lithium-ion Battery",
+    "sim" : "Dual Micro SIM",
+    "sensor" : "G-Sensor, Proximity, Light",
+    "others" : "One Touch Selfie"
+  },
+  "i10 plus" :{
+    "processor" : "1.3GHz Quad core; mali 400",
+    "camera" : "8MP(AF) + 8MP(FF)",
+    "display" : "5.2 inch HD IPS; 2.5D Glass",
+    "memory" : "16GB + 1GB",
+    "os" : "Android 7.0",
+    "data_connection" : "3G",
+    "connectivity" : "WiFi, EDGE, Bluetooth, GPS",
+    "battery" : "25000mAh Li-ion",
+    "sim" : "dual",
+    "others" : "selfie touch, metal body, otg supported"
+
   }
+
+
+
 
 }
