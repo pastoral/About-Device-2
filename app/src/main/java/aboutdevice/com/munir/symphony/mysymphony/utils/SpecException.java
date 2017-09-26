@@ -113,10 +113,10 @@ public class SpecException {
         if(size > 1400 && size < 2000){
             exceptionSpec[1] = "4GB ROM";
         }
-        if(size > 3200 && size < 10000){
+        if(size > 3200 && size < 7000){
             exceptionSpec[1] = "8GB ROM";
         }
-        if(size > 10899 && size <23000 ){
+        if(size > 7000 && size <23000 ){
             exceptionSpec[1] = "16GB ROM";
         }
         if(size > 23000 && size <52000 ){

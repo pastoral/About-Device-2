@@ -1,6 +1,8 @@
 package aboutdevice.com.munir.symphony.mysymphony.utils;
 
 import android.content.Context;
+import android.util.Log;
+import android.widget.Toast;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -17,6 +19,8 @@ import java.util.Map;
 
 import aboutdevice.com.munir.symphony.mysymphony.R;
 import aboutdevice.com.munir.symphony.mysymphony.model.ExceptionModels;
+
+import static aboutdevice.com.munir.symphony.mysymphony.MySymphonyApp.getContext;
 
 /**
  * Created by munirul.hoque on 11/15/2016.
@@ -170,16 +174,51 @@ public class FetchJson {
         se.setRAM(ramSize);
 
         long romSize = se.getTotalROM();
+        Log.d("ROM Size: " , String.valueOf(romSize));
+
         se.setROM(romSize);
 
 
-        se.getCameraPixel();
-        se.setCameraPixel(se.cam1,se.cam2);
+        if(getModelName()!="P9") {
+            se.getCameraPixel();
+            se.setCameraPixel(se.cam1, se.cam2);
+        }
 
-        featureList.remove(1);
-        featureList.add(1,se.exceptionSpec[2]);
+        if(getModelName()=="P9") {
+            featureList.remove(1);
+            featureList.add(1, "13MP + 13MP with Dual Flash");
+        }
         featureList.remove(3);
         featureList.add(3,se.exceptionSpec[1] + " + " + se.exceptionSpec[0]);
 
+    }
+
+    public String getModelName(){
+        String modelName = getSystemProperty("ro.product.device");
+
+        String read = readJSONFromAsset();
+        try{
+            jsonToMap(read);
+            if(searchModelName(modelName)) {
+                modelName = getSystemProperty("ro.build.product");
+            }
+        }
+        catch(JSONException e){
+            e.printStackTrace();
+        }
+        return modelName;
+    }
+
+    public String getSystemProperty(String key) {
+        String value = null;
+
+        try {
+            value = (String) Class.forName("android.os.SystemProperties")
+                    .getMethod("get", String.class).invoke(null, key);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return value;
     }
 }
